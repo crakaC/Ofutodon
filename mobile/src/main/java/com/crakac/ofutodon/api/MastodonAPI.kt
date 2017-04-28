@@ -1,10 +1,12 @@
 package com.crakac.ofutodon.api
 
 import com.crakac.ofutodon.api.entity.AccessToken
+import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.api.entity.AppCredentials
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 /**
@@ -38,4 +40,8 @@ interface MastodonAPI {
             @Field("grant_type")
             grantType: String
     ): Call<AccessToken>
+
+    @GET("api/v1/accounts/verify_credentials")
+    fun fetchCurrentAccount(): Call<Account>
+
 }

@@ -3,7 +3,6 @@ package com.crakac.ofutodon
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -23,7 +22,10 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.crakac.ofutodon.api.MastodonAPI
 import com.crakac.ofutodon.api.entity.AccessToken
+import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.api.entity.AppCredentials
+import com.crakac.ofutodon.util.C
+import com.crakac.ofutodon.util.PrefsUtil
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -34,9 +36,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     val TAG: String = "HomeActivity"
-    val ENDPOINT_AUTHORIZE: String = "/oauth/authorize"
-    val OAUTH_SCOPE: String = "read write follow"
-    val OAUTH_TARGET_DOMAIN: String = "oauth_target_domain"
 
     @BindView(R.id.pagerTab)
     lateinit var pagerTab: PagerTabStrip
@@ -69,6 +68,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener { view ->
             if (alreadyHasAppCredential()) {
                 Snackbar.make(view, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
+                val clientId = PrefsUtil.getString("${instanceDomain}.${C.CLIENT_ID}")!!
+                startAuthorize(instanceDomain, clientId)
             } else {
                 registerApplication()
             }
@@ -91,9 +92,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         pager.adapter = adapter
-
-        //mastodon API
-        mastodon = createMastodonApi()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -155,7 +153,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent == null) return
+        if (intent == null || intent.data == null) return
 
         if (intent.data.scheme != getString(R.string.oauth_scheme)) {
             return
@@ -163,38 +161,51 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val code = intent.data.getQueryParameter("code")
         val error = intent.data.getQueryParameter("error")
 
-        if(code != null) {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-            val domain = prefs.getString(OAUTH_TARGET_DOMAIN, "")
-            val id = prefs.getString("${domain}.client_id", "")
-            val secret = prefs.getString("${domain}.client_secret", "")
-            createMastodonApi().fetchOAuthToken(id, secret, oauthRedirectUri, code, "authorization_code")?.enqueue(object : Callback<AccessToken> {
-                override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
-                    Log.w(TAG, "fetchOAuthTokenFailed")
-                }
-
+        if (code != null) {
+            val domain = PrefsUtil.getString(C.OAUTH_TARGET_DOMAIN)
+            val id = PrefsUtil.getString("${domain}.${C.CLIENT_ID}")
+            val secret = PrefsUtil.getString("${domain}.${C.CLIENT_SECRET}")
+            if(domain == null || id == null || secret == null){
+                Log.d(TAG, "Authentication Failed due to some Preferences are null")
+                // TODO show dialog
+                return
+            }
+            getMastodonApi(domain).fetchOAuthToken(id, secret, oauthRedirectUri, code, C.AUTHORIZATION_CODE).enqueue(object : Callback<AccessToken> {
                 override fun onResponse(call: Call<AccessToken>?, response: Response<AccessToken>?) {
                     if (response == null || !response.isSuccessful) {
                         Log.w(TAG, "fetchOAuthToken is not successful")
                         return
                     }
 
-                    PreferenceManager.getDefaultSharedPreferences(this@HomeActivity).edit()
-                            .putString("${instanceDomain}.access_token", response.body().accessToken)
-                            .apply()
+                    onLoginSuccess(domain, response.body().accessToken)
+                    PrefsUtil.remove(domain)
+                }
+                override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
+                    Log.w(TAG, "fetchOAuthTokenFailed")
+                    PrefsUtil.remove(domain)
                 }
             })
         }
     }
 
-    fun createMastodonApi(): MastodonAPI {
+    fun getMastodonApi(domain: String, accessToken: String? = null): MastodonAPI {
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BODY
-        val okHttpClient = OkHttpClient.Builder()
+        val clientBuilder = OkHttpClient.Builder()
                 .addInterceptor(logger)
-                .build()
+        accessToken.let {
+            clientBuilder.addInterceptor {
+                val org = it.request()
+                val builder = org.newBuilder()
+                builder.addHeader("Authorization", "Bearer $accessToken")
+                val newRequest = builder.build()
+                it.proceed(newRequest)
+            }
+        }
+
+        val okHttpClient = clientBuilder.build()
         val retrofit = Retrofit.Builder()
-                .baseUrl("https://${instanceDomain}")
+                .baseUrl("https://${domain}")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -202,55 +213,77 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun saveAppCredential(credentials: AppCredentials, domain: String) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit()
-                .putString("${domain}.client_id", credentials.clientId)
-                .putString("${domain}.client_secret", credentials.clientSecret)
-                .putLong("${domain}.id", credentials.id)
-                .apply()
+        PrefsUtil.putString("${domain}.${C.CLIENT_ID}", credentials.clientId)
+        PrefsUtil.putString("${domain}.${C.CLIENT_SECRET}", credentials.clientSecret)
+        PrefsUtil.putLong("${domain}.id", credentials.id)
     }
 
     fun alreadyHasAppCredential(): Boolean {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val clientId = prefs.getString("${instanceDomain}.client_id", null)
-        val clientSecret = prefs.getString("${instanceDomain}.client_secret", null)
+        val clientId = PrefsUtil.getString("${instanceDomain}.${C.CLIENT_ID}")
+        val clientSecret = PrefsUtil.getString("${instanceDomain}.${C.CLIENT_SECRET}")
         return clientId != null && clientSecret != null
     }
 
     fun registerApplication() {
-        mastodon?.registerApplication(getString(R.string.app_name), oauthRedirectUri, OAUTH_SCOPE, "http://crakac.com")
+        mastodon?.registerApplication(getString(R.string.app_name), oauthRedirectUri, C.OAUTH_SCOPE, "http://crakac.com")
                 ?.enqueue(object : Callback<AppCredentials> {
-            override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
-            }
+                    override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
+                    }
 
-            override fun onResponse(call: Call<AppCredentials>?, response: Response<AppCredentials>?) {
-                if (response == null || !response.isSuccessful) {
-                    Snackbar.make(findViewById(R.id.fab), "Something wrong", Snackbar.LENGTH_SHORT).show()
-                    return;
-                    //TODO Retry
-                }
+                    override fun onResponse(call: Call<AppCredentials>?, response: Response<AppCredentials>?) {
+                        if (response == null || !response.isSuccessful) {
+                            Snackbar.make(findViewById(R.id.fab), "Something wrong", Snackbar.LENGTH_SHORT).show()
+                            return;
+                            //TODO Retry
+                        }
 
-                val credential = response.body()
-                saveAppCredential(credential, instanceDomain)
-                PreferenceManager.getDefaultSharedPreferences(this@HomeActivity).edit()
-                        .putString(OAUTH_TARGET_DOMAIN, instanceDomain)
-                        .apply()
-                val uri = Uri.Builder()
-                        .scheme("https")
-                        .authority(instanceDomain)
-                        .path(ENDPOINT_AUTHORIZE)
-                        .appendQueryParameter("client_id", credential.clientId)
-                        .appendQueryParameter("redirect_uri", credential.redirectUri)
-                        .appendQueryParameter("response_type", "code")
-                        .appendQueryParameter("scope", OAUTH_SCOPE)
-                        .build()
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                startActivity(intent)
-            }
-        })
+                        val credential = response.body()
+                        saveAppCredential(credential, instanceDomain)
+                        startAuthorize(instanceDomain, credential.clientId)
+                    }
+                })
     }
 
     @OnClick(R.id.fab2)
     fun onClickFab(v: View) {
+        //mastodon API
+        PrefsUtil.getString("${instanceDomain}.${C.ACCESS_TOKEN}").let {
+            mastodon = getMastodonApi(instanceDomain, it)
+            mastodon?.fetchCurrentAccount()?.enqueue(
+                object: Callback<Account>{
+                    override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
+                        if(response == null || !response.isSuccessful){
+                            Log.w(TAG, "fetch account failed")
+                            return
+                        }
+                        Log.d(TAG, response.body().toString())
+                    }
+                    override fun onFailure(call: Call<Account>?, t: Throwable?) {
+                    }
+                }
+            )
+        }
+    }
 
+    fun startAuthorize(domain: String, clientId: String) {
+        // Save target domain since keeping
+        PrefsUtil.putString(C.OAUTH_TARGET_DOMAIN, domain)
+        val uri = Uri.Builder()
+                .scheme("https")
+                .authority(domain)
+                .path(C.ENDPOINT_AUTHORIZE)
+                .appendQueryParameter(C.CLIENT_ID, clientId)
+                .appendQueryParameter(C.REDIRECT_URI, oauthRedirectUri)
+                .appendQueryParameter(C.RESPONSE_TYPE, "code")
+                .appendQueryParameter(C.SCOPE, C.OAUTH_SCOPE)
+                .build()
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
+    }
+
+    fun onLoginSuccess(domain: String, accessToken: String){
+        //save access token in preferences
+        PrefsUtil.putString("${domain}.${C.ACCESS_TOKEN}", accessToken)
+        Snackbar.make(fab2, "Login Success: $domain", Snackbar.LENGTH_SHORT).show()
     }
 }
