@@ -5,40 +5,35 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by Kosuke on 2017/04/27.
  */
-open class Account {
+class Account {
     @SerializedName("id")
     val id: Long = 0L
-
     @SerializedName("username")
-    val userName: String = ""
-
+    val username: String = ""
     @SerializedName("acct")
     val acct: String = ""
-
     @SerializedName("display_name")
     val displayName: String = ""
-
-    @SerializedName("note")
-    val note: String = ""
-
-    @SerializedName("url")
-    val url: String = ""
-
-    @SerializedName("header")
-    val header: String = ""
-
     @SerializedName("locked")
-    val locked: Boolean = false
-
+    val locked: String = ""
     @SerializedName("created_at")
     val createdAt: String = ""
-
     @SerializedName("followers_count")
-    val followersCount: Int = 0
-
+    val followersCount: Long = 0L
     @SerializedName("following_count")
-    val followingCount: Int = 0
-
+    val followingCount: Long = 0L
     @SerializedName("statuses_count")
-    val statusesCount: Int = 0
+    val statusesCount: Long = 0L
+    @SerializedName("note")
+    val note: String = ""
+    @SerializedName("url")
+    val url: String = ""
+    @SerializedName("avatar")
+    val avatar: String = ""
+    @SerializedName("avatar_static")
+    val avatarStatic: String = ""
+    @SerializedName("header")
+    val header: String = ""
+    @SerializedName("header_static")
+    val headerStatic: String = ""
 }

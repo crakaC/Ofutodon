@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by Kosuke on 2017/04/27.
  */
-open class AppCredentials {
+class AppCredentials {
     @SerializedName("id")
     val id: Long = 0
     @SerializedName("client_id")
