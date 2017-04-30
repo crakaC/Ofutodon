@@ -19,7 +19,7 @@ import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.crakac.ofutodon.api.MastodonAPI
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.MastodonUtil
 import com.crakac.ofutodon.api.entity.AccessToken
 import com.crakac.ofutodon.api.entity.Account
@@ -50,7 +50,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var adapter: MyFragmentPagerAdapter? = null
     var instanceDomain: String = "friends.nico"
 
-    var mastodon: MastodonAPI? = null
+    var mastodon: Mastodon? = null
 
     var oauthRedirectUri: String = ""
         get() {

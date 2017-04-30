@@ -12,7 +12,7 @@ class MastodonUtil {
     companion object{
         val TAG: String = "MastodonUtil"
         val dispatcher: Dispatcher = Dispatcher()
-        fun createMastodonApi(domain: String, accessToken: String? = null): MastodonAPI {
+        fun createMastodonApi(domain: String, accessToken: String? = null): Mastodon {
 
             val clientBuilder = getLoggableHttpClientBuilder()
             accessToken.let {
@@ -31,7 +31,7 @@ class MastodonUtil {
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
-            return retrofit.create(MastodonAPI::class.java)
+            return retrofit.create(Mastodon::class.java)
         }
 
         fun createAuthenticationUri(domain: String, clientId: String, redirectUri: String): Uri{

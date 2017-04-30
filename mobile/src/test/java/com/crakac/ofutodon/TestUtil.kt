@@ -1,13 +1,13 @@
 package com.crakac.ofutodon
 
-import com.crakac.ofutodon.api.MastodonAPI
+import com.crakac.ofutodon.api.Mastodon
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object TestUtil{
-    fun createApi(useToken: Boolean = false): MastodonAPI {
+    fun createApi(useToken: Boolean = false): Mastodon {
         System.out.println(BuildConfig.BUILD_TYPE)
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BODY
@@ -30,7 +30,7 @@ object TestUtil{
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-        return retrofit.create(MastodonAPI::class.java)
+        return retrofit.create(Mastodon::class.java)
     }
 
 }
