@@ -1,6 +1,7 @@
 package com.crakac.ofutodon.api
 
 import android.net.Uri
+import com.crakac.ofutodon.BuildConfig
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -12,10 +13,8 @@ class MastodonUtil {
         val TAG: String = "MastodonUtil"
         val dispatcher: Dispatcher = Dispatcher()
         fun createMastodonApi(domain: String, accessToken: String? = null): MastodonAPI {
-            val logger = HttpLoggingInterceptor()
-            logger.level = HttpLoggingInterceptor.Level.BODY
-            val clientBuilder = OkHttpClient.Builder()
-                    .addInterceptor(logger)
+
+            val clientBuilder = getLoggableHttpClientBuilder()
             accessToken.let {
                 clientBuilder.addInterceptor {
                     val org = it.request()
@@ -45,6 +44,16 @@ class MastodonUtil {
                     .appendQueryParameter(C.RESPONSE_TYPE, "code")
                     .appendQueryParameter(C.SCOPES, C.OAUTH_SCOPES)
                     .build()
+        }
+
+        private fun getLoggableHttpClientBuilder(): OkHttpClient.Builder{
+            val logger = HttpLoggingInterceptor()
+            if(BuildConfig.DEBUG){
+                logger.level = HttpLoggingInterceptor.Level.BODY
+            } else {
+                logger.level = HttpLoggingInterceptor.Level.NONE
+            }
+            return OkHttpClient.Builder().addInterceptor(logger)
         }
     }
 }
