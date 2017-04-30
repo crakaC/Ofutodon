@@ -1,8 +1,8 @@
 package com.crakac.ofutodon.api
 
-import android.app.Notification
 import com.crakac.ofutodon.api.entity.*
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -72,24 +72,16 @@ interface MastodonAPI {
     fun getFollowers(
             @Path("id")
             id: Long,
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Account>>
 
     @GET("/api/v1/accounts/{id}/following")
     fun getFollowings(
             @Path("id")
             id: Long,
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Account>>
 
     @GET("/api/v1/accounts/{id}/statuses")
@@ -97,15 +89,11 @@ interface MastodonAPI {
             @Path("id")
             id: Long,
             @Query("only_media")
-            onlyMedia: Boolean,
+            onlyMedia: Boolean?,
             @Query("exclude_replies")
-            excludeReplies: Boolean,
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            excludeReplies: Boolean?,
+            @QueryMap
+            range: Map<String, Long>?
     ): Call<List<Status>>
 
     @POST("/api/v1/accounts/{id}/follow")
@@ -172,33 +160,21 @@ interface MastodonAPI {
     ): Call<AppCredentials>
 
     @GET("/api/v1/blocks")
-    fun getBlockAccounts(
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+    fun getBlockingAccounts(
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Account>>
 
     @GET("/api/v1/favourites")
     fun getFavourites(
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Status>>
 
     @GET("/api/v1/follow_requests")
     fun getFollowRequests(
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Account>>
 
     @FormUrlEncoded
@@ -233,23 +209,15 @@ interface MastodonAPI {
     ): Call<Attachment>
 
     @GET("/api/v1/mutes")
-    fun getMutes(
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+    fun getMutingAccounts(
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Account>>
 
     @GET("/api/v1/notifications")
     fun getNotifications(
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Notification>>
 
     @GET("/api/v1/notifications/{id}")
@@ -259,7 +227,7 @@ interface MastodonAPI {
     ): Call<Notification>
 
     @POST("/api/v1/notifications/clear")
-    fun crearNotification()
+    fun crearNotification(): Call<ResponseBody>
 
     @GET("/api/v1/reports")
     fun getReports(): Call<List<Report>>
@@ -280,7 +248,7 @@ interface MastodonAPI {
             @Query("q")
             query: String,
             @Query("resolve")
-            resolveNonLocalAccount: Boolean
+            resolveNonLocalAccount: Boolean? = null
     ): Call<Results>
 
     @GET("/api/v1/statuses/{id}")
@@ -305,24 +273,16 @@ interface MastodonAPI {
     fun getRebloggedBy(
             @Path("id")
             id: Long,
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Account>>
 
     @GET("/api/v1/statuses/{id}/favourited_by")
     fun getFavouritedBy(
             @Path("id")
             id: Long,
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Account>>
 
     @FormUrlEncoded
@@ -335,7 +295,7 @@ interface MastodonAPI {
             @Field("media_ids")
             mediaIds: String,
             @Field("sensitive")
-            isSensitive: Boolean,
+            isSensitive: Boolean?,
             @Field("spoiler_text")
             spoilerText: String,
             @Field("visibility")
@@ -375,23 +335,15 @@ interface MastodonAPI {
     @GET("/api/v1/timelines/home")
     fun getHomeTileline(
             @Query("local")
-            localOnly: Boolean,
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            localOnly: Boolean?,
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Status>>
 
     @GET("/api/v1/timelines/public")
     fun getPublicTimeline(
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Status>>
 
     @GET("/api/v1/timelines/tag/{hashtag}")
@@ -399,12 +351,8 @@ interface MastodonAPI {
             @Path("hashtag")
             tag: String,
             @Query("local")
-            localOnly: Boolean,
-            @Query("max_id")
-            maxId: Long,
-            @Query("since_id")
-            sinceId: Long,
-            @Query("limit")
-            limit: Int
+            localOnly: Boolean?,
+            @QueryMap
+            pager: Map<String, Long>
     ): Call<List<Status>>
 }

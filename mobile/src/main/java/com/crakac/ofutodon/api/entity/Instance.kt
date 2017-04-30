@@ -14,4 +14,6 @@ class Instance{
     val description: String = ""
     @SerializedName("email")
     val email: String = ""
+    @SerializedName("version")
+    val version: String = ""
 }
