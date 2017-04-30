@@ -1,7 +1,6 @@
 package com.crakac.ofutodon.api
 
 import android.app.Notification
-import android.content.Context
 import com.crakac.ofutodon.api.entity.*
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -37,6 +36,22 @@ interface MastodonAPI {
             grantType: String
     ): Call<AccessToken>
 
+    @FormUrlEncoded
+    @POST("oauth/token")
+    fun fetchAccessTokenByPassword(
+            @Field("client_id")
+            clientId: String,
+            @Field("client_secret")
+            clientSecret: String,
+            @Field("grant_type")
+            grantType: String,
+            @Field("username")
+            userName: String,
+            @Field("password")
+            password: String,
+            @Field("scope")
+            scope: String
+    ): Call<AccessToken>
     @GET("/api/v1/accounts/verify_credentials")
     fun getCurrentAccount(): Call<Account>
 
@@ -46,12 +61,12 @@ interface MastodonAPI {
             @Field("display_name")
             displayName: String,
             @Field("note")
-            note: String,
+            note: String? = null,
             @Field("avatar")
-            avator: String,
+            avator: String? = null,
             @Field("header")
-            header: String
-    )
+            header: String? = null
+    ): Call<Account>
 
     @GET("/api/v1/accounts/{id}/followers")
     fun getFollowers(
@@ -188,7 +203,7 @@ interface MastodonAPI {
 
     @FormUrlEncoded
     @POST("/api/v1/follow_requests/{id}/authorize")
-    fun acceptFollowRequest(
+    fun authorizeFollowRequest(
             @Path("id")
             id: Long
     )
@@ -383,6 +398,7 @@ interface MastodonAPI {
     fun getHashtagTimeline(
             @Path("hashtag")
             tag: String,
+            @Query("local")
             localOnly: Boolean,
             @Query("max_id")
             maxId: Long,
