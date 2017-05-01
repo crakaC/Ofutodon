@@ -3,8 +3,12 @@ package com.crakac.ofutodon.methods
 import com.crakac.ofutodon.BuildConfig
 import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.api.entity.StatusBuilder
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class Status : MastodonMethodTestBase(){
 
@@ -77,8 +81,11 @@ class Status : MastodonMethodTestBase(){
 
     @Test
     fun postWithMedia(){
-        val attachment = listOf(416073L)
-        val r = api.postStatus(StatusBuilder(text = "システムオールレッド", mediaIds = attachment, visibility = "direct")).execute()
+        val f = File(javaClass.getResource("/lgtm.webm").path)
+        val reqFile = RequestBody.create(MediaType.parse("video/webm"), f)
+        val body = MultipartBody.Part.createFormData("file", f.name, reqFile)
+        val attachment = api.uploadMediaAttachment(body).execute().body()
+        val r = api.postStatus(StatusBuilder(text = "( ˘ω˘)ｽﾔｧ", mediaIds = listOf(attachment.id))).execute()
         Assert.assertTrue(r.isSuccessful)
     }
 }
