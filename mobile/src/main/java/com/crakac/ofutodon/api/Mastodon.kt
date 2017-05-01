@@ -2,7 +2,6 @@ package com.crakac.ofutodon.api
 
 import com.crakac.ofutodon.api.entity.*
 import okhttp3.MultipartBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -55,87 +54,80 @@ interface Mastodon {
     @GET("/api/v1/accounts/verify_credentials")
     fun getCurrentAccount(): Call<Account>
 
-    @FormUrlEncoded
     @PATCH("/api/v1/accounts/update_credentials")
     fun updateAccountCredentials(
-            @Field("display_name")
-            displayName: String,
-            @Field("note")
-            note: String? = null,
-            @Field("avatar")
-            avator: String? = null,
-            @Field("header")
-            header: String? = null
+            @Body
+            credentials: AccountCredentials?
     ): Call<Account>
 
     @GET("/api/v1/accounts/{id}/followers")
     fun getFollowers(
             @Path("id")
-            id: Long,
+            accountId: Long,
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Account>>
 
     @GET("/api/v1/accounts/{id}/following")
     fun getFollowings(
             @Path("id")
-            id: Long,
+            accountId: Long,
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Account>>
 
     @GET("/api/v1/accounts/{id}/statuses")
     fun getStatuses(
             @Path("id")
-            id: Long,
+            accountId: Long,
             @Query("only_media")
-            onlyMedia: Boolean?,
+            onlyMedia: Boolean? = null,
             @Query("exclude_replies")
-            excludeReplies: Boolean?,
+            excludeReplies: Boolean? = null,
             @QueryMap
-            range: Map<String, Long>?
+            range: Map<String, String> = emptyMap()
     ): Call<List<Status>>
 
     @POST("/api/v1/accounts/{id}/follow")
     fun follow(
             @Path("id")
-            id: Long
+            accountId: Long
     ): Call<Relationship>
 
     @POST("/api/v1/accounts/{id}/unfollow")
     fun unfollow(
             @Path("id")
-            id: Long
+            accountId: Long
     ): Call<Relationship>
 
     @POST("/api/v1/accounts/{id}/block")
     fun block(
             @Path("id")
-            id: Long
+            accountId: Long
     ): Call<Relationship>
 
     @POST("/api/v1/accounts/{id}/unblock")
     fun unblock(
             @Path("id")
-            id: Long
+            accountId: Long
     ): Call<Relationship>
 
     @POST("/api/v1/accounts/{id}/mute")
     fun mute(
             @Path("id")
-            id: Long
+            accountId: Long
     ): Call<Relationship>
 
     @POST("/api/v1/accounts/{id}/unmute")
     fun unmute(
             @Path("id")
-            id: Long
+            accountId: Long
     ): Call<Relationship>
 
     @GET("/api/v1/accounts/relationships")
     fun getRelationships(
             @Query("id")
-            id: Long
+            vararg accountIds: Long
     ): Call<List<Relationship>>
 
     @GET("/api/v1/accounts/search")
@@ -162,34 +154,32 @@ interface Mastodon {
     @GET("/api/v1/blocks")
     fun getBlockingAccounts(
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Account>>
 
     @GET("/api/v1/favourites")
     fun getFavourites(
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Status>>
 
     @GET("/api/v1/follow_requests")
     fun getFollowRequests(
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Account>>
 
-    @FormUrlEncoded
     @POST("/api/v1/follow_requests/{id}/authorize")
     fun authorizeFollowRequest(
             @Path("id")
             id: Long
-    )
+    ): Call<Unit>
 
-    @FormUrlEncoded
     @POST("/api/v1/follow_requests/{id}/reject")
     fun rejectFollowRequest(
             @Path("id")
             id: Long
-    )
+    ): Call<Unit>
 
     @FormUrlEncoded
     @POST("/api/v1/follows")
@@ -211,13 +201,13 @@ interface Mastodon {
     @GET("/api/v1/mutes")
     fun getMutingAccounts(
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Account>>
 
     @GET("/api/v1/notifications")
     fun getNotifications(
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Notification>>
 
     @GET("/api/v1/notifications/{id}")
@@ -227,7 +217,7 @@ interface Mastodon {
     ): Call<Notification>
 
     @POST("/api/v1/notifications/clear")
-    fun crearNotification(): Call<ResponseBody>
+    fun clearNotification(): Call<Unit>
 
     @GET("/api/v1/reports")
     fun getReports(): Call<List<Report>>
@@ -240,7 +230,7 @@ interface Mastodon {
             @Field("status_ids")
             statusIds: List<Long>,
             @Field("comment")
-            comment: String
+            comment: String?
     ): Call<Report>
 
     @GET("/api/v1/search")
@@ -274,7 +264,7 @@ interface Mastodon {
             @Path("id")
             id: Long,
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Account>>
 
     @GET("/api/v1/statuses/{id}/favourited_by")
@@ -282,31 +272,20 @@ interface Mastodon {
             @Path("id")
             id: Long,
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Account>>
 
-    @FormUrlEncoded
     @POST("/api/v1/statuses")
     fun postStatus(
-            @Field("status")
-            text: String,
-            @Field("in_reply_to_id")
-            replyTo: Long,
-            @Field("media_ids")
-            mediaIds: String,
-            @Field("sensitive")
-            isSensitive: Boolean?,
-            @Field("spoiler_text")
-            spoilerText: String,
-            @Field("visibility")
-            visibility: Status.Visibility
+            @Body
+            param: StatusBuilder
     ): Call<Status>
 
     @DELETE("/api/v1/statuses/{id}")
     fun deleteStatus(
             @Path("id")
             id: Long
-    )
+    ): Call<Unit>
 
     @POST("/api/v1/statuses/{id}/reblog")
     fun reblogStatus(
@@ -337,13 +316,13 @@ interface Mastodon {
             @Query("local")
             localOnly: Boolean?,
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Status>>
 
     @GET("/api/v1/timelines/public")
     fun getPublicTimeline(
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Status>>
 
     @GET("/api/v1/timelines/tag/{hashtag}")
@@ -353,6 +332,6 @@ interface Mastodon {
             @Query("local")
             localOnly: Boolean?,
             @QueryMap
-            pager: Map<String, Long>
+            pager: Map<String, String> = emptyMap()
     ): Call<List<Status>>
 }

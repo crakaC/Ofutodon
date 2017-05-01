@@ -7,7 +7,9 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import java.net.URLConnection;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -22,5 +24,11 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.crakac.ofutodon", appContext.getPackageName());
+    }
+
+    @Test
+    public void guessContentTypeFromMp4File() throws Exception{
+        String mimeType = URLConnection.guessContentTypeFromName("hoge.mp4");
+        assertEquals("video/mp4", mimeType);
     }
 }

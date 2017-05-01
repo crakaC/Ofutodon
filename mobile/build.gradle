@@ -19,7 +19,18 @@ android {
         }
         debug{
             def p = getProps("mobile/debug_token.properties")
-            buildConfigField "String", "DEBUG_TOKEN", p.getProperty("TOKEN")
+            p.each {k, v ->
+                def val = v.toString()
+                if(val.startsWith("\"")) {
+                    buildConfigField "String", k, v
+                } else if (val.contains(".")) {
+                    buildConfigField "double", k, v
+                } else if (val.endsWith("L")){
+                    buildConfigField "long", k, v
+                } else {
+                    buildConfigField "int", k, v
+                }
+            }
         }
     }
 }
