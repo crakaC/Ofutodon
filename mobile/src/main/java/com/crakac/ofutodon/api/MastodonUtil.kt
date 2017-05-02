@@ -4,6 +4,7 @@ import android.net.Uri
 import android.text.Html
 import android.text.Spanned
 import com.crakac.ofutodon.BuildConfig
+import com.emojione.Emojione
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import okhttp3.Dispatcher
@@ -13,12 +14,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MastodonUtil {
-    companion object{
+    companion object {
         private var instance: Mastodon? = null
         val api: Mastodon?
-        get() {
-            return instance
-        }
+            get() {
+                return instance
+            }
         val TAG: String = "MastodonUtil"
         val dispatcher: Dispatcher = Dispatcher()
         fun createMastodonApi(domain: String, accessToken: String? = null): Mastodon {
@@ -33,16 +34,17 @@ class MastodonUtil {
                     it.proceed(newRequest)
                 }
             }
-            val gson = GsonBuilder().registerTypeAdapter(Spanned::class.java,
-                    JsonDeserializer<Spanned> { json, typeOfT, context ->
-                        fun trimWhiteSpace (source: CharSequence) : CharSequence{
+            val gson = GsonBuilder()
+                    .registerTypeAdapter(Spanned::class.java, JsonDeserializer<Spanned> { json, typeOfT, context ->
+                        fun trimWhiteSpace(source: CharSequence): CharSequence {
                             var i = source.length
-                            do{
+                            do {
                                 --i
-                            }while(i >= 0 && Character.isWhitespace(source[i]))
+                            } while (i >= 0 && Character.isWhitespace(source[i]))
                             return source.subSequence(0, i + 1)
                         }
-                        trimWhiteSpace(Html.fromHtml(json.asString)) as Spanned
+                        val text = Emojione.shortnameToUnicode(json.asString)
+                        trimWhiteSpace(Html.fromHtml(text)) as Spanned
                     }).create()
 
             val okHttpClient = clientBuilder.dispatcher(dispatcher).build()
@@ -55,7 +57,7 @@ class MastodonUtil {
             return instance!!
         }
 
-        fun createAuthenticationUri(domain: String, clientId: String, redirectUri: String): Uri{
+        fun createAuthenticationUri(domain: String, clientId: String, redirectUri: String): Uri {
             return Uri.Builder()
                     .scheme("https")
                     .authority(domain)
@@ -67,9 +69,9 @@ class MastodonUtil {
                     .build()
         }
 
-        private fun getLoggableHttpClientBuilder(): OkHttpClient.Builder{
+        private fun getLoggableHttpClientBuilder(): OkHttpClient.Builder {
             val logger = HttpLoggingInterceptor()
-            if(BuildConfig.DEBUG){
+            if (BuildConfig.DEBUG) {
                 logger.level = HttpLoggingInterceptor.Level.BODY
             } else {
                 logger.level = HttpLoggingInterceptor.Level.NONE
