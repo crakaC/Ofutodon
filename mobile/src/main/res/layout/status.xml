@@ -8,26 +8,24 @@
         android:id="@+id/displayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ieeeeeeeeeeeeeeei"
         android:layout_alignParentTop="true"
         style="@style/Base.TextAppearance.AppCompat.Caption"
         android:layout_toEndOf="@+id/icon" />
 
     <ImageView
-        android:paddingEnd="8dp"
+        android:layout_margin="8dp"
         android:id="@+id/icon"
-        android:src="@android:drawable/ic_menu_compass"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:src="@android:drawable/ic_menu_compass" />
 
     <TextView
         android:id="@+id/status"
         android:layout_width="match_parent"
         style="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_height="wrap_content"
-        android:text="foooooooooooooooooooooooo"
         android:layout_below="@+id/displayName"
         android:layout_toEndOf="@+id/icon" />
 

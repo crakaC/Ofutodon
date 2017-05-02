@@ -1,5 +1,6 @@
 package com.crakac.ofutodon.api.entity
 
+import android.text.Spanned
 import com.google.gson.annotations.SerializedName
 
 class Status{
@@ -24,7 +25,7 @@ class Status{
     @SerializedName("reblog")
     val reblog: Status? = null
     @SerializedName("content")
-    val content: String = ""
+    val content: Spanned? = null
     @SerializedName("created_at")
     val createdAt: String = ""
     @SerializedName("reblogs_count")

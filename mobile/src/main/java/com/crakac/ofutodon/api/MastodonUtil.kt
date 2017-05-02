@@ -1,7 +1,11 @@
 package com.crakac.ofutodon.api
 
 import android.net.Uri
+import android.text.Html
+import android.text.Spanned
 import com.crakac.ofutodon.BuildConfig
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -29,12 +33,23 @@ class MastodonUtil {
                     it.proceed(newRequest)
                 }
             }
+            val gson = GsonBuilder().registerTypeAdapter(Spanned::class.java,
+                    JsonDeserializer<Spanned> { json, typeOfT, context ->
+                        fun trimWhiteSpace (source: CharSequence) : CharSequence{
+                            var i = source.length
+                            do{
+                                --i
+                            }while(i >= 0 && Character.isWhitespace(source[i]))
+                            return source.subSequence(0, i + 1)
+                        }
+                        trimWhiteSpace(Html.fromHtml(json.asString)) as Spanned
+                    }).create()
 
             val okHttpClient = clientBuilder.dispatcher(dispatcher).build()
             val retrofit = Retrofit.Builder()
                     .baseUrl("https://${domain}")
                     .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build()
             instance = retrofit.create(Mastodon::class.java)
             return instance!!
