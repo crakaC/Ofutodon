@@ -1,6 +1,5 @@
 package com.crakac.ofutodon
 
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 
@@ -11,7 +10,7 @@ class MyFragmentPagerAdapter(fm : FragmentManager) : FragmentStatePagerAdapter(f
 
     private val fragments = ArrayList<StatusFragment>()
 
-    override fun getItem(position: Int): Fragment {
+    override fun getItem(position: Int): StatusFragment {
         return fragments[position]
     }
 
@@ -25,6 +24,6 @@ class MyFragmentPagerAdapter(fm : FragmentManager) : FragmentStatePagerAdapter(f
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return (getItem(position) as StatusFragment).getTitle()
+        return getItem(position).getTitle()
     }
 }

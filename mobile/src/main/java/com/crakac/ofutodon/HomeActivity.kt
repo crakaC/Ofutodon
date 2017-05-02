@@ -15,14 +15,11 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
-import butterknife.OnClick
 import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.MastodonUtil
 import com.crakac.ofutodon.api.entity.AccessToken
-import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.api.entity.AppCredentials
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.PrefsUtil
@@ -88,11 +85,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //fragments
         if (adapter == null) {
             adapter = MyFragmentPagerAdapter(supportFragmentManager)
-            for (i in 1..3) {
-                adapter?.add(StatusFragment())
-            }
+            adapter?.add(StatusFragment())
         }
         pager.adapter = adapter
+
+        PrefsUtil.getString("${instanceDomain}.${ACCESS_TOKEN}").let {
+            mastodon = MastodonUtil.createMastodonApi(instanceDomain, it)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -220,26 +219,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         startAuthorize(instanceDomain, credential.clientId)
                     }
                 })
-    }
-
-    @OnClick(R.id.fab2)
-    fun onClickFab(v: View) {
-        //mastodon API
-        PrefsUtil.getString("${instanceDomain}.${ACCESS_TOKEN}").let {
-            mastodon = MastodonUtil.createMastodonApi(instanceDomain, it)
-            mastodon?.getCurrentAccount()?.enqueue(
-                object: Callback<Account>{
-                    override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                        if(response == null || !response.isSuccessful){
-                            Log.w(TAG, "fetch account failed")
-                            return
-                        }
-                    }
-                    override fun onFailure(call: Call<Account>?, t: Throwable?) {
-                    }
-                }
-            )
-        }
     }
 
     fun startAuthorize(domain: String, clientId: String) {

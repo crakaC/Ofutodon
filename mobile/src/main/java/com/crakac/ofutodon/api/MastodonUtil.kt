@@ -10,6 +10,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MastodonUtil {
     companion object{
+        private var instance: Mastodon? = null
+        val api: Mastodon?
+        get() {
+            return instance
+        }
         val TAG: String = "MastodonUtil"
         val dispatcher: Dispatcher = Dispatcher()
         fun createMastodonApi(domain: String, accessToken: String? = null): Mastodon {
@@ -31,7 +36,8 @@ class MastodonUtil {
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
-            return retrofit.create(Mastodon::class.java)
+            instance = retrofit.create(Mastodon::class.java)
+            return instance!!
         }
 
         fun createAuthenticationUri(domain: String, clientId: String, redirectUri: String): Uri{

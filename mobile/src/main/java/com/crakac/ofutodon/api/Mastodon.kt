@@ -314,7 +314,7 @@ interface Mastodon {
     @GET("/api/v1/timelines/home")
     fun getHomeTileline(
             @Query("local")
-            localOnly: Boolean?,
+            localOnly: Boolean? = null,
             @QueryMap
             pager: Map<String, String> = emptyMap()
     ): Call<List<Status>>
