@@ -1,15 +1,17 @@
 package com.crakac.ofutodon.api.entity
 
 import android.text.Spanned
+import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.annotations.SerializedName
 
-class Status{
-    enum class Visibility(val value: String){
+class Status {
+    enum class Visibility(val value: String) {
         Public("public"),
         UnListed("unlisted"),
         Private("private"),
         Direct("direct")
     }
+
     @SerializedName("id")
     val id: Long = 0L
     @SerializedName("uri")
@@ -25,7 +27,7 @@ class Status{
     @SerializedName("reblog")
     val reblog: Status? = null
     @SerializedName("content")
-    val content: Spanned? = null
+    val content: String = ""
     @SerializedName("created_at")
     val createdAt: String = ""
     @SerializedName("reblogs_count")
@@ -50,4 +52,13 @@ class Status{
     val tags: List<Tag>? = null
     @SerializedName("application")
     val application: Application? = null
+
+    private var _spannedContent: Spanned? = null
+    val spannedContent: Spanned?
+        get() {
+            if (_spannedContent == null) {
+                _spannedContent = HtmlUtil.parse(content)
+            }
+            return _spannedContent
+        }
 }

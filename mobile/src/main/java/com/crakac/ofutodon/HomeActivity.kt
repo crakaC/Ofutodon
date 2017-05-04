@@ -15,8 +15,10 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
+import butterknife.OnClick
 import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.MastodonUtil
 import com.crakac.ofutodon.api.entity.AccessToken
@@ -41,8 +43,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @BindView(R.id.pager)
     lateinit var pager: ViewPager
 
-    @BindView(R.id.fab2)
-    lateinit var fab2: FloatingActionButton
+    @BindView(R.id.fab)
+    lateinit var fab: FloatingActionButton
 
     var adapter: MyFragmentPagerAdapter? = null
     var instanceDomain: String = "friends.nico"
@@ -61,17 +63,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
-
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.setOnClickListener { view ->
-            if (alreadyHasAppCredential()) {
-                Snackbar.make(view, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
-                val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
-                startAuthorize(instanceDomain, clientId)
-            } else {
-                registerApplication()
-            }
-        }
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         val toggle = ActionBarDrawerToggle(
@@ -165,27 +156,28 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val domain = PrefsUtil.getString(C.OAUTH_TARGET_DOMAIN)
             val id = PrefsUtil.getString("${domain}.${CLIENT_ID}")
             val secret = PrefsUtil.getString("${domain}.${CLIENT_SECRET}")
-            if(domain == null || id == null || secret == null){
+            if (domain == null || id == null || secret == null) {
                 Log.d(TAG, "Authentication Failed due to some Preferences are null")
                 // TODO show dialog
                 return
             }
             MastodonUtil.createMastodonApi(domain).fetchAccessToken(id, secret, oauthRedirectUri, code, AUTHORIZATION_CODE)
                     .enqueue(object : Callback<AccessToken> {
-                override fun onResponse(call: Call<AccessToken>?, response: Response<AccessToken>?) {
-                    if (response == null || !response.isSuccessful) {
-                        Log.w(TAG, "fetchOAuthToken is not successful")
-                        return
-                    }
+                        override fun onResponse(call: Call<AccessToken>?, response: Response<AccessToken>?) {
+                            if (response == null || !response.isSuccessful) {
+                                Log.w(TAG, "fetchOAuthToken is not successful")
+                                return
+                            }
 
-                    onLoginSuccess(domain, response.body().accessToken)
-                    PrefsUtil.remove(domain)
-                }
-                override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
-                    Log.w(TAG, "fetchOAuthTokenFailed")
-                    PrefsUtil.remove(domain)
-                }
-            })
+                            onLoginSuccess(domain, response.body().accessToken)
+                            PrefsUtil.remove(domain)
+                        }
+
+                        override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
+                            Log.w(TAG, "fetchOAuthTokenFailed")
+                            PrefsUtil.remove(domain)
+                        }
+                    })
         }
     }
 
@@ -202,7 +194,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun registerApplication() {
-        mastodon?.registerApplication(getString(R.string.app_name), oauthRedirectUri,  OAUTH_SCOPES, "http://crakac.com")
+        mastodon?.registerApplication(getString(R.string.app_name), oauthRedirectUri, OAUTH_SCOPES, "http://crakac.com")
                 ?.enqueue(object : Callback<AppCredentials> {
                     override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
                     }
@@ -229,9 +221,22 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
-    fun onLoginSuccess(domain: String, accessToken: String){
+    @OnClick(R.id.fab)
+    fun onClickFab(fab: View) {
+        fab.setOnClickListener { view ->
+            if (alreadyHasAppCredential()) {
+                Snackbar.make(view, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
+                val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
+                startAuthorize(instanceDomain, clientId)
+            } else {
+                registerApplication()
+            }
+        }
+    }
+
+    fun onLoginSuccess(domain: String, accessToken: String) {
         //save access token in preferences
         PrefsUtil.putString("${domain}.${ACCESS_TOKEN}", accessToken)
-        Snackbar.make(fab2, "Login Success: $domain", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(fab, "Login Success: $domain", Snackbar.LENGTH_SHORT).show()
     }
 }

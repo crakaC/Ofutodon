@@ -13,12 +13,13 @@
         android:layout_toEndOf="@+id/icon" />
 
     <ImageView
-        android:layout_margin="8dp"
         android:id="@+id/icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="12dp"
         android:src="@android:drawable/ic_menu_compass" />
 
     <TextView

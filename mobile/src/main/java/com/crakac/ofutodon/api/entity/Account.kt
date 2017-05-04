@@ -1,5 +1,6 @@
 package com.crakac.ofutodon.api.entity
 
+import com.emojione.Emojione
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -36,4 +37,13 @@ class Account {
     val header: String = ""
     @SerializedName("header_static")
     val headerStatic: String = ""
+
+    var _dn: String? = null
+    val dispNameWithEmoji: String?
+    get(){
+        if(_dn == null ){
+            _dn = Emojione.shortnameToUnicode(displayName)
+        }
+        return _dn
+    }
 }

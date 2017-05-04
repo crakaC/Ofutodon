@@ -15,8 +15,10 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.bumptech.glide.Glide
+import com.crakac.ofutodon.api.MastodonStreaming
 import com.crakac.ofutodon.api.MastodonUtil
 import com.crakac.ofutodon.api.Range
+import com.crakac.ofutodon.api.entity.Notification
 import com.crakac.ofutodon.api.entity.Status
 import jp.wasabeef.glide.transformations.CropCircleTransformation
 import retrofit2.Call
@@ -26,7 +28,7 @@ import retrofit2.Response
 /**
  * Created by Kosuke on 2017/04/26.
  */
-class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, MastodonStreaming.StreamingCallback {
 
     @BindView(R.id.listView)
     lateinit var listView: ListView
@@ -38,30 +40,45 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     var nextRange: Range? = null
     var prevRange: Range? = null
 
+    var streaming: MastodonStreaming? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_status, container, false)
         unbinder = ButterKnife.bind(this, view)
         adapter = StatusAdapter(activity)
         listView.adapter = adapter
         swipeRefresh.setOnRefreshListener(this)
+        streaming = MastodonStreaming()
+        streaming?.callBack = this
+        streaming?.connect()
         return view
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         unbinder.unbind()
+        streaming?.callBack = null
+        streaming?.close()
     }
 
     fun getTitle(): String = "Test!"
 
+
     fun addStatuses(statuses: List<Status>) {
-        adapter.addAll(statuses)
+        adapter.addTop(statuses)
+        adapter.notifyDataSetChanged()
+    }
+
+    fun addStatus(status: Status) {
+        adapter.addTop(status)
         adapter.notifyDataSetChanged()
     }
 
     override fun onRefresh() {
         val mastodon = MastodonUtil.api
-        if(mastodon == null){
+        if (mastodon == null) {
             swipeRefresh.isRefreshing = false
             return
         }
@@ -73,7 +90,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
                     override fun onResponse(call: Call<List<Status>>?, response: Response<List<Status>>?) {
                         swipeRefresh.isRefreshing = false
-                        if(response == null || !response.isSuccessful){
+                        if (response == null || !response.isSuccessful) {
                             return
                         }
                         addStatuses(response.body())
@@ -82,6 +99,18 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         )
     }
 
+    override fun onStatus(status: Status?) {
+        status?.let {
+            addStatus(status)
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun onNotification(notification: Notification?) {
+    }
+
+    override fun onDelete(id: Long?) {
+    }
 
     class StatusAdapter(val context: Context) : BaseAdapter() {
         val inflater = LayoutInflater.from(context)
@@ -99,9 +128,19 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             return statusArray.size
         }
 
-        fun addAll(statuses: Collection<Status>) {
-            statusArray.addAll(statuses)
+        fun addTop(status: Status) {
+            statusArray.add(0, status)
             notifyDataSetChanged()
+        }
+
+        fun addTop(statuses: Collection<Status>) {
+            statusArray.addAll(0, statuses)
+            notifyDataSetChanged()
+        }
+
+        fun addBottom(vararg status: Status) {
+            notifyDataSetChanged()
+            statusArray.addAll(status)
         }
 
         class Holder(v: View) {
@@ -129,10 +168,10 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 view.tag = holder
             }
 
-            holder?.let{
+            holder?.let {
                 val status = getItem(position)
-                it.name.text = status.account?.displayName
-                it.content.text = status.content
+                it.name.text = status.account?.dispNameWithEmoji
+                it.content.text = status.spannedContent
                 Glide.with(context)
                         .load(status.account?.avatar)
                         .centerCrop()
