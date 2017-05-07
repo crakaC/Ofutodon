@@ -6,7 +6,6 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.PagerTabStrip
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -19,6 +18,7 @@ import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.astuetz.PagerSlidingTabStrip
 import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.MastodonUtil
 import com.crakac.ofutodon.api.entity.AccessToken
@@ -37,8 +37,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val OAUTH_SCOPES: String = "read write follow"
     val AUTHORIZATION_CODE: String = "authorization_code"
 
-    @BindView(R.id.pagerTab)
-    lateinit var pagerTab: PagerTabStrip
+    @BindView(R.id.slidingTab)
+    lateinit var pagerTab: PagerSlidingTabStrip
 
     @BindView(R.id.pager)
     lateinit var pager: ViewPager
@@ -77,8 +77,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (adapter == null) {
             adapter = MyFragmentPagerAdapter(supportFragmentManager)
             adapter?.add(StatusFragment())
+            adapter?.add(StatusFragment())
+            adapter?.add(StatusFragment())
         }
+
         pager.adapter = adapter
+        pagerTab.setViewPager(pager)
+
 
         PrefsUtil.getString("${instanceDomain}.${ACCESS_TOKEN}").let {
             mastodon = MastodonUtil.createMastodonApi(instanceDomain, it)
@@ -223,14 +228,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @OnClick(R.id.fab)
     fun onClickFab(fab: View) {
-        fab.setOnClickListener { view ->
-            if (alreadyHasAppCredential()) {
-                Snackbar.make(view, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
-                val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
-                startAuthorize(instanceDomain, clientId)
-            } else {
-                registerApplication()
-            }
+        if (alreadyHasAppCredential()) {
+            Snackbar.make(fab, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
+            val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
+            startAuthorize(instanceDomain, clientId)
+        } else {
+            registerApplication()
         }
     }
 

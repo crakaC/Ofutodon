@@ -316,7 +316,7 @@ interface Mastodon {
             @Query("local")
             localOnly: Boolean? = null,
             @QueryMap
-            pager: Map<String, String> = emptyMap()
+            pager: Map<String, String>? = emptyMap()
     ): Call<List<Status>>
 
     @GET("/api/v1/timelines/public")

@@ -12,7 +12,7 @@ class Link (
             return linkHeader?.let{
                 val links = it.split(",")
                 val nextRel = ".*max_id=([0-9]+).*rel=\"next\"".toRegex()
-                val prevRel = ".*max_id=([0-9]+).*rel=\"prev\"".toRegex()
+                val prevRel = ".*since_id=([0-9]+).*rel=\"prev\"".toRegex()
                 var nextPath = ""
                 var maxId = 0L
                 var prevPath = ""

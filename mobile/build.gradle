@@ -17,15 +17,15 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug{
+        debug {
             def p = getProps("mobile/debug_token.properties")
-            p.each {k, v ->
+            p.each { k, v ->
                 def val = v.toString()
-                if(val.startsWith("\"")) {
+                if (val.startsWith("\"")) {
                     buildConfigField "String", k, v
                 } else if (val.contains(".")) {
                     buildConfigField "double", k, v
-                } else if (val.endsWith("L")){
+                } else if (val.endsWith("L")) {
                     buildConfigField "long", k, v
                 } else {
                     buildConfigField "int", k, v
@@ -47,25 +47,26 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:design:25.3.1'
-    compile "com.android.support:support-annotations:25.3.1"
+    compile 'com.android.support:support-annotations:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    testCompile 'com.squareup.retrofit2:retrofit-mock:2.2.0'
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.7.0'
-    testCompile 'com.squareup.okhttp3:mockwebserver:3.7.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'com.jakewharton:butterknife:8.5.1'
-    kapt 'com.jakewharton:butterknife-compiler:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'jp.wasabeef:glide-transformations:2.0.2'
+    testCompile 'com.squareup.retrofit2:retrofit-mock:2.2.0'
+    testCompile 'com.squareup.okhttp3:mockwebserver:3.7.0'
+    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    kapt 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.jpardogo.materialtabstrip:library:1.1.1'
 }
 
 kapt {

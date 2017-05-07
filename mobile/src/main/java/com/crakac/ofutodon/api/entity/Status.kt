@@ -35,7 +35,7 @@ class Status {
     @SerializedName("favourites_count")
     val favouritesCount: Long = 0L
     @SerializedName("reblogged")
-    val reblogged: Boolean = false
+    val isReblogged: Boolean = false
     @SerializedName("favourited")
     val favourited: Boolean = false
     @SerializedName("sensitive")
