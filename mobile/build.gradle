@@ -44,15 +44,17 @@ static def getProps(String key) {
 
 
 dependencies {
+    ext.support_library_version = '26.0.0-beta2'
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.android.support:appcompat-v7:26.0.0-beta2'
-    compile 'com.android.support:support-v4:26.0.0-beta2'
-    compile 'com.android.support:design:26.0.0-beta2'
-    compile 'com.android.support:support-annotations:26.0.0-beta2'
+    compile "com.android.support:appcompat-v7:$support_library_version"
+    compile "com.android.support:support-v4:$support_library_version"
+    compile "com.android.support:design:$support_library_version"
+    compile "com.android.support:support-annotations:$support_library_version"
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
