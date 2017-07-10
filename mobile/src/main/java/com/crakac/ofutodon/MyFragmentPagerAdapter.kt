@@ -1,12 +1,12 @@
 package com.crakac.ofutodon
 
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.app.FragmentPagerAdapter
 
 /**
  * Created by Kosuke on 2017/04/26.
  */
-class MyFragmentPagerAdapter(fm : FragmentManager) : FragmentStatePagerAdapter(fm) {
+class MyFragmentPagerAdapter(fm : FragmentManager) : FragmentPagerAdapter(fm) {
 
     private val fragments = ArrayList<StatusFragment>()
 
@@ -26,4 +26,14 @@ class MyFragmentPagerAdapter(fm : FragmentManager) : FragmentStatePagerAdapter(f
     override fun getPageTitle(position: Int): CharSequence {
         return getItem(position).getTitle()
     }
+
+//    override fun getCustomTabView(parent: ViewGroup?, position: Int): View {
+//    }
+//
+//
+//    override fun tabUnselected(tab: View?) {
+//    }
+//
+//    override fun tabSelected(tab: View?) {
+//    }
 }
