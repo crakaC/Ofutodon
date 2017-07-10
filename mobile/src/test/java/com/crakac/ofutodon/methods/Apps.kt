@@ -1,8 +1,8 @@
 package com.crakac.ofutodon.methods
 
 import com.crakac.ofutodon.BuildConfig
-import com.crakac.ofutodon.api.C
-import com.crakac.ofutodon.api.entity.AppCredentials
+import com.crakac.ofutodon.model.api.C
+import com.crakac.ofutodon.model.api.entity.AppCredentials
 import org.junit.Assert
 import org.junit.Test
 

@@ -1,7 +1,7 @@
 package com.crakac.ofutodon.methods
 
-import com.crakac.ofutodon.api.Range
-import com.crakac.ofutodon.api.entity.Notification
+import com.crakac.ofutodon.model.api.Range
+import com.crakac.ofutodon.model.api.entity.Notification
 import org.junit.Assert
 import org.junit.Test
 import retrofit2.Call
