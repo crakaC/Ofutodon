@@ -1,5 +1,6 @@
 package com.crakac.ofutodon.ui
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -229,13 +230,19 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @OnClick(R.id.fab)
     fun onClickFab(fab: View) {
-        if (alreadyHasAppCredential()) {
-            Snackbar.make(fab, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
-            val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
-            startAuthorize(instanceDomain, clientId)
-        } else {
-            registerApplication()
-        }
+        val login = Intent(this , TootActivity::class.java)
+        login.putExtra("EXTRA_FAB_COLOR", R.color.colorAccent )
+        login.putExtra("EXTRA_FAB_ICON_RES_ID", R.drawable.ic_menu_send)
+        val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_login));
+        startActivityForResult(login, 128, options.toBundle())
+
+//        if (alreadyHasAppCredential()) {
+//            Snackbar.make(fab, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
+//            val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
+//            startAuthorize(instanceDomain, clientId)
+//        } else {
+//            registerApplication()
+//        }
     }
 
     fun onLoginSuccess(domain: String, accessToken: String) {

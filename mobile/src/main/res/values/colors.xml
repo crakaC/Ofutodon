@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="background_light">#FEFEFE</color>
+    <color name="text_primary_dark">#de000000</color> <!-- 87% -->
+    <color name="scrim">#99323232</color>
 </resources>

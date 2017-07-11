@@ -34,6 +34,10 @@
                     android:scheme="@string/oauth_scheme" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.TootActivity"
+            android:theme="@style/AppTheme.Translucent">
+
+        </activity>
     </application>
 
 </manifest>
