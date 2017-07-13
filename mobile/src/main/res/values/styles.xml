@@ -26,6 +26,13 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementsUseOverlay">false</item>
+    </style>
+
+    <style name="AppTheme.Translucent.Toot">
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 
 

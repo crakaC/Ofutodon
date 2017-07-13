@@ -28,7 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:padding="0dp"
         android:stateListAnimator="@animator/raise"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@drawable/ic_menu_send" />
 
 </android.support.design.widget.CoordinatorLayout>

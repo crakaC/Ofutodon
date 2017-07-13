@@ -3,9 +3,9 @@ package com.crakac.ofutodon.ui
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
@@ -25,6 +25,7 @@ import com.crakac.ofutodon.model.api.Mastodon
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.AccessToken
 import com.crakac.ofutodon.model.api.entity.AppCredentials
+import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.PrefsUtil
 import retrofit2.Call
@@ -46,7 +47,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var pager: ViewPager
 
     @BindView(R.id.fab)
-    lateinit var fab: FloatingActionButton
+    lateinit var fab: View
 
     @BindView(R.id.drawer_layout)
     lateinit var drawer: DrawerLayout
@@ -231,8 +232,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @OnClick(R.id.fab)
     fun onClickFab(fab: View) {
         val login = Intent(this , TootActivity::class.java)
-        login.putExtra("EXTRA_FAB_COLOR", R.color.colorAccent )
-        login.putExtra("EXTRA_FAB_ICON_RES_ID", R.drawable.ic_menu_send)
+        FabTransform.addExtras(login, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_menu_send)
         val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_login));
         startActivityForResult(login, 128, options.toBundle())
 
