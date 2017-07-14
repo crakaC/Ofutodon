@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.design.widget.TabLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
@@ -19,7 +20,6 @@ import android.view.View
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.astuetz.PagerSlidingTabStrip
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Mastodon
 import com.crakac.ofutodon.model.api.MastodonUtil
@@ -40,8 +40,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val OAUTH_SCOPES: String = "read write follow"
     val AUTHORIZATION_CODE: String = "authorization_code"
 
-    @BindView(R.id.slidingTab)
-    lateinit var pagerTab: PagerSlidingTabStrip
+    @BindView(R.id.tab)
+    lateinit var tabLayout: TabLayout
 
     @BindView(R.id.pager)
     lateinit var pager: ViewPager
@@ -72,7 +72,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer.setDrawerListener(toggle)
+        drawer.addDrawerListener(toggle)
         toggle.syncState()
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
@@ -87,7 +87,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         pager.adapter = adapter
-        pagerTab.setViewPager(pager)
 
 
         PrefsUtil.getString("${instanceDomain}.${ACCESS_TOKEN}").let {
