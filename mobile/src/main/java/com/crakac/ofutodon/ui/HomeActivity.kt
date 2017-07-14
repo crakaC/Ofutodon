@@ -87,6 +87,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         pager.adapter = adapter
+        tabLayout.setupWithViewPager(pager)
 
 
         PrefsUtil.getString("${instanceDomain}.${ACCESS_TOKEN}").let {

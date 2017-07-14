@@ -43,6 +43,10 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         val view = inflater.inflate(R.layout.fragment_status, container, false)
         unbinder = ButterKnife.bind(this, view)
         adapter = StatusAdapter(activity)
+
+        val emptyView = view.findViewById<View>(R.id.empty)
+        listView.emptyView = emptyView
+        listView.isNestedScrollingEnabled = true
         listView.adapter = adapter
         swipeRefresh.setOnRefreshListener(this)
         streaming = MastodonStreaming()
