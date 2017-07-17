@@ -2,7 +2,7 @@ package com.crakac.ofutodon.model.api.entity
 
 import com.google.gson.annotations.SerializedName
 
-class AccountCredentials @JvmOverloads constructor(
+class AccountCredentials (
         @SerializedName("display_name")
         var displayName: String? = null,
         @SerializedName("note")

@@ -52,6 +52,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         streaming = MastodonStreaming()
         streaming?.callBack = this
 
+        listView.setOnScrollListener(LastItemListener())
         //streaming?.connect()
         return view
     }

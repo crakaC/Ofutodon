@@ -19,7 +19,7 @@ import java.util.*
 
 class StatusAdapter(val context: Context) : BaseAdapter() {
     val TAG: String = "StatusAdapter"
-    val inflater = LayoutInflater.from(context)
+    val inflater: LayoutInflater = LayoutInflater.from(context)
     val statusArray = ArrayList<Status>()
 
     override fun getItem(position: Int): Status {

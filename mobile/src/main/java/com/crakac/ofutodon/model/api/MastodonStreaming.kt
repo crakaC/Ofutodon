@@ -60,8 +60,6 @@ class MastodonStreaming : WebSocketListener(){
             System.out.println("callback is null!")
             return
         }
-        System.out.println(message.event)
-        System.out.println(message.payload)
         when (message.eventType) {
             StreamingContent.Event.Update -> {
                 val status = gson.fromJson(message.payload, Status::class.java)
