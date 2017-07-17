@@ -48,8 +48,8 @@ class StatusAdapter(val context: Context) : BaseAdapter() {
         notifyDataSetChanged()
     }
 
-    fun addBottom(vararg status: Status) {
-        statusArray.addAll(status)
+    fun addBottom(statuses: Collection<Status>) {
+        statusArray.addAll(statuses)
         notifyDataSetChanged()
     }
 

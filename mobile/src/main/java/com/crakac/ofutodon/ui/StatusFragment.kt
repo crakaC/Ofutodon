@@ -18,6 +18,7 @@ import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.ui.LastItemListener.OnLastItemVisibleListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -52,7 +53,17 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         streaming = MastodonStreaming()
         streaming?.callBack = this
 
-        listView.setOnScrollListener(LastItemListener())
+        val listener = LastItemListener()
+        listener.callback = object : OnLastItemVisibleListener {
+            override fun onBottomOfLastItemShown() {
+
+            }
+
+            override fun onLastItemVisible() {
+                MastodonUtil.api?.getHomeTileline(pager = nextRange?.q ?: emptyMap())?.enqueue(onNextStatus)
+            }
+        }
+        listView.setOnScrollListener(listener)
         //streaming?.connect()
         return view
     }
@@ -67,8 +78,8 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
     fun getTitle(): String = "テスト"
 
 
-    fun addStatuses(statuses: List<Status>) {
-        adapter.addTop(statuses)
+    fun addStatus(statuses: List<Status>) {
+        adapter.addBottom(statuses)
     }
 
     fun addStatus(status: Status) {
@@ -81,27 +92,39 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
             swipeRefresh.isRefreshing = false
             return
         }
-        mastodon.getHomeTileline(pager = prevRange?.q ?: emptyMap()).enqueue(
-                object : Callback<List<Status>> {
-                    override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
-                        swipeRefresh.isRefreshing = false
-                        Log.w("hoge", t)
-                    }
-
-                    override fun onResponse(call: Call<List<Status>>?, response: Response<List<Status>>?) {
-                        swipeRefresh.isRefreshing = false
-                        if (response == null || !response.isSuccessful) {
-                            return
-                        }
-                        response.body().forEach {
-                            Log.d("StatusId", it.id.toString())
-                        }
-                        insertQuietly(response.body())
-                        updateRange(response.headers().get("link"), response.body())
-                    }
-                }
-        )
+        mastodon.getHomeTileline(pager = prevRange?.q ?: emptyMap()).enqueue(onStatus)
     }
+
+    private val onStatus = object : Callback<List<Status>> {
+        override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
+            swipeRefresh.isRefreshing = false
+        }
+
+        override fun onResponse(call: Call<List<Status>>?, response: Response<List<Status>>?) {
+            swipeRefresh.isRefreshing = false
+            if (response == null || !response.isSuccessful) {
+                return
+            }
+            insertQuietly(response.body())
+            updateRange(response.headers().get("link"), response.body())
+        }
+    }
+
+    private val onNextStatus = object : Callback<List<Status>> {
+        override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
+            swipeRefresh.isRefreshing = false
+        }
+
+        override fun onResponse(call: Call<List<Status>>?, response: Response<List<Status>>?) {
+            swipeRefresh.isRefreshing = false
+            if (response == null || !response.isSuccessful) {
+                return
+            }
+            addStatus(response.body())
+            updateRange(response.headers().get("link"), response.body())
+        }
+    }
+
 
     private fun updateRange(header: String?, statuses: List<Status>) {
         val link = Link.parse(header)
@@ -115,7 +138,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
             return
         }
         prevRange = Range(sinceId = link.sinceId, limit = 20)
-        nextRange = Range(maxId = link.maxId, sinceId = statuses.last().id, limit = 20)
+        nextRange = Range(maxId = link.maxId, limit = 20)
     }
 
     var firstVisibleStatus: Status? = null
@@ -129,7 +152,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         firstVisibleOffset = listView.getChildAt(0).top
     }
 
-    private fun restorePositioin(){
+    private fun restorePosition(){
         firstVisibleStatus?.let{
             val pos = adapter.getPosition(it)
             listView.setSelectionFromTop(pos, firstVisibleOffset)
@@ -141,7 +164,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
             savePosition()
         }
         adapter.addTop(statuses)
-        restorePositioin()
+        restorePosition()
     }
 
     override fun onStatus(status: Status?) {

@@ -12,7 +12,6 @@ class LastItemListener: AbsListView.OnScrollListener {
     override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
         if (visibleItemCount == 0 || view == null) return
         val lastItem = firstVisibleItem + visibleItemCount
-        view.lastVisiblePosition
         if (lastItem == totalItemCount) {
             if (mPreLastItemPosition != lastItem) {
                 callback?.onLastItemVisible()
