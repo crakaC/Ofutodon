@@ -1,7 +1,7 @@
 package com.crakac.ofutodon.ui
 
 import android.content.Context
-import android.text.format.DateFormat
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,12 +104,10 @@ class StatusAdapter(val context: Context) : BaseAdapter() {
         return view
     }
 
-    fun parseCreatedAt(source: String): String{
-        val format = "yyyy-MM-dd'T'HH:mm:ss.sss";
+    fun parseCreatedAt(source: String): CharSequence{
+        val format = "yyyy-MM-dd'T'HH:mm:ss.SSS";
         val sdf = SimpleDateFormat(format, Locale.getDefault())
-        val date = sdf.parse(source)
-
-        val simpleFormat = "MM/dd HH:mm:ss"
-        return  DateFormat.format(simpleFormat, date).toString()
+        val time = sdf.parse(source).time + TimeZone.getDefault().rawOffset
+        return DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS)
     }
 }
