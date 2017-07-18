@@ -7,7 +7,7 @@ class Timelines: MastodonMethodTestBase(){
 
     @Test
     fun getHomeTimeline(){
-        val r = api.getHomeTimeline(false, rangeLong.q).execute()
+        val r = api.getHomeTimeline(rangeLong.q).execute()
         Assert.assertTrue(r.isSuccessful)
     }
 

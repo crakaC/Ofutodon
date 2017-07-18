@@ -313,8 +313,6 @@ interface Mastodon {
 
     @GET("/api/v1/timelines/home")
     fun getHomeTimeline(
-            @Query("local")
-            localOnly: Boolean? = null,
             @QueryMap
             pager: Map<String, String>? = emptyMap()
     ): Call<List<Status>>

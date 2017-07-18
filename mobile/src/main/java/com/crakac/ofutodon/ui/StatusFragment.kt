@@ -32,8 +32,8 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
     lateinit var unbinder: Unbinder
     lateinit var adapter: StatusAdapter
 
-    var nextRange: Range? = null
-    var prevRange: Range? = null
+    var nextRange: Range = Range()
+    var prevRange: Range = Range()
 
     var streaming: MastodonStreaming? = null
 
@@ -65,12 +65,12 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
     fun getTitle(): String = "テスト"
 
     override fun onRefresh() {
-        MastodonUtil.api?.getHomeTimeline(pager = prevRange?.q ?: emptyMap())?.enqueue(onStatus)
+        MastodonUtil.api?.getHomeTimeline(prevRange.q)?.enqueue(onStatus)
     }
 
     override fun onLastItemVisible() {
         if(isLoadingNext) return
-        MastodonUtil.api?.getHomeTimeline(pager = nextRange?.q ?: emptyMap())?.enqueue(onNextStatus)
+        MastodonUtil.api?.getHomeTimeline(nextRange.q)?.enqueue(onNextStatus)
         isLoadingNext = true
     }
 
@@ -86,8 +86,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
                 return
             }
             insertQuietly(response.body())
-            val link = Link.parse(response.headers().get("link"))
-            link?.let {
+            Link.parse(response.headers().get("link"))?.let{
                 prevRange = it.prevRange()
             }
         }
@@ -104,8 +103,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
                 return
             }
             adapter.addBottom(response.body())
-            val link = Link.parse(response.headers().get("link"))
-            link?.let {
+            Link.parse(response.headers().get("link"))?.let {
                 nextRange = it.nextRange()
             }
         }
