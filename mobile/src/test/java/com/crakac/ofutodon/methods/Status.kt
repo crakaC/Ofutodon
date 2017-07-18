@@ -65,10 +65,10 @@ class Status : MastodonMethodTestBase(){
 
         //fav, unfav
         run{
-            val r = api.favouritStatus(postedStatus!!.id).execute()
+            val r = api.favouriteStatus(postedStatus!!.id).execute()
             Assert.assertTrue(r.isSuccessful)
 
-            val u = api.unfavouritStatus(postedStatus!!.id).execute()
+            val u = api.unfavouriteStatus(postedStatus!!.id).execute()
             Assert.assertTrue(u.isSuccessful)
         }
 

@@ -60,7 +60,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
             }
 
             override fun onLastItemVisible() {
-                MastodonUtil.api?.getHomeTileline(pager = nextRange?.q ?: emptyMap())?.enqueue(onNextStatus)
+                MastodonUtil.api?.getHomeTimeline(pager = nextRange?.q ?: emptyMap())?.enqueue(onNextStatus)
             }
         }
         listView.setOnScrollListener(listener)
@@ -92,7 +92,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
             swipeRefresh.isRefreshing = false
             return
         }
-        mastodon.getHomeTileline(pager = prevRange?.q ?: emptyMap()).enqueue(onStatus)
+        mastodon.getHomeTimeline(pager = prevRange?.q ?: emptyMap()).enqueue(onStatus)
     }
 
     private val onStatus = object : Callback<List<Status>> {

@@ -300,19 +300,19 @@ interface Mastodon {
     ): Call<Status>
 
     @POST("/api/v1/statuses/{id}/favourite")
-    fun favouritStatus(
+    fun favouriteStatus(
             @Path("id")
             id: Long
     ): Call<Status>
 
     @POST("/api/v1/statuses/{id}/unfavourite")
-    fun unfavouritStatus(
+    fun unfavouriteStatus(
             @Path("id")
             id: Long
     ): Call<Status>
 
     @GET("/api/v1/timelines/home")
-    fun getHomeTileline(
+    fun getHomeTimeline(
             @Query("local")
             localOnly: Boolean? = null,
             @QueryMap
