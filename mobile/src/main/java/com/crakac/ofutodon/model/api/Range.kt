@@ -3,7 +3,7 @@ package com.crakac.ofutodon.model.api
 class Range(
         var maxId: Long? = null,
         var sinceId: Long? = null,
-        var limit: Int? = null) {
+        var limit: Int? = 40) {
 
     var q = emptyMap<String, String>()
         get() {

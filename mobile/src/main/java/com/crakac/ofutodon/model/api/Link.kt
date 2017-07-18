@@ -34,4 +34,9 @@ class Link (
             }
         }
     }
+    val DEFAULT_LIMIT = 40
+    fun nextRange(limit: Int = DEFAULT_LIMIT): Range = Range(maxId, limit = limit)
+    fun prevRange(limit: Int = DEFAULT_LIMIT): Range = Range(sinceId = sinceId, limit = limit)
+    fun toRange(limit: Int = DEFAULT_LIMIT): Range = Range(maxId, sinceId, limit)
+
 }

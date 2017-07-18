@@ -26,14 +26,4 @@ class MyFragmentPagerAdapter(fm : FragmentManager) : FragmentPagerAdapter(fm) {
     override fun getPageTitle(position: Int): CharSequence {
         return getItem(position).getTitle()
     }
-
-//    override fun getCustomTabView(parent: ViewGroup?, position: Int): View {
-//    }
-//
-//
-//    override fun tabUnselected(tab: View?) {
-//    }
-//
-//    override fun tabSelected(tab: View?) {
-//    }
 }

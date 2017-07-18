@@ -24,7 +24,7 @@ import retrofit2.Response
 /**
  * Created by Kosuke on 2017/04/26.
  */
-class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, MastodonStreaming.StreamingCallback {
+class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, MastodonStreaming.StreamingCallback, SwipeRefreshListView.OnLastItemVisibleListener {
 
     lateinit var listView: ListView
     @BindView(R.id.swipeRefresh)
@@ -37,6 +37,8 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
 
     var streaming: MastodonStreaming? = null
 
+    private var isLoadingNext = false;
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_status, container, false)
         unbinder = ButterKnife.bind(this, view)
@@ -45,6 +47,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         listView = swipeRefresh.listView
         listView.adapter = adapter
         swipeRefresh.setOnRefreshListener(this)
+        swipeRefresh.setOnLastItemVisibleListener(this)
         streaming = MastodonStreaming()
         streaming?.callBack = this
 
@@ -62,13 +65,15 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
     fun getTitle(): String = "テスト"
 
     override fun onRefresh() {
-        val mastodon = MastodonUtil.api
-        if (mastodon == null) {
-            swipeRefresh.isRefreshing = false
-            return
-        }
-        mastodon.getHomeTimeline(pager = prevRange?.q ?: emptyMap()).enqueue(onStatus)
+        MastodonUtil.api?.getHomeTimeline(pager = prevRange?.q ?: emptyMap())?.enqueue(onStatus)
     }
+
+    override fun onLastItemVisible() {
+        if(isLoadingNext) return
+        MastodonUtil.api?.getHomeTimeline(pager = nextRange?.q ?: emptyMap())?.enqueue(onNextStatus)
+        isLoadingNext = true
+    }
+
 
     private val onStatus = object : Callback<List<Status>> {
         override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
@@ -81,33 +86,33 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
                 return
             }
             insertQuietly(response.body())
-            updateRange(response.headers().get("link"), response.body())
+            val link = Link.parse(response.headers().get("link"))
+            link?.let {
+                prevRange = it.prevRange()
+            }
         }
     }
 
     private val onNextStatus = object : Callback<List<Status>> {
         override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
-            swipeRefresh.isRefreshing = false
+            isLoadingNext = false
         }
 
         override fun onResponse(call: Call<List<Status>>?, response: Response<List<Status>>?) {
-            swipeRefresh.isRefreshing = false
+            isLoadingNext = false
             if (response == null || !response.isSuccessful) {
                 return
             }
             adapter.addBottom(response.body())
-            updateRange(response.headers().get("link"), response.body())
+            val link = Link.parse(response.headers().get("link"))
+            link?.let {
+                nextRange = it.nextRange()
+            }
         }
     }
 
-
-    private fun updateRange(header: String?, statuses: List<Status>) {
-        prevRange = Range(sinceId = adapter.getItem(0).id)
-        nextRange = Range(maxId = adapter.getItem(adapter.count-1).id)
-    }
-
     var firstVisibleStatus: Status? = null
-    var firstVisibleOffset = -1
+    var firstVisibleOffset = 0
 
     private fun savePosition(){
         if(adapter.isEmpty || listView.getChildAt(0) == null){
@@ -125,9 +130,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
     }
 
     fun insertQuietly(statuses: List<Status>){
-        if(isResumed){
-            savePosition()
-        }
+        savePosition()
         adapter.addTop(statuses)
         restorePosition()
     }
