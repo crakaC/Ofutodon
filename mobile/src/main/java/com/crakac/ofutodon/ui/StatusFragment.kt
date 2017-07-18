@@ -3,7 +3,6 @@ package com.crakac.ofutodon.ui
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
-import com.crakac.ofutodon.ui.LastItemListener.OnLastItemVisibleListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,10 +26,9 @@ import retrofit2.Response
  */
 class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, MastodonStreaming.StreamingCallback {
 
-    @BindView(R.id.listView)
     lateinit var listView: ListView
     @BindView(R.id.swipeRefresh)
-    lateinit var swipeRefresh: SwipeRefreshLayout
+    lateinit var swipeRefresh: SwipeRefreshListView
     lateinit var unbinder: Unbinder
     lateinit var adapter: StatusAdapter
 
@@ -45,25 +42,12 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         unbinder = ButterKnife.bind(this, view)
         adapter = StatusAdapter(activity)
 
-        val emptyView = view.findViewById<View>(R.id.empty)
-        listView.emptyView = emptyView
-        listView.isNestedScrollingEnabled = true
+        listView = swipeRefresh.listView
         listView.adapter = adapter
         swipeRefresh.setOnRefreshListener(this)
         streaming = MastodonStreaming()
         streaming?.callBack = this
 
-        val listener = LastItemListener()
-        listener.callback = object : OnLastItemVisibleListener {
-            override fun onBottomOfLastItemShown() {
-
-            }
-
-            override fun onLastItemVisible() {
-                MastodonUtil.api?.getHomeTimeline(pager = nextRange?.q ?: emptyMap())?.enqueue(onNextStatus)
-            }
-        }
-        listView.setOnScrollListener(listener)
         //streaming?.connect()
         return view
     }
@@ -76,15 +60,6 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
     }
 
     fun getTitle(): String = "テスト"
-
-
-    fun addStatus(statuses: List<Status>) {
-        adapter.addBottom(statuses)
-    }
-
-    fun addStatus(status: Status) {
-        adapter.addTop(status)
-    }
 
     override fun onRefresh() {
         val mastodon = MastodonUtil.api
@@ -120,25 +95,15 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
             if (response == null || !response.isSuccessful) {
                 return
             }
-            addStatus(response.body())
+            adapter.addBottom(response.body())
             updateRange(response.headers().get("link"), response.body())
         }
     }
 
 
     private fun updateRange(header: String?, statuses: List<Status>) {
-        val link = Link.parse(header)
-        if (link == null) {
-            Log.d("updateRange", "cannot parse link from response header")
-            return
-        }
-
-        if (statuses.isEmpty()) {
-            Log.d("updateRange", "no need to update range")
-            return
-        }
-        prevRange = Range(sinceId = link.sinceId, limit = 20)
-        nextRange = Range(maxId = link.maxId, limit = 20)
+        prevRange = Range(sinceId = adapter.getItem(0).id)
+        nextRange = Range(maxId = adapter.getItem(adapter.count-1).id)
     }
 
     var firstVisibleStatus: Status? = null
@@ -169,7 +134,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
 
     override fun onStatus(status: Status?) {
         status?.let {
-            addStatus(status)
+            adapter.addTop(status)
             adapter.notifyDataSetChanged()
         }
     }
