@@ -1,7 +1,6 @@
 package com.crakac.ofutodon.ui
 
 import android.content.Context
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +12,8 @@ import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
-import java.text.SimpleDateFormat
 import java.util.*
 
 class StatusAdapter(val context: Context) : BaseAdapter() {
@@ -74,6 +73,19 @@ class StatusAdapter(val context: Context) : BaseAdapter() {
         init {
             ButterKnife.bind(this, v)
         }
+
+        fun setData(context: Context, status: Status){
+            name.text = status.account?.dispNameWithEmoji
+            content.text = status.spannedContent
+            Glide.with(context)
+                    .load(status.account?.avatar)
+                    .centerCrop()
+                    .crossFade()
+                    .bitmapTransform(CropCircleTransformation(context))
+                    .into(icon)
+
+            createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
+        }
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
@@ -88,26 +100,9 @@ class StatusAdapter(val context: Context) : BaseAdapter() {
             view.tag = holder
         }
 
-        holder?.let {
-            val status = getItem(position).reblog ?: getItem(position)
-            it.name.text = status.account?.dispNameWithEmoji
-            it.content.text = status.spannedContent
-            Glide.with(context)
-                    .load(status.account?.avatar)
-                    .centerCrop()
-                    .crossFade()
-                    .bitmapTransform(CropCircleTransformation(context))
-                    .into(it.icon)
+        val status = getItem(position).reblog ?: getItem(position)
+        holder?.setData(context, status)
 
-            it.createdAt.text = parseCreatedAt(status.createdAt)
-        }
         return view
-    }
-
-    fun parseCreatedAt(source: String): CharSequence{
-        val format = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-        val sdf = SimpleDateFormat(format, Locale.getDefault())
-        val time = sdf.parse(source).time + TimeZone.getDefault().rawOffset
-        return DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS)
     }
 }
