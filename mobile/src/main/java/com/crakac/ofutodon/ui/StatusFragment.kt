@@ -3,10 +3,11 @@ package com.crakac.ofutodon.ui
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
@@ -24,13 +25,14 @@ import retrofit2.Response
 /**
  * Created by Kosuke on 2017/04/26.
  */
-class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, MastodonStreaming.StreamingCallback, SwipeRefreshListView.OnLastItemVisibleListener {
+class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, MastodonStreaming.StreamingCallback, SwipeRefreshListView.OnLoadMoreListener {
 
-    lateinit var listView: ListView
+    lateinit var recyclerView: RecyclerView
     @BindView(R.id.swipeRefresh)
     lateinit var swipeRefresh: SwipeRefreshListView
     lateinit var unbinder: Unbinder
     lateinit var adapter: StatusAdapter
+    lateinit var layoutManager: LinearLayoutManager
 
     var nextRange: Range = Range()
     var prevRange: Range = Range()
@@ -44,10 +46,12 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         unbinder = ButterKnife.bind(this, view)
         adapter = StatusAdapter(activity)
 
-        listView = swipeRefresh.listView
-        listView.adapter = adapter
+        recyclerView = swipeRefresh.recyclerView
+        recyclerView.adapter = adapter
+        layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = layoutManager
         swipeRefresh.setOnRefreshListener(this)
-        swipeRefresh.setOnLastItemVisibleListener(this)
+        swipeRefresh.setOnLoadMoreListener(this)
         streaming = MastodonStreaming()
         streaming?.callBack = this
 
@@ -68,7 +72,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         MastodonUtil.api?.getHomeTimeline(prevRange.q)?.enqueue(onStatus)
     }
 
-    override fun onLastItemVisible() {
+    override fun onLoadMore() {
         if(isLoadingNext) return
         MastodonUtil.api?.getHomeTimeline(nextRange.q)?.enqueue(onNextStatus)
         isLoadingNext = true
@@ -113,17 +117,17 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
     var firstVisibleOffset = 0
 
     private fun savePosition(){
-        if(adapter.isEmpty || listView.getChildAt(0) == null){
+        if(adapter.isEmpty || recyclerView.getChildAt(0) == null){
             return
         }
-        firstVisibleStatus = adapter.getItem(listView.firstVisiblePosition)
-        firstVisibleOffset = listView.getChildAt(0).top
+        firstVisibleStatus = adapter.getItem(layoutManager.findFirstVisibleItemPosition())
+        firstVisibleOffset = recyclerView.getChildAt(0).top
     }
 
     private fun restorePosition(){
         firstVisibleStatus?.let{
             val pos = adapter.getPosition(it)
-            listView.setSelectionFromTop(pos, firstVisibleOffset)
+            layoutManager.scrollToPositionWithOffset(pos, firstVisibleOffset)
         }
     }
 
