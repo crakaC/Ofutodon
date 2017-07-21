@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -243,6 +244,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        } else {
 //            registerApplication()
 //        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if(keyCode == KeyEvent.KEYCODE_N){
+            onClickFab(fab)
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     fun onLoginSuccess(domain: String, accessToken: String) {
