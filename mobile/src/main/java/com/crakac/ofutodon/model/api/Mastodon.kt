@@ -9,10 +9,6 @@ import retrofit2.http.*
  * Created by Kosuke on 2017/04/27.
  */
 interface Mastodon {
-    companion object {
-        val ENDPOINT_AUTHORIZE: String = "/oauth/authorize"
-        val OAUTH_SCOPES: String = "read write follow"
-    }
 
     @GET("/api/v1/accounts/{id}")
     fun getAccount(
