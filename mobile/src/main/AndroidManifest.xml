@@ -11,12 +11,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Ofuton">
         <activity
             android:name=".ui.HomeActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/Ofuton.Home"
+            android:windowSoftInputMode="adjustPan"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,8 +36,10 @@
                     android:scheme="@string/oauth_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.TootActivity"
-            android:theme="@style/AppTheme.Translucent.Toot">
+        <activity
+            android:name=".ui.TootActivity"
+            android:theme="@style/Ofuton.Translucent.Toot"
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
     </application>

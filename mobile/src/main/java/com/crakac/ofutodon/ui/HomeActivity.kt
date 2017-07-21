@@ -94,6 +94,17 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         PrefsUtil.getString("${instanceDomain}.${ACCESS_TOKEN}").let {
             mastodon = MastodonUtil.createMastodonApi(instanceDomain, it)
         }
+
+        if(!loggedIn()) {
+            if (alreadyHasAppCredential()) {
+                Snackbar.make(fab, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
+                val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
+                startAuthorize(instanceDomain, clientId)
+            } else {
+                registerApplication()
+            }
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -202,6 +213,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return clientId != null && clientSecret != null
     }
 
+    fun loggedIn(): Boolean{
+        return PrefsUtil.getString("$instanceDomain.$ACCESS_TOKEN") != null
+    }
+
     fun registerApplication() {
         mastodon?.registerApplication(getString(R.string.app_name), oauthRedirectUri, OAUTH_SCOPES, "http://crakac.com")
                 ?.enqueue(object : Callback<AppCredentials> {
@@ -234,16 +249,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun onClickFab(fab: View) {
         val login = Intent(this , TootActivity::class.java)
         FabTransform.addExtras(login, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_menu_send)
-        val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_login));
+        val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_toot_dialog));
         startActivityForResult(login, 128, options.toBundle())
 
-//        if (alreadyHasAppCredential()) {
-//            Snackbar.make(fab, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
-//            val clientId = PrefsUtil.getString("${instanceDomain}.${CLIENT_ID}")!!
-//            startAuthorize(instanceDomain, clientId)
-//        } else {
-//            registerApplication()
-//        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

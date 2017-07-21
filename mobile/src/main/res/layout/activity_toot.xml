@@ -15,46 +15,38 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/toot_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toot_background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/container"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/spacing_normal"
+        android:layout_margin="@dimen/spacing_large"
         android:background="@drawable/dialog_background"
         android:elevation="@dimen/z_fab"
         android:orientation="vertical"
-        android:padding="@dimen/spacing_large"
-        android:paddingTop="@dimen/spacing_xlarge"
-        android:transitionName="@string/transition_name_login">
-
-        <TextView
-            android:id="@+id/dialog_title"
-            style="@style/DialogTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dialog_title_spacing"
-            android:layout_marginStart="@dimen/spacing_normal"
-            android:text="@string/toot_title" />
+        android:padding="@dimen/padding_normal"
+        android:clickable="true"
+        android:transitionName="@string/transition_name_toot_dialog">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/username_float_label"
+            android:id="@+id/toot_text_float_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:hintTextAppearance="@style/TextAppearance.Design.Hint"
             android:layout_marginStart="@dimen/spacing_micro">
 
-            <AutoCompleteTextView
-                android:id="@+id/username"
+            <android.support.design.widget.TextInputEditText
+                android:textColor="@color/text_primary_dark"
+                android:id="@+id/toot_text"
+                android:hint="@string/toot_hint"
+                android:inputType="text|textMultiLine"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:selectAllOnFocus="true" />
+                android:layout_height="80dp" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -64,29 +56,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_normal" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/password_float_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_micro"
-            app:passwordToggleEnabled="true"
-            app:passwordToggleTint="?colorControlNormal">
-
-            <EditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:selectAllOnFocus="true" />
-
-        </android.support.design.widget.TextInputLayout>
-
         <Button
             android:id="@+id/toot"
-            android:text="@string/toot"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/toot" />
 
     </LinearLayout>
-
 </FrameLayout>

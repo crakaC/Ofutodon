@@ -19,9 +19,6 @@ class SwipeRefreshListView : SwipeRefreshLayout {
     @BindView(R.id.recyclerView)
     lateinit var recyclerView: RecyclerView
 
-    @BindView(R.id.empty)
-    lateinit var emptyView: View
-
     init {
         val v = View.inflate(context, R.layout.swipe_refresh_list_view, this)
         ButterKnife.bind(v)

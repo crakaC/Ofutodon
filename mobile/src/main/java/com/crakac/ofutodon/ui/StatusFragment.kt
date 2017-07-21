@@ -2,7 +2,9 @@ package com.crakac.ofutodon.ui
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -50,12 +52,17 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         recyclerView.adapter = adapter
         layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
+        val divider = DividerItemDecoration(activity, layoutManager.orientation).apply {
+            setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
+        }
+        recyclerView.addItemDecoration(divider)
+
         swipeRefresh.setOnRefreshListener(this)
         swipeRefresh.setOnLoadMoreListener(this)
+
         streaming = MastodonStreaming()
         streaming?.callBack = this
-
-        //streaming?.connect()
+//        streaming?.connect()
         return view
     }
 
@@ -92,6 +99,9 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
             insertQuietly(response.body())
             Link.parse(response.headers().get("link"))?.let{
                 prevRange = it.prevRange()
+                if(nextRange.maxId == null){
+                    nextRange = it.nextRange()
+                }
             }
         }
     }

@@ -8,7 +8,7 @@
     <string name="oauth_redirect_host">com.crakac.ofutodon</string>
     <string name="oauth_scheme">oauth2redirect</string>
 
-    <string name="transition_name_login" translatable="false">login</string>
-    <string name="toot_title">Compose toot</string>
+    <string name="transition_name_toot_dialog" translatable="false">login</string>
+    <string name="toot_hint">今何してる？</string>
     <string name="toot">Toot!</string>
 </resources>

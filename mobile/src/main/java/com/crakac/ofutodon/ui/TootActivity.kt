@@ -1,16 +1,15 @@
 package com.crakac.ofutodon.ui
 
-import android.app.Activity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.transition.FabTransform
 
-class TootActivity : Activity() {
+class TootActivity : AppCompatActivity() {
 
     @BindView(R.id.container)
     lateinit var container: View
@@ -28,10 +27,5 @@ class TootActivity : Activity() {
     @OnClick(R.id.toot_background)
     fun dismiss(){
         finishAfterTransition()
-    }
-
-    @OnClick(R.id.toot)
-    fun toot(){
-        Toast.makeText(this, "TOOOOOOOT", Toast.LENGTH_SHORT).show()
     }
 }
