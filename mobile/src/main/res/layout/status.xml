@@ -23,8 +23,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="12dp"
-        android:src="@android:drawable/ic_menu_compass" />
+        android:layout_marginEnd="12dp" />
 
     <TextView
         android:id="@+id/status"
@@ -41,5 +40,16 @@
         style="@style/Base.TextAppearance.AppCompat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/status"
+        android:layout_alignParentEnd="true"
+        android:paddingStart="@dimen/list_item_padding"
+        android:paddingEnd="@dimen/list_item_padding"
+        android:text="⋯"
+        android:textAppearance="?android:textAppearanceLarge"/>
 
 </RelativeLayout>

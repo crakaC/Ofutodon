@@ -2,9 +2,11 @@ package com.crakac.ofutodon.ui
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -18,6 +20,8 @@ import java.util.*
 class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
     val TAG: String = "StatusAdapter"
     val statusArray = ArrayList<Status>()
+
+    var listener: OnRecyclerItemClickListener? = null
 
     fun getItem(position: Int): Status {
         return statusArray[position]
@@ -65,11 +69,35 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): StatusViewHolder {
-        return StatusViewHolder(View.inflate(context, R.layout.status, null))
+        val holder = StatusViewHolder(View.inflate(context, R.layout.status, null))
+        holder.itemView.setOnClickListener { _ ->
+            val status = getItem(holder.adapterPosition)
+            listener?.onItemClicked(status)
+        }
+        holder.option.setOnClickListener { _ ->
+            val popup = PopupMenu(context, holder.option)
+            popup.inflate(R.menu.home)
+            popup.setOnMenuItemClickListener { item ->
+                val status = getItem(holder.adapterPosition)
+                val menuItemId = item.itemId
+                listener?.onMenuClicked(status, menuItemId)
+                Log.d(TAG, "menu item clicked!")
+                return@setOnMenuItemClickListener true
+            }
+            popup.show()
+        }
+
+        return holder
     }
 
     override fun getItemCount(): Int {
         return statusArray.size
+    }
+
+    override fun onViewRecycled(holder: StatusViewHolder?) {
+        if(holder is StatusViewHolder){
+            holder.icon.setImageBitmap(null)
+        }
     }
 
     class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -81,6 +109,8 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         lateinit var icon: ImageView
         @BindView(R.id.createdAt)
         lateinit var createdAt: TextView
+        @BindView(R.id.option)
+        lateinit var option: TextView
 
         init {
             ButterKnife.bind(this, v)
@@ -98,5 +128,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
             createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
         }
+    }
+
+    interface OnRecyclerItemClickListener {
+        fun onItemClicked(status: Status)
+        fun onMenuClicked(status: Status, menuId: Int)
     }
 }
