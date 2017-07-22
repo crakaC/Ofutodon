@@ -181,12 +181,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             }
 
                             onLoginSuccess(domain, response.body().accessToken)
-                            PrefsUtil.remove(domain)
+                            PrefsUtil.remove(C.OAUTH_TARGET_DOMAIN)
                         }
 
                         override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
                             Log.w(TAG, "fetchOAuthTokenFailed")
-                            PrefsUtil.remove(domain)
                         }
                     })
         }
