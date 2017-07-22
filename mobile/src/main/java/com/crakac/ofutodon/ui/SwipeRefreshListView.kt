@@ -34,14 +34,6 @@ class SwipeRefreshListView : SwipeRefreshLayout {
         recyclerView.removeOnScrollListener(scrollListener)
     }
 
-//    private var mLastItemVisibleListener: OnLastItemVisibleListener? = null
-//    private var mIsBottomOfLastItemShown = false
-//    private var mPreLastItemPosition = -1
-//
-//    fun setOnLastItemVisibleListener(listener: OnLastItemVisibleListener?) {
-//        mLastItemVisibleListener = listener
-//    }
-
     private var mLoadMoreListener: OnLoadMoreListener? = null
     fun setOnLoadMoreListener(listener: OnLoadMoreListener){
         mLoadMoreListener = listener
@@ -69,33 +61,4 @@ class SwipeRefreshListView : SwipeRefreshLayout {
         override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
         }
     }
-
-//    override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-//        if (visibleItemCount == 0 || view == null) return
-//        val lastItem = firstVisibleItem + visibleItemCount
-//        if (lastItem == totalItemCount) {
-//            if (mPreLastItemPosition != lastItem) {
-//                mLastItemVisibleListener?.onLastItemVisible()
-//                Log.d(TAG, "LastItem is Visible")
-//            }
-//            mIsBottomOfLastItemShown = view.getChildAt(visibleItemCount - 1).bottom <= view.height
-//        } else {
-//            mIsBottomOfLastItemShown = false
-//        }
-//        mPreLastItemPosition = lastItem
-//    }
-//
-//    override fun onScrollStateChanged(view: AbsListView?, state: Int) {
-//        if (state == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-//            if (mIsBottomOfLastItemShown) {
-//                mLastItemVisibleListener?.onBottomOfLastItemShown()
-//                Log.d(TAG, "Reach to bottom")
-//            }
-//        }
-//    }
-//
-//    interface OnLastItemVisibleListener {
-//        fun onBottomOfLastItemShown(){}
-//        fun onLastItemVisible(){}
-//    }
 }
