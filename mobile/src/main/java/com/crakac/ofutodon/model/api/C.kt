@@ -12,5 +12,5 @@ object C {
     val ACCESS_TOKEN: String = "access_token"
     val REDIRECT_URI: String = "redirect_uri"
     val RESPONSE_TYPE: String = "response_type"
-    val SCOPES: String = "scope"
+    val SCOPE: String = "scope"
 }

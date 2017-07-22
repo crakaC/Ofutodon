@@ -7,6 +7,6 @@ import com.crakac.ofutodon.model.api.Range
 abstract class MastodonMethodTestBase {
     val rangeLong = Range(Long.MAX_VALUE, 0, 10)
     val rangeInt = Range(Int.MAX_VALUE.toLong(), 0, 10)
-    val api = MastodonUtil.createMastodonApi("mstdn.jp", BuildConfig.DEBUG_TOKEN)
-    val noTokenApi = MastodonUtil.createMastodonApi("localhost")
+    val api = MastodonUtil.api("friends.nico", BuildConfig.DEBUG_TOKEN)
+    val noTokenApi = MastodonUtil.api("localhost")
 }
