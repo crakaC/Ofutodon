@@ -13,6 +13,10 @@
     <color name="background_light">#FEFEFE</color>
     <color name="scrim">#99323232</color>
 
+    <color name="icon_tint">#FFF</color>
+
     <color name="ripple_dark">@color/mid_grey</color>
     <color name="dark_icon">#99000000</color> <!-- 60% black-->
+
+    <color name="boosted">#2b90d9</color>
 </resources>

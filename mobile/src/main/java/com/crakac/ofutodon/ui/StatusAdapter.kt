@@ -1,6 +1,7 @@
 package com.crakac.ofutodon.ui
 
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
@@ -74,8 +75,8 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             val status = getItem(holder.adapterPosition)
             listener?.onItemClicked(status)
         }
-        holder.option.setOnClickListener { _ ->
-            val popup = PopupMenu(context, holder.option)
+        holder.more.setOnClickListener { _ ->
+            val popup = PopupMenu(context, holder.more)
             popup.inflate(R.menu.home)
             popup.setOnMenuItemClickListener { item ->
                 val status = getItem(holder.adapterPosition)
@@ -103,14 +104,33 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         @BindView(R.id.displayName)
         lateinit var name: TextView
+
         @BindView(R.id.status)
         lateinit var content: TextView
+
         @BindView(R.id.icon)
         lateinit var icon: ImageView
+
         @BindView(R.id.createdAt)
         lateinit var createdAt: TextView
-        @BindView(R.id.option)
-        lateinit var option: TextView
+
+        @BindView(R.id.reply)
+        lateinit var reply: ImageView
+
+        @BindView(R.id.boost)
+        lateinit var boost: ImageView
+
+        @BindView(R.id.followers_only)
+        lateinit var followersOnly: ImageView
+
+        @BindView(R.id.direct)
+        lateinit var direct: ImageView
+
+        @BindView(R.id.favorite)
+        lateinit var favorite: ImageView
+
+        @BindView(R.id.more)
+        lateinit var more: ImageView
 
         init {
             ButterKnife.bind(this, v)
@@ -127,6 +147,28 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                     .into(icon)
 
             createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
+
+            if(status.isReblogged){
+                boost.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
+            }
+
+            when(status.visibility){
+                Status.Visibility.Direct.value -> {
+                    boost.visibility = View.GONE
+                    followersOnly.visibility = View.GONE
+                    direct.visibility = View.VISIBLE
+                }
+                Status.Visibility.Private.value -> {
+                    boost.visibility = View.GONE
+                    followersOnly.visibility = View.VISIBLE
+                    direct.visibility = View.GONE
+                }
+                else -> {
+                    boost.visibility = View.VISIBLE
+                    followersOnly.visibility = View.GONE
+                    direct.visibility = View.GONE
+                }
+            }
         }
     }
 
