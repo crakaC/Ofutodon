@@ -89,7 +89,7 @@
             android:layout_marginEnd="@dimen/image_inner_padding"
             android:alpha="0.8"
             android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_message"
+            android:src="@drawable/ic_private_message"
             android:tint="@color/icon_tint"
             />
 
@@ -101,7 +101,7 @@
             android:alpha="0.8"
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_favorite"
+            android:src="@drawable/ic_star"
             android:tint="@color/icon_tint" />
 
         <ImageView
