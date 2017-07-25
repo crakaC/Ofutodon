@@ -49,7 +49,6 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/toot_hint"
                 android:inputType="textMultiLine"
-                android:cursorVisible="true"
                 android:textColor="@color/text_primary_dark" />
 
         </android.support.design.widget.TextInputLayout>

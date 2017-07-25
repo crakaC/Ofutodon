@@ -221,10 +221,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @OnClick(R.id.fab)
     fun onClickFab(fab: View) {
-        val login = Intent(this , TootActivity::class.java)
-        FabTransform.addExtras(login, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_message)
+        val tootIntent = Intent(this , TootActivity::class.java)
+        FabTransform.addExtras(tootIntent, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_message)
         val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_toot_dialog));
-        startActivityForResult(login, 128, options.toBundle())
+        startActivityForResult(tootIntent, 128, options.toBundle())
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
