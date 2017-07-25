@@ -77,7 +77,6 @@
             android:layout_height="@dimen/image_button"
             android:layout_marginEnd="@dimen/image_inner_padding"
             android:alpha="0.8"
-            android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
             android:src="@drawable/ic_lock"
             android:tint="@color/icon_tint"
@@ -89,7 +88,6 @@
             android:layout_height="@dimen/image_button"
             android:layout_marginEnd="@dimen/image_inner_padding"
             android:alpha="0.8"
-            android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
             android:src="@drawable/ic_message"
             android:tint="@color/icon_tint"
@@ -103,7 +101,7 @@
             android:alpha="0.8"
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_favorite_border"
+            android:src="@drawable/ic_favorite"
             android:tint="@color/icon_tint" />
 
         <ImageView

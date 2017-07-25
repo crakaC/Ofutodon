@@ -75,6 +75,22 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             val status = getItem(holder.adapterPosition)
             listener?.onItemClicked(status)
         }
+
+        holder.icon.setOnClickListener { v ->
+            listener?.onIconClicked(v as ImageView, getItem(holder.adapterPosition))
+        }
+
+        holder.reply.setOnClickListener { _ ->
+            listener?.onReplyClicked(getItem(holder.adapterPosition))
+        }
+
+        holder.boost.setOnClickListener { _ ->
+            listener?.onBoostClicked(getItem(holder.adapterPosition))
+        }
+        holder.favorite.setOnClickListener { _ ->
+            listener?.onFavoriteClicked(getItem(holder.adapterPosition))
+        }
+
         holder.more.setOnClickListener { _ ->
             val popup = PopupMenu(context, holder.more)
             popup.inflate(R.menu.home)
@@ -87,6 +103,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             }
             popup.show()
         }
+
 
         return holder
     }
@@ -150,6 +167,14 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
             if(status.isReblogged){
                 boost.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
+            } else {
+                boost.clearColorFilter()
+            }
+
+            if(status.isFavourited){
+                favorite.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
+            } else {
+                favorite.clearColorFilter()
             }
 
             when(status.visibility){
@@ -174,6 +199,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
     interface OnRecyclerItemClickListener {
         fun onItemClicked(status: Status)
+        fun onIconClicked(icon: ImageView, status: Status)
+        fun onReplyClicked(status: Status)
+        fun onBoostClicked(status: Status)
+        fun onFavoriteClicked(status: Status)
         fun onMenuClicked(status: Status, menuId: Int)
     }
 }

@@ -19,4 +19,5 @@
     <color name="dark_icon">#99000000</color> <!-- 60% black-->
 
     <color name="boosted">#2b90d9</color>
+    <color name="favourited">#ca8f04</color>
 </resources>

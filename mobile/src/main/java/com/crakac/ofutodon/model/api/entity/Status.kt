@@ -37,7 +37,7 @@ class Status {
     @SerializedName("reblogged")
     val isReblogged: Boolean = false
     @SerializedName("favourited")
-    val favourited: Boolean = false
+    val isFavourited: Boolean = false
     @SerializedName("sensitive")
     val sensitive: Boolean = false
     @SerializedName("spoiler_text")
