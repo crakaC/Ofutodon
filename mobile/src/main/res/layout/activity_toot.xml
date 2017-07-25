@@ -40,8 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_micro"
             app:counterEnabled="true"
-            app:counterMaxLength="@integer/max_toot_length"
-            app:hintTextAppearance="@style/TextAppearance.Design.Hint">
+            app:counterMaxLength="@integer/max_toot_length">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/toot_text"

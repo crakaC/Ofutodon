@@ -20,6 +20,6 @@
 
     <color name="icon_tint">#FFF</color>
 
-    <color name="boosted">#2b90d9</color>
-    <color name="favourited">#ca8f04</color>
+    <color name="boosted">#1e88e5</color>
+    <color name="favourited">#FFC107</color>
 </resources>
