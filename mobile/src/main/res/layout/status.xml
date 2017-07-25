@@ -72,6 +72,18 @@
             android:tint="@color/icon_tint" />
 
         <ImageView
+            android:id="@+id/unlisted"
+            android:layout_width="@dimen/image_button"
+            android:layout_height="@dimen/image_button"
+            android:layout_marginEnd="@dimen/image_inner_padding"
+            android:alpha="0.8"
+            android:padding="@dimen/image_inner_padding"
+            android:src="@drawable/ic_lock_open"
+            android:tint="@color/icon_tint"
+            android:visibility="gone"
+            />
+
+        <ImageView
             android:id="@+id/followers_only"
             android:layout_width="@dimen/image_button"
             android:layout_height="@dimen/image_button"
@@ -80,6 +92,7 @@
             android:padding="@dimen/image_inner_padding"
             android:src="@drawable/ic_lock"
             android:tint="@color/icon_tint"
+            android:visibility="gone"
             />
 
         <ImageView
@@ -91,6 +104,7 @@
             android:padding="@dimen/image_inner_padding"
             android:src="@drawable/ic_private_message"
             android:tint="@color/icon_tint"
+            android:visibility="gone"
             />
 
         <ImageView
