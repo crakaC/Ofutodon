@@ -10,5 +10,6 @@
 
     <string name="transition_name_toot_dialog" translatable="false">toot_dialog</string>
     <string name="toot_hint">今何してる？</string>
-    <string name="toot">Toot!</string>
+    <string name="toot_public">Toot!</string>
+    <string name="toot_unpublic">Toot</string>
 </resources>

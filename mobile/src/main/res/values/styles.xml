@@ -3,6 +3,7 @@
     <!-- Base application theme. -->
     <style name="Ofuton" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/background_dark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -22,8 +23,14 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="Ofuton.Translucent">
+    <style name="Ofuton.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- using a semi-transparent window background for the drag-back gesture -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementsUseOverlay">false</item>
         <item name="android:windowBackground">@color/scrim</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -33,8 +40,10 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="Ofuton.Translucent.Toot">
+    <style name="Ofuton.Toot" parent="Ofuton.Translucent">
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
     </style>
 
 
@@ -46,6 +55,10 @@
         <item name="android:textColor">@color/text_primary_dark</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.DarkButton" parent="@android:style/TextAppearance.Material.Widget.Button">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>
