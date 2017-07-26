@@ -67,4 +67,23 @@ class TootActivity : AppCompatActivity() {
         )
     }
 
+    @OnClick(R.id.add_photo)
+    fun addPhoto() {
+
+    }
+
+    @OnClick(R.id.toot_visibility)
+    fun setTootVisibility(){
+
+    }
+
+    @OnClick(R.id.content_warning)
+    fun setContentWarning(){
+
+    }
+
+    @OnClick(R.id.nsfw)
+    fun notSafeForWark(){
+
+    }
 }
