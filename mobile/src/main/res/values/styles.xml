@@ -63,4 +63,11 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="StatusActionItem">
+        <item name="android:layout_width">@dimen/image_button</item>
+        <item name="android:layout_height">@dimen/image_button</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:tint">@color/icon_tint</item>
+    </style>
+
 </resources>

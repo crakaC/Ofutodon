@@ -2,10 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background_dark"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:padding="@dimen/list_item_padding">
+    android:paddingEnd="@dimen/list_item_padding"
+    android:paddingStart="@dimen/list_item_padding"
+    android:paddingTop="@dimen/list_item_padding">
 
     <TextView
         android:id="@+id/displayName"
@@ -22,8 +25,8 @@
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="12dp"
-        android:layout_marginStart="4dp" />
+        android:layout_marginEnd="@dimen/spacing_mid_large"
+        android:layout_marginStart="@dimen/spacing_micro" />
 
     <TextView
         android:id="@+id/status"
@@ -47,86 +50,63 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@id/status"
         android:layout_toEndOf="@+id/icon"
+        android:layout_marginTop="-4dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/reply"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
+            style="@style/StatusActionItem"
             android:layout_marginEnd="@dimen/image_inner_padding"
-            android:alpha="0.8"
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_reply"
-            android:tint="@color/icon_tint" />
+            android:src="@drawable/ic_reply" />
 
         <ImageView
             android:id="@+id/boost"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
+            style="@style/StatusActionItem"
             android:layout_marginEnd="@dimen/image_inner_padding"
-            android:alpha="0.8"
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_boost"
-            android:tint="@color/icon_tint" />
+            android:src="@drawable/ic_boost" />
 
         <ImageView
             android:id="@+id/unlisted"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
+            style="@style/StatusActionItem"
             android:layout_marginEnd="@dimen/image_inner_padding"
-            android:alpha="0.8"
             android:padding="@dimen/image_inner_padding"
             android:src="@drawable/ic_lock_open"
-            android:tint="@color/icon_tint"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/followers_only"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
+            style="@style/StatusActionItem"
             android:layout_marginEnd="@dimen/image_inner_padding"
-            android:alpha="0.8"
             android:padding="@dimen/image_inner_padding"
             android:src="@drawable/ic_lock"
-            android:tint="@color/icon_tint"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/direct"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
+            style="@style/StatusActionItem"
             android:layout_marginEnd="@dimen/image_inner_padding"
-            android:alpha="0.8"
             android:padding="@dimen/image_inner_padding"
             android:src="@drawable/ic_private_message"
-            android:tint="@color/icon_tint"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/favorite"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
+            style="@style/StatusActionItem"
             android:layout_marginEnd="@dimen/image_inner_padding"
-            android:alpha="0.8"
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_star"
-            android:tint="@color/icon_tint" />
+            android:src="@drawable/ic_star" />
 
         <ImageView
             android:id="@+id/more"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
-            android:alpha="0.8"
+            style="@style/StatusActionItem"
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_more"
-            android:tint="@color/icon_tint" />
+            android:src="@drawable/ic_more" />
 
     </LinearLayout>
 
