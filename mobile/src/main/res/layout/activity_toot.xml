@@ -32,28 +32,36 @@
         android:orientation="vertical"
         android:transitionName="@string/transition_name_toot_dialog">
 
-        <EditText
-            android:id="@+id/spoiler_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background_light"
-            android:hint="@string/spoiler_hint"
-            android:inputType="textMultiLine"
-            android:padding="@dimen/spacing_mid_large"
-            android:textColor="@color/text_primary_dark"
-            android:textColorHint="@color/text_secondary_dark"
-            android:visibility="gone" />
+            android:background="@drawable/toot_input_background"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/toot_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background_light"
-            android:hint="@string/toot_hint"
-            android:inputType="textMultiLine"
-            android:padding="@dimen/spacing_mid_large"
-            android:textColor="@color/text_primary_dark"
-            android:textColorHint="@color/text_secondary_dark" />
+            <EditText
+                android:id="@+id/spoiler_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="@string/spoiler_hint"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/spacing_mid_large"
+                android:textColor="@color/text_primary_dark"
+                android:textColorHint="@color/text_secondary_dark"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/toot_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="@string/toot_hint"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/spacing_mid_large"
+                android:textColor="@color/text_primary_dark"
+                android:textColorHint="@color/text_secondary_dark" />
+
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -110,9 +118,9 @@
                 android:layout_width="@dimen/button_large"
                 android:layout_height="@dimen/image_button"
                 android:layout_alignParentEnd="true"
-                android:background="@color/colorPrimary"
-                android:foreground="@drawable/light_ripple"
+                android:background="@drawable/toot_button_background"
                 android:drawableStart="@drawable/ic_lock_white"
+                android:foreground="@drawable/light_ripple"
                 android:gravity="center"
                 android:padding="@dimen/padding_micro"
                 android:text="@string/toot_public"
