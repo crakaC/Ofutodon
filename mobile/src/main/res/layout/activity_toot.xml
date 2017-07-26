@@ -15,7 +15,6 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toot_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -31,41 +30,95 @@
         android:clickable="true"
         android:elevation="@dimen/z_fab"
         android:orientation="vertical"
-        android:padding="@dimen/padding_normal"
         android:transitionName="@string/transition_name_toot_dialog">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/toot_text_float_label"
+        <EditText
+            android:id="@+id/spoiler_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_micro"
-            app:counterEnabled="true"
-            app:counterMaxLength="@integer/max_toot_length">
+            android:background="@color/background_light"
+            android:hint="@string/spoiler_hint"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/spacing_mid_large"
+            android:textColor="@color/text_primary_dark"
+            android:textColorHint="@color/text_secondary_dark"
+            android:visibility="gone" />
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/toot_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/toot_hint"
-                android:inputType="textMultiLine"
+        <EditText
+            android:id="@+id/toot_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_light"
+            android:hint="@string/toot_hint"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/spacing_mid_large"
+            android:textColor="@color/text_primary_dark"
+            android:textColorHint="@color/text_secondary_dark" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/add_photo"
+                android:layout_width="@dimen/image_button"
+                android:layout_height="@dimen/image_button"
+                android:layout_alignParentStart="true"
+                android:alpha="0.8"
+                android:background="?selectableItemBackground"
+                android:padding="@dimen/image_inner_padding"
+                android:src="@drawable/ic_add_a_photo" />
+
+            <ImageView
+                android:id="@+id/toot_visibility"
+                android:layout_width="@dimen/image_button"
+                android:layout_height="@dimen/image_button"
+                android:layout_toEndOf="@+id/add_photo"
+                android:alpha="0.8"
+                android:background="?selectableItemBackground"
+                android:padding="@dimen/image_inner_padding"
+                android:src="@drawable/ic_public" />
+
+            <TextView
+                android:id="@+id/content_warning"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/image_button"
+                android:layout_toEndOf="@+id/toot_visibility"
+                android:background="?selectableItemBackground"
+                android:gravity="center"
+                android:minWidth="@dimen/image_button"
+                android:padding="@dimen/padding_micro"
+                android:text="@string/toot_content_warning"
                 android:textColor="@color/text_primary_dark" />
 
-        </android.support.design.widget.TextInputLayout>
+            <TextView
+                android:id="@+id/nsfw"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/image_button"
+                android:layout_toEndOf="@+id/content_warning"
+                android:background="?selectableItemBackground"
+                android:gravity="center"
+                android:minWidth="@dimen/image_button"
+                android:padding="@dimen/padding_micro"
+                android:text="@string/toot_NSFW"
+                android:textColor="@color/text_primary_dark" />
 
-        <CheckBox
-            android:id="@+id/content_warning"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_normal" />
+            <TextView
+                android:id="@+id/toot"
+                android:layout_width="@dimen/button_large"
+                android:layout_height="@dimen/image_button"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorPrimary"
+                android:drawableStart="@drawable/ic_lock_white"
+                android:gravity="center"
+                android:padding="@dimen/padding_micro"
+                android:text="@string/toot_public"
+                android:textAppearance="@style/TextAppearance.DarkButton" />
 
-        <Button
-            android:id="@+id/toot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:drawableStart="@drawable/ic_lock_white"
-            android:textAppearance="@style/TextAppearance.DarkButton"
-            android:text="@string/toot_public" />
+        </RelativeLayout>
+
 
     </LinearLayout>
 </FrameLayout>

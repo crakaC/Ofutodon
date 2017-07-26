@@ -9,12 +9,16 @@
     <dimen name="list_item_padding">8dp</dimen>
 
     <dimen name="spacing_normal">8dp</dimen>
+    <dimen name="spacing_mid_large">12dp</dimen>
     <dimen name="spacing_micro">4dp</dimen>
     <dimen name="spacing_large">32dp</dimen>
     <dimen name="spacing_xlarge">48dp</dimen>
     <dimen name="spacing_huge">64dp</dimen>
+    <dimen name="padding_micro">8dp</dimen>
     <dimen name="padding_normal">16dp</dimen>
     <dimen name="padding_large">24dp</dimen>
+
+    <dimen name="button_large">92dp</dimen>
 
     <!-- dialogs -->
     <dimen name="padding_dialog">24dp</dimen>
@@ -29,4 +33,5 @@
     <!-- image button -->
     <dimen name="image_button">48dp</dimen>
     <dimen name="image_inner_padding">12dp</dimen>
+    <dimen name="button_elevation">2dp</dimen>
 </resources>
