@@ -47,19 +47,7 @@
         <item name="android:textAppearanceButton">@style/TextAppearance.DarkButton</item>
     </style>
 
-
-    <style name="DialogTitle" parent="android:Widget">
-        <item name="android:textAppearance">@style/TextAppearance.DialogTitle</item>
-        <!--<item name="lineHeightHint">28sp</item>-->
-    </style>
-    <style name="TextAppearance.DialogTitle" parent="@android:style/TextAppearance.Material.Title">
-        <item name="android:textColor">@color/text_primary_dark</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">0.01</item>
-    </style>
-
-    <style name="TextAppearance.DarkButton" parent="@android:style/TextAppearance.Material.Widget.Button"
-        >
+    <style name="TextAppearance.DarkButton" parent="@android:style/TextAppearance.Material.Widget.Button">
         <item name="android:textColor">@android:color/white</item>
     </style>
 
