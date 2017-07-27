@@ -11,11 +11,14 @@ import java.util.*
 class TextUtil private constructor(){
     companion object {
         fun parseCreatedAt(source: String): CharSequence{
-            val format = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+            val format = "yyyy-MM-dd'T'HH:mm:ss.SSS"
             val sdf = SimpleDateFormat(format, Locale.getDefault())
             val time = sdf.parse(source).time + TimeZone.getDefault().rawOffset
             return DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS)
         }
 
+        fun currentTimeString(): String{
+            return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        }
     }
 }
