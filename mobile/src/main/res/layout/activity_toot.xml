@@ -75,7 +75,7 @@
                 android:alpha="0.8"
                 android:background="?selectableItemBackground"
                 android:padding="@dimen/image_inner_padding"
-                android:src="@drawable/ic_add_a_photo" />
+                android:src="@drawable/ic_camera" />
 
             <ImageView
                 android:id="@+id/toot_visibility"
