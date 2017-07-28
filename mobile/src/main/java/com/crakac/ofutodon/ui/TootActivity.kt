@@ -185,7 +185,7 @@ class TootActivity : AppCompatActivity() {
         val p = LinearLayout.LayoutParams(edge, edge)
         v.layoutParams = p
 
-        Glide.with(this).loadFromMediaStore(uri).override(edge, edge).listener(
+        Glide.with(this).loadFromMediaStore(uri).listener(
             object : RequestListener<Uri, GlideDrawable> {
                 override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
