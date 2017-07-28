@@ -6,7 +6,6 @@ import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,6 +24,11 @@ import android.widget.LinearLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
+import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Status
@@ -36,6 +40,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.lang.Exception
 
 
 class TootActivity : AppCompatActivity() {
@@ -180,21 +185,26 @@ class TootActivity : AppCompatActivity() {
         val p = LinearLayout.LayoutParams(edge, edge)
         v.layoutParams = p
 
-        val pad = resources.getDimension(R.dimen.padding_micro).toInt()
+        Glide.with(this).loadFromMediaStore(uri).override(edge, edge).listener(
+            object : RequestListener<Uri, GlideDrawable> {
+                override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        val drawable = resource!!.current as GlideBitmapDrawable
+                        Palette.from(drawable.bitmap).generate { palette ->
+                            v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, getColor(R.color.mid_grey), true)
+                            v.setOnClickListener { _ ->
+                                Log.d("Attachment", "Attachment Clicked")
+                            }
+                        }
+                    }
+                    return false
+                }
 
-        v.setPadding(pad, pad, pad, pad)
-        v.setImageURI(uri)
-        v.scaleType = ImageView.ScaleType.CENTER_CROP
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val drawable = v.drawable.current as BitmapDrawable
-            Palette.from(drawable.bitmap).generate { palette ->
-                v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, getColor(R.color.mid_grey), true)
-                v.setOnClickListener { _ ->
-                    Log.d("Attachment", "Attachment Clicked")
+                override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
+                    return false
                 }
             }
-        }
+        ).centerCrop().crossFade().into(v)
         imageAttachmentParent.addView(v)
     }
 
