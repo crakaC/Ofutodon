@@ -23,10 +23,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -82,12 +79,13 @@ class TootActivity : AppCompatActivity() {
 
     var isPosting = false
 
-    // using for picking up attachments by other app
+    // using for picking up attachmentUris by other app
     var cameraUri: Uri? = null
     var cameraFilePath: String? = null
 
-    // keep attachments
-    lateinit var attachments: ArrayList<Uri>
+    // keep attachmentUris
+    lateinit var attachmentUris: ArrayList<Uri>
+    val attachments = ArrayList<Attachment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,14 +98,14 @@ class TootActivity : AppCompatActivity() {
         val attachmentArray = savedInstanceState?.getParcelableArray("Attachments")
 
         if (attachmentArray != null) {
-            attachments = attachmentArray.toMutableList() as ArrayList<Uri>
+            attachmentUris = attachmentArray.toMutableList() as ArrayList<Uri>
         } else {
-            attachments = ArrayList<Uri>()
+            attachmentUris = ArrayList<Uri>()
         }
 
         tootText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                checkTootContent()
+                updateTootButtonState()
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -116,13 +114,13 @@ class TootActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
-        checkTootContent()
+        updateTootButtonState()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable("CameraUri", cameraUri)
         outState.putString("CameraFilePath", cameraFilePath)
-        outState.putParcelableArray("Attachments", attachments.toTypedArray())
+        outState.putParcelableArray("Attachments", attachmentUris.toTypedArray())
     }
 
     override fun onBackPressed() {
@@ -146,7 +144,7 @@ class TootActivity : AppCompatActivity() {
         isPosting = true
         tootButton.isEnabled = false
 
-        MastodonUtil.api?.postStatus(StatusBuilder(text = tootText.text.toString()))?.enqueue(
+        MastodonUtil.api?.postStatus(StatusBuilder(mediaIds = attachments.map {e -> e.id} ,text = tootText.text.toString()))?.enqueue(
                 object : Callback<Status> {
                     override fun onFailure(call: Call<Status>?, t: Throwable?) {
                         isPosting = false
@@ -161,6 +159,7 @@ class TootActivity : AppCompatActivity() {
                         }
                         Log.d(TAG, "Success:" + response.body()?.content)
                         tootText.setText("")
+                        attachments.clear()
                     }
                 }
         )
@@ -229,8 +228,9 @@ class TootActivity : AppCompatActivity() {
     }
 
     fun addThumbnail(uri: Uri) {
-        attachments.add(uri)
+        attachmentUris.add(uri)
         updateAttachmentButtonState()
+        updateTootButtonState()
 
         val v = ImageView(this)
         val edge = resources.getDimension(R.dimen.image_attachment).toInt()
@@ -247,7 +247,7 @@ class TootActivity : AppCompatActivity() {
                                 v.setOnClickListener { _ ->
                                     Log.d("Attachment", "Attachment Clicked")
                                     imageAttachmentParent.removeView(v)
-                                    attachments.remove(uri)
+                                    attachmentUris.remove(uri)
                                     updateAttachmentButtonState()
                                 }
                             }
@@ -274,14 +274,18 @@ class TootActivity : AppCompatActivity() {
                 .into(object : SimpleTarget<ByteArray>() {
                     override fun onResourceReady(resource: ByteArray?, glideAnimation: GlideAnimation<in ByteArray>?) {
                         val attachment = RequestBody.create(MediaType.parse("image/*"), resource)
-                        val body = MultipartBody.Part.createFormData("file", null, attachment)
+                        val body = MultipartBody.Part.createFormData("file", "media_attachment", attachment)
                         MastodonUtil.api?.uploadMediaAttachment(body)?.enqueue(
                                 object : Callback<Attachment> {
                                     override fun onResponse(call: Call<Attachment>?, response: Response<Attachment>?) {
+                                        Toast.makeText(this@TootActivity, "uploaded", Toast.LENGTH_SHORT).show()
+                                        response?.let{
+                                            attachments.add(it.body())
+                                        }
                                     }
 
                                     override fun onFailure(call: Call<Attachment>?, t: Throwable?) {
-                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                        Toast.makeText(this@TootActivity, "falied", Toast.LENGTH_SHORT).show()
                                     }
                                 }
                         )
@@ -312,14 +316,14 @@ class TootActivity : AppCompatActivity() {
         contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
     }
 
-    private fun checkTootContent() {
+    private fun updateTootButtonState() {
         val hasText = tootText.text.isNotEmpty()
-        val hasMedia = attachments.isNotEmpty()
+        val hasMedia = attachmentUris.isNotEmpty()
         tootButton.isEnabled = hasText || hasMedia
     }
 
     private fun updateAttachmentButtonState() {
-        attachmentButton.isEnabled = (attachments.size < MAX_ATTACHMENTS_NUM)
+        attachmentButton.isEnabled = (attachmentUris.size < MAX_ATTACHMENTS_NUM)
         val d = attachmentButton.drawable.mutate()
         if (attachmentButton.isEnabled) {
             d.clearColorFilter()
