@@ -16,4 +16,5 @@
     <string name="toot_unpublic">Toot</string>
     <string name="toot_content_warning">CW</string>
     <string name="toot_NSFW">NSFW</string>
+    <string name="delete">削除する</string>
 </resources>

@@ -1,16 +1,18 @@
 package com.crakac.ofutodon.model.api.entity
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * Created by Kosuke on 2017/04/29.
  */
-class Attachment {
-    enum class Type(val v: String){
+class Attachment : Serializable {
+    enum class Type(val v: String) {
         Image("image"),
         Video("video"),
         Gifv("gifv")
     }
+
     @SerializedName("id")
     val id: Long = 0L
     @SerializedName("type")
