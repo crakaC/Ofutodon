@@ -6,6 +6,9 @@ import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,26 +19,36 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.Palette
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
+import com.crakac.ofutodon.model.api.entity.Attachment
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.model.api.entity.StatusBuilder
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.util.TextUtil
 import com.crakac.ofutodon.util.ViewUtil
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,6 +59,8 @@ import java.lang.Exception
 class TootActivity : AppCompatActivity() {
     val PERMISSION_REQUEST = 1234
     val REQUEST_ATTACHMENT = 1235
+
+    val MAX_ATTACHMENTS_NUM = 4
     val TAG = "TootActivity"
 
     val IMAGE_ATTACHMENT_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
@@ -59,23 +74,55 @@ class TootActivity : AppCompatActivity() {
     @BindView(R.id.image_attachments_root)
     lateinit var imageAttachmentParent: LinearLayout
 
+    @BindView(R.id.toot)
+    lateinit var tootButton: TextView
+
+    @BindView(R.id.add_photo)
+    lateinit var attachmentButton: ImageView
+
     var isPosting = false
 
+    // using for picking up attachments by other app
     var cameraUri: Uri? = null
     var cameraFilePath: String? = null
+
+    // keep attachments
+    lateinit var attachments: ArrayList<Uri>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_toot)
         ButterKnife.bind(this)
         FabTransform.setup(this, container)
+
         cameraUri = savedInstanceState?.getParcelable("CameraUri")
         cameraFilePath = savedInstanceState?.getString("CameraFilePath")
+        val attachmentArray = savedInstanceState?.getParcelableArray("Attachments")
+
+        if (attachmentArray != null) {
+            attachments = attachmentArray.toMutableList() as ArrayList<Uri>
+        } else {
+            attachments = ArrayList<Uri>()
+        }
+
+        tootText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                checkTootContent()
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+        checkTootContent()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable("CameraUri", cameraUri)
         outState.putString("CameraFilePath", cameraFilePath)
+        outState.putParcelableArray("Attachments", attachments.toTypedArray())
     }
 
     override fun onBackPressed() {
@@ -97,6 +144,8 @@ class TootActivity : AppCompatActivity() {
     fun toot(v: View) {
         if (isPosting) return
         isPosting = true
+        tootButton.isEnabled = false
+
         MastodonUtil.api?.postStatus(StatusBuilder(text = tootText.text.toString()))?.enqueue(
                 object : Callback<Status> {
                     override fun onFailure(call: Call<Status>?, t: Throwable?) {
@@ -118,7 +167,7 @@ class TootActivity : AppCompatActivity() {
     }
 
     @OnClick(R.id.add_photo)
-    fun addPhoto() {
+    fun onClickAttachment() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA),
@@ -180,32 +229,64 @@ class TootActivity : AppCompatActivity() {
     }
 
     fun addThumbnail(uri: Uri) {
+        attachments.add(uri)
+        updateAttachmentButtonState()
+
         val v = ImageView(this)
         val edge = resources.getDimension(R.dimen.image_attachment).toInt()
         val p = LinearLayout.LayoutParams(edge, edge)
         v.layoutParams = p
 
         Glide.with(this).loadFromMediaStore(uri).listener(
-            object : RequestListener<Uri, GlideDrawable> {
-                override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        val drawable = resource!!.current as GlideBitmapDrawable
-                        Palette.from(drawable.bitmap).generate { palette ->
-                            v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, getColor(R.color.mid_grey), true)
-                            v.setOnClickListener { _ ->
-                                Log.d("Attachment", "Attachment Clicked")
+                object : RequestListener<Uri, GlideDrawable> {
+                    override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            val drawable = resource!!.current as GlideBitmapDrawable
+                            Palette.from(drawable.bitmap).generate { palette ->
+                                v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, getColor(R.color.mid_grey), true)
+                                v.setOnClickListener { _ ->
+                                    Log.d("Attachment", "Attachment Clicked")
+                                    imageAttachmentParent.removeView(v)
+                                    attachments.remove(uri)
+                                    updateAttachmentButtonState()
+                                }
                             }
                         }
+                        return false
                     }
-                    return false
-                }
 
-                override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
-                    return false
+                    override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
                 }
-            }
         ).centerCrop().crossFade().into(v)
         imageAttachmentParent.addView(v)
+
+        Glide
+                .with(this)
+                .load(uri)
+                .asBitmap()
+                .toBytes(Bitmap.CompressFormat.JPEG, 85)
+                .atMost()
+                .override(2048, 2048)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(object : SimpleTarget<ByteArray>() {
+                    override fun onResourceReady(resource: ByteArray?, glideAnimation: GlideAnimation<in ByteArray>?) {
+                        val attachment = RequestBody.create(MediaType.parse("image/*"), resource)
+                        val body = MultipartBody.Part.createFormData("file", null, attachment)
+                        MastodonUtil.api?.uploadMediaAttachment(body)?.enqueue(
+                                object : Callback<Attachment> {
+                                    override fun onResponse(call: Call<Attachment>?, response: Response<Attachment>?) {
+                                    }
+
+                                    override fun onFailure(call: Call<Attachment>?, t: Throwable?) {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+                                }
+                        )
+                    }
+                })
     }
 
     @OnClick(R.id.toot_visibility)
@@ -229,5 +310,21 @@ class TootActivity : AppCompatActivity() {
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
         values.put(MediaStore.Images.Media.DATA, file)
         contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+    }
+
+    private fun checkTootContent() {
+        val hasText = tootText.text.isNotEmpty()
+        val hasMedia = attachments.isNotEmpty()
+        tootButton.isEnabled = hasText || hasMedia
+    }
+
+    private fun updateAttachmentButtonState() {
+        attachmentButton.isEnabled = (attachments.size < MAX_ATTACHMENTS_NUM)
+        val d = attachmentButton.drawable.mutate()
+        if (attachmentButton.isEnabled) {
+            d.clearColorFilter()
+        } else {
+            d.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
+        }
     }
 }
