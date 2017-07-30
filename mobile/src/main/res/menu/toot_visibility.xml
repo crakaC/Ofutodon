@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/visibility_public"
+        android:icon="@drawable/ic_public"
+        android:title="@string/visibility_public" />
+    <item
+        android:id="@+id/visibility_unlisted"
+        android:icon="@drawable/ic_lock_open"
+        android:title="@string/visibility_unlisted" />
+    <item
+        android:id="@+id/visibility_followers"
+        android:icon="@drawable/ic_lock"
+        android:title="@string/visibility_followes" />
+    <item
+        android:id="@+id/visibility_direct"
+        android:icon="@drawable/ic_message"
+        android:title="@string/visibility_direct" />
+</menu>

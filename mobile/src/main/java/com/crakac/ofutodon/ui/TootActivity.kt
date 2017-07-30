@@ -44,6 +44,7 @@ import com.crakac.ofutodon.model.api.entity.Attachment
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.model.api.entity.StatusBuilder
 import com.crakac.ofutodon.transition.FabTransform
+import com.crakac.ofutodon.util.PrefsUtil
 import com.crakac.ofutodon.util.TextUtil
 import com.crakac.ofutodon.util.ViewUtil
 import okhttp3.MediaType
@@ -59,6 +60,8 @@ import java.lang.Exception
 class TootActivity : AppCompatActivity() {
     val PERMISSION_REQUEST = 1234
     val REQUEST_ATTACHMENT = 1235
+
+    val TOOT_VISIBILITY = "toot_visibility"
 
     val MAX_ATTACHMENTS_NUM = 4
     val TAG = "TootActivity"
@@ -80,6 +83,9 @@ class TootActivity : AppCompatActivity() {
     @BindView(R.id.add_photo)
     lateinit var attachmentButton: ImageView
 
+    @BindView(R.id.toot_visibility)
+    lateinit var visibilityButton: ImageView
+
     var isPosting = false
 
     // using for picking up attachmentUris by other app
@@ -88,6 +94,10 @@ class TootActivity : AppCompatActivity() {
 
     // keep attachmentUris
     var uriAttachmentsMap = HashMap<Uri, Attachment?>()
+
+    var tootVisibility = Status.Visibility.valueOf(
+            PrefsUtil.getString(TOOT_VISIBILITY, Status.Visibility.Public.toString())!!
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +123,7 @@ class TootActivity : AppCompatActivity() {
             }
         })
         updateTootButtonState()
+        updateVisibilityButtonState()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -142,7 +153,11 @@ class TootActivity : AppCompatActivity() {
         isPosting = true
         tootButton.isEnabled = false
 
-        MastodonUtil.api?.postStatus(StatusBuilder(mediaIds = uriAttachmentsMap.filter{ e->e.value != null}.map { e -> e.value!!.id }, text = tootText.text.toString()))?.enqueue(
+        MastodonUtil.api?.postStatus(StatusBuilder(
+                visibility = tootVisibility.value,
+                mediaIds = uriAttachmentsMap.filter { e -> e.value != null }.map { e -> e.value!!.id },
+                text = tootText.text.toString())
+        )?.enqueue(
                 object : Callback<Status> {
                     override fun onFailure(call: Call<Status>?, t: Throwable?) {
                         isPosting = false
@@ -331,8 +346,56 @@ class TootActivity : AppCompatActivity() {
         }
     }
 
-    private fun clearAttachments(){
+    private fun clearAttachments() {
         imageAttachmentParent.removeAllViews()
         uriAttachmentsMap.clear()
+    }
+
+
+    @OnClick(R.id.toot_visibility)
+    fun onClickVisibility(v: View) {
+        val popup = PopupMenu(this, v)
+        popup.inflate(R.menu.toot_visibility)
+        popup.setOnMenuItemClickListener { item ->
+            val menuItemId = item.itemId
+            when (menuItemId) {
+                R.id.visibility_public -> {
+                    tootVisibility = Status.Visibility.Public
+                }
+                R.id.visibility_unlisted -> {
+                    tootVisibility = Status.Visibility.UnListed
+                }
+                R.id.visibility_followers -> {
+                    tootVisibility = Status.Visibility.Private
+                }
+                R.id.visibility_direct -> {
+                    tootVisibility = Status.Visibility.Direct
+                }
+            }
+            updateVisibilityButtonState()
+            return@setOnMenuItemClickListener true
+        }
+        MenuPopupHelper(this, popup.menu as MenuBuilder, v).apply {
+            setForceShowIcon(true)
+            show()
+        }
+        updateAttachmentButtonState()
+    }
+
+    private fun updateVisibilityButtonState() {
+        when (tootVisibility) {
+            Status.Visibility.Public -> {
+                visibilityButton.setImageResource(R.drawable.ic_public)
+            }
+            Status.Visibility.UnListed -> {
+                visibilityButton.setImageResource(R.drawable.ic_lock_open)
+            }
+            Status.Visibility.Private -> {
+                visibilityButton.setImageResource(R.drawable.ic_lock)
+            }
+            Status.Visibility.Direct -> {
+                visibilityButton.setImageResource(R.drawable.ic_message)
+            }
+        }
     }
 }
