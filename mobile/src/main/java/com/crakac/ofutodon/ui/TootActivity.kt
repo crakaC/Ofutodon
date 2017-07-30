@@ -210,12 +210,7 @@ class TootActivity : AppCompatActivity() {
             return
         }
 
-        if (data == null) {
-            Log.d(TAG, "data is null")
-            return
-        }
-
-        if (data.data != null) {
+        if (data?.data != null) {
             addThumbnail(data.data)
         } else if (cameraUri != null) {
             addThumbnail(cameraUri!!)
