@@ -156,6 +156,7 @@ class TootActivity : AppCompatActivity() {
         (savedInstanceState?.getSerializable("Attachments") as HashMap<Uri, Attachment?>?)?.let {
             uriAttachmentsMap = it
             it.forEach { e -> addThumbnail(e.key) }
+            nsfwButton.visibility = View.VISIBLE
         }
 
         tootText.addTextChangedListener(textWatcher)
@@ -169,6 +170,37 @@ class TootActivity : AppCompatActivity() {
         outState.putParcelable("CameraUri", cameraUri)
         outState.putString("CameraFilePath", cameraFilePath)
         outState.putSerializable("Attachments", uriAttachmentsMap)
+
+        outState.putString("tootText", tootText.text.toString())
+        outState.putString("spoilerText", spoilerText.text.toString())
+        outState.putBoolean("cw", isContentWarningEnabled)
+        outState.putBoolean("nsfw", isNotSafeForWork)
+        outState.putSerializable("visibility", tootVisibility)
+        if(replyToStatus != null){
+            outState.putString(REPLY_STATUS, Gson().toJson(replyToStatus))
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        tootText.setText(savedInstanceState.getString("tootText"))
+        spoilerText.setText(savedInstanceState.getString("spoilerText"))
+
+        tootVisibility = savedInstanceState.getSerializable("visibility") as Status.Visibility
+        updateVisibilityButtonState()
+
+        if(savedInstanceState.getBoolean("cw", false)){
+            toggleContentWarning()
+        }
+        if(savedInstanceState.getBoolean("nsfw", false)){
+            toggleNotSafeForWork()
+        }
+
+        savedInstanceState.getString(REPLY_STATUS)?.let{
+            replyToStatus = Gson().fromJson(it, Status::class.java)
+        }
+
+        tootText.requestFocus()
+        tootText.setSelection(tootText.length())
     }
 
     override fun onBackPressed() {
@@ -376,7 +408,11 @@ class TootActivity : AppCompatActivity() {
     @OnClick(R.id.content_warning)
     fun toggleContentWarning() {
         isContentWarningEnabled = !isContentWarningEnabled
-        if (isContentWarningEnabled) {
+        setContentWarning(isContentWarningEnabled)
+    }
+
+    fun setContentWarning(isEnabled: Boolean){
+        if (isEnabled) {
             cwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
             spoilerText.visibility = View.VISIBLE
             textSeparator.visibility = View.VISIBLE
@@ -390,9 +426,13 @@ class TootActivity : AppCompatActivity() {
     }
 
     @OnClick(R.id.nsfw)
-    fun toggleNotSafeForWark() {
+    fun toggleNotSafeForWork() {
         isNotSafeForWork = !isNotSafeForWork
-        if (isNotSafeForWork) {
+        setNotSafeForWorkEnabled(isNotSafeForWork)
+    }
+
+    fun setNotSafeForWorkEnabled(isEnabled: Boolean){
+        if (isEnabled) {
             nsfwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
         } else {
             nsfwButton.setTextColor(ContextCompat.getColor(this, R.color.text_primary_dark))
@@ -427,7 +467,7 @@ class TootActivity : AppCompatActivity() {
         imageAttachmentParent.removeAllViews()
         uriAttachmentsMap.clear()
         if (isNotSafeForWork) {
-            toggleNotSafeForWark()
+            toggleNotSafeForWork()
         }
         nsfwButton.visibility = View.GONE
     }
@@ -514,6 +554,10 @@ class TootActivity : AppCompatActivity() {
             textCount.setTextColor(ContextCompat.getColor(this, R.color.text_error))
         } else {
             textCount.setTextColor(ContextCompat.getColor(this, R.color.text_secondary_dark))
+        }
+
+        if(total == 0){
+            replyToStatus = null
         }
     }
 
