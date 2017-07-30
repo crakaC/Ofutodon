@@ -133,7 +133,6 @@
                 android:layout_width="@dimen/button_large"
                 android:layout_height="@dimen/image_button"
                 android:layout_alignParentEnd="true"
-                android:drawableStart="@drawable/ic_lock_white"
                 android:text="@string/toot_public"
                 android:textAppearance="@style/TextAppearance.DarkButton" />
 

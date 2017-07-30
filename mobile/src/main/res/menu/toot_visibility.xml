@@ -15,6 +15,6 @@
         android:title="@string/visibility_followes" />
     <item
         android:id="@+id/visibility_direct"
-        android:icon="@drawable/ic_message"
+        android:icon="@drawable/ic_private_message"
         android:title="@string/visibility_direct" />
 </menu>

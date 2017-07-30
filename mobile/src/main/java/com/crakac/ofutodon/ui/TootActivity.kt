@@ -445,15 +445,30 @@ class TootActivity : AppCompatActivity() {
         when (tootVisibility) {
             Status.Visibility.Public -> {
                 visibilityButton.setImageResource(R.drawable.ic_public)
+                tootButton.text = getString(R.string.toot_public)
+                tootButton.setCompoundDrawables(null, null, null, null)
             }
             Status.Visibility.UnListed -> {
+                tootButton.text = getString(R.string.toot_unpublic)
                 visibilityButton.setImageResource(R.drawable.ic_lock_open)
+                tootButton.setCompoundDrawables(null, null, null, null)
             }
             Status.Visibility.Private -> {
+                tootButton.text = getString(R.string.toot_unpublic)
                 visibilityButton.setImageResource(R.drawable.ic_lock)
+
+                tootButton.compoundDrawablePadding = 0
+                val d = getDrawable(R.drawable.ic_lock_white).mutate()
+                tootButton.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null)
             }
             Status.Visibility.Direct -> {
-                visibilityButton.setImageResource(R.drawable.ic_message)
+                tootButton.text = getString(R.string.toot_unpublic)
+                visibilityButton.setImageResource(R.drawable.ic_private_message)
+
+                tootButton.compoundDrawablePadding = 0
+                val d = getDrawable(R.drawable.ic_lock_white).mutate()
+                d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
+                tootButton.setCompoundDrawables(d, null, null, null)
             }
         }
     }

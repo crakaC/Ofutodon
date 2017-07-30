@@ -12,8 +12,8 @@
     <string name="toot_hint">今何してる？</string>
     <string name="choose_image_or_take_picture">操作を選択</string>
     <string name="spoiler_hint">Content warning</string>
-    <string name="toot_public">Toot!</string>
-    <string name="toot_unpublic">Toot</string>
+    <string name="toot_public">トゥート!</string>
+    <string name="toot_unpublic">トゥート</string>
     <string name="toot_content_warning">CW</string>
     <string name="toot_NSFW">NSFW</string>
     <string name="delete">削除する</string>
