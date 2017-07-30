@@ -6,6 +6,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="text_error">#F4511E</color>
+
     <color name="ripple_light">#99ffffff</color>
     <color name="ripple_dark">@color/mid_grey</color>
 

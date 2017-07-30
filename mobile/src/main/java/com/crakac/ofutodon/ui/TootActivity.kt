@@ -64,7 +64,9 @@ class TootActivity : AppCompatActivity() {
 
     val TOOT_VISIBILITY = "toot_visibility"
 
+    val MAX_TOOT_LENGTH = 500
     val MAX_ATTACHMENTS_NUM = 4
+
     val TAG = "TootActivity"
 
     val IMAGE_ATTACHMENT_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
@@ -95,6 +97,9 @@ class TootActivity : AppCompatActivity() {
 
     @BindView(R.id.nsfw)
     lateinit var nsfwButton: TextView
+
+    @BindView(R.id.text_count)
+    lateinit var textCount: TextView
 
     var isPosting = false
 
@@ -136,6 +141,9 @@ class TootActivity : AppCompatActivity() {
         tootText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 updateTootButtonState()
+                p0?.let {
+                    checkTextCount(it)
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -195,6 +203,7 @@ class TootActivity : AppCompatActivity() {
             isPosting = false
             if (response == null || !response.isSuccessful) {
                 Log.d(TAG, "Server Error")
+                Toast.makeText(this@TootActivity, "無理でした", Toast.LENGTH_LONG).show()
                 return
             }
 
@@ -386,7 +395,7 @@ class TootActivity : AppCompatActivity() {
     }
 
     private fun updateTootButtonState() {
-        val hasText = tootText.text.isNotEmpty()
+        val hasText = tootText.text.isNotEmpty() && (tootText.text.length <= MAX_TOOT_LENGTH)
         val hasMedia = uriAttachmentsMap.isNotEmpty()
         tootButton.isEnabled = (hasText || hasMedia) && !isPosting
     }
@@ -470,6 +479,15 @@ class TootActivity : AppCompatActivity() {
                 d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
                 tootButton.setCompoundDrawables(d, null, null, null)
             }
+        }
+    }
+
+    private fun checkTextCount(text: CharSequence){
+        textCount.text = (MAX_TOOT_LENGTH - text.length).toString()
+        if(text.length > MAX_TOOT_LENGTH){
+            textCount.setTextColor(ContextCompat.getColor(this, R.color.text_error))
+        } else {
+            textCount.setTextColor(ContextCompat.getColor(this, R.color.text_secondary_dark))
         }
     }
 }
