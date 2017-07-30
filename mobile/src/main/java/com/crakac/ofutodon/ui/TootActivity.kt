@@ -77,6 +77,9 @@ class TootActivity : AppCompatActivity() {
     @BindView(R.id.spoiler_text)
     lateinit var spoilerText: EditText
 
+    @BindView(R.id.text_separator)
+    lateinit var textSeparator: View
+
     @BindView(R.id.toot_text)
     lateinit var tootText: EditText
 
@@ -368,11 +371,13 @@ class TootActivity : AppCompatActivity() {
         if (isContentWarningEnabled) {
             cwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
             spoilerText.visibility = View.VISIBLE
+            textSeparator.visibility = View.VISIBLE
             spoilerText.requestFocus()
         } else {
             cwButton.setTextColor(ContextCompat.getColor(this, R.color.text_primary_dark))
             spoilerText.text.clear()
             spoilerText.visibility = View.GONE
+            textSeparator.visibility = View.GONE
         }
     }
 
@@ -476,8 +481,7 @@ class TootActivity : AppCompatActivity() {
 
                 tootButton.compoundDrawablePadding = 0
                 val d = getDrawable(R.drawable.ic_lock_white).mutate()
-                d.setBounds(0, 0, d.intrinsicWidth, d.intrinsicHeight)
-                tootButton.setCompoundDrawables(d, null, null, null)
+                tootButton.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null)
             }
         }
     }
