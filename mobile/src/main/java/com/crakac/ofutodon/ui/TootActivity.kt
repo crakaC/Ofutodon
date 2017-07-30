@@ -2,6 +2,7 @@ package com.crakac.ofutodon.ui
 
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Intent
@@ -92,6 +93,9 @@ class TootActivity : AppCompatActivity() {
     @BindView(R.id.content_warning)
     lateinit var cwButton: TextView
 
+    @BindView(R.id.nsfw)
+    lateinit var nsfwButton: TextView
+
     var isPosting = false
 
     // using for picking up attachmentUris by other app
@@ -107,12 +111,14 @@ class TootActivity : AppCompatActivity() {
 
     var isContentWarningEnabled = false
 
-    fun getSpoilerText(): String?{
-        if (!isContentWarningEnabled){
+    fun getSpoilerText(): String? {
+        if (!isContentWarningEnabled) {
             return null
         }
         return spoilerText.text.toString()
     }
+
+    var isNotSafeForWork = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,6 +130,7 @@ class TootActivity : AppCompatActivity() {
         cameraFilePath = savedInstanceState?.getString("CameraFilePath")
         (savedInstanceState?.getSerializable("Attachments") as HashMap<Uri, Attachment?>?)?.let {
             uriAttachmentsMap = it
+            it.forEach { e -> addThumbnail(e.key) }
         }
 
         tootText.addTextChangedListener(object : TextWatcher {
@@ -173,6 +180,7 @@ class TootActivity : AppCompatActivity() {
                         visibility = tootVisibility.value,
                         spoilerText = getSpoilerText(),
                         mediaIds = uriAttachmentsMap.filter { e -> e.value != null }.map { e -> e.value!!.id },
+                        isSensitive = isNotSafeForWork,
                         text = tootText.text.toString()
                 ))?.enqueue(onTootFinished)
     }
@@ -186,15 +194,17 @@ class TootActivity : AppCompatActivity() {
         override fun onResponse(call: Call<Status>?, response: Response<Status>?) {
             isPosting = false
             if (response == null || !response.isSuccessful) {
-                Log.d(TAG, "Failed")
+                Log.d(TAG, "Server Error")
                 return
             }
+
             Log.d(TAG, "Success:" + response.body()?.content)
 
             clearAttachments()
-            if(isContentWarningEnabled){
+            if (isContentWarningEnabled) {
                 toggleContentWarning()
             }
+
             tootText.text.clear()
         }
     }
@@ -248,12 +258,16 @@ class TootActivity : AppCompatActivity() {
 
         if (data?.data != null) {
             addThumbnail(data.data)
+            uploadMedia(data.data)
         } else if (cameraUri != null) {
-            addThumbnail(cameraUri!!)
             addToGallery(cameraFilePath!!)
+            addThumbnail(cameraUri!!)
+            uploadMedia(cameraUri!!)
             cameraUri = null
             cameraFilePath = null
         }
+
+        nsfwButton.visibility = View.VISIBLE
     }
 
     fun addThumbnail(uri: Uri) {
@@ -280,6 +294,8 @@ class TootActivity : AppCompatActivity() {
                             popup.setOnMenuItemClickListener { _ ->
                                 imageAttachmentParent.removeView(v)
                                 uriAttachmentsMap.remove(uri)
+                                if(uriAttachmentsMap.isEmpty())
+                                    nsfwButton.visibility = View.GONE
                                 return@setOnMenuItemClickListener true
                             }
                             MenuPopupHelper(this@TootActivity, popup.menu as MenuBuilder, v).apply {
@@ -296,10 +312,17 @@ class TootActivity : AppCompatActivity() {
                     }
                 }
         ).centerCrop().into(v)
-        imageAttachmentParent.addView(v)
 
-        Glide
-                .with(applicationContext)
+        imageAttachmentParent.addView(v)
+    }
+
+    private fun uploadMedia(uri: Uri){
+        val dialog = ProgressDialog(this)
+        dialog.isIndeterminate = true
+        dialog.setCancelable(false)
+        dialog.setMessage(getString(R.string.uploading_media))
+        dialog.show()
+        Glide.with(applicationContext)
                 .load(uri)
                 .asBitmap()
                 .toBytes(Bitmap.CompressFormat.JPEG, 85)
@@ -317,10 +340,12 @@ class TootActivity : AppCompatActivity() {
                                         response?.let {
                                             uriAttachmentsMap.put(uri, it.body())
                                         }
+                                        dialog.dismiss()
                                     }
 
                                     override fun onFailure(call: Call<Attachment>?, t: Throwable?) {
                                         Toast.makeText(this@TootActivity, "falied", Toast.LENGTH_SHORT).show()
+                                        dialog.dismiss()
                                     }
                                 }
                         )
@@ -344,7 +369,12 @@ class TootActivity : AppCompatActivity() {
 
     @OnClick(R.id.nsfw)
     fun toggleNotSafeForWark() {
-
+        isNotSafeForWork = !isNotSafeForWork
+        if (isNotSafeForWork) {
+            nsfwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
+        } else {
+            nsfwButton.setTextColor(ContextCompat.getColor(this, R.color.text_primary_dark))
+        }
     }
 
     // コンテントプロバイダを使用し,ギャラリーに画像を保存.
@@ -374,6 +404,10 @@ class TootActivity : AppCompatActivity() {
     private fun clearAttachments() {
         imageAttachmentParent.removeAllViews()
         uriAttachmentsMap.clear()
+        if (isNotSafeForWork) {
+            toggleNotSafeForWark()
+        }
+        nsfwButton.visibility = View.GONE
     }
 
 

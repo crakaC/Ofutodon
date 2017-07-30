@@ -125,6 +125,7 @@
                 android:minWidth="@dimen/image_button"
                 android:padding="@dimen/padding_micro"
                 android:text="@string/toot_NSFW"
+                android:visibility="gone"
                 android:textColor="@color/text_primary_dark" />
 
             <Button
