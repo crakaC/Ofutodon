@@ -1,5 +1,6 @@
 package com.crakac.ofutodon.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
@@ -27,7 +29,11 @@ import retrofit2.Response
 /**
  * Created by Kosuke on 2017/04/26.
  */
-class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, MastodonStreaming.StreamingCallback, SwipeRefreshListView.OnLoadMoreListener {
+class StatusFragment : Fragment(),
+        SwipeRefreshLayout.OnRefreshListener,
+        MastodonStreaming.StreamingCallback,
+        SwipeRefreshListView.OnLoadMoreListener,
+        StatusAdapter.OnClickStatusListener {
 
     lateinit var recyclerView: RecyclerView
     @BindView(R.id.swipeRefresh)
@@ -47,6 +53,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         val view = inflater.inflate(R.layout.fragment_status, container, false)
         unbinder = ButterKnife.bind(this, view)
         adapter = StatusAdapter(activity)
+        adapter.statusListener = this
 
         recyclerView = swipeRefresh.recyclerView
         recyclerView.adapter = adapter
@@ -68,6 +75,7 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
 
     override fun onDestroyView() {
         super.onDestroyView()
+        adapter.statusListener = null
         unbinder.unbind()
         streaming?.callBack = null
         streaming?.close()
@@ -161,5 +169,26 @@ class StatusFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Mastodo
         id?.let {
             adapter.removeById(id)
         }
+    }
+
+    override fun onItemClicked(status: Status) {
+    }
+
+    override fun onIconClicked(icon: ImageView, status: Status) {
+    }
+
+    override fun onReplyClicked(status: Status) {
+        val intent = Intent (activity, TootActivity::class.java)
+        TootActivity.addReplyInfo(intent, status)
+        startActivity(intent)
+    }
+
+    override fun onBoostClicked(status: Status) {
+    }
+
+    override fun onFavoriteClicked(status: Status) {
+    }
+
+    override fun onMenuClicked(status: Status, menuId: Int) {
     }
 }

@@ -48,6 +48,7 @@ import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.util.PrefsUtil
 import com.crakac.ofutodon.util.TextUtil
 import com.crakac.ofutodon.util.ViewUtil
+import com.google.gson.Gson
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -70,6 +71,16 @@ class TootActivity : AppCompatActivity() {
     val TAG = "TootActivity"
 
     val IMAGE_ATTACHMENT_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
+
+
+    companion object {
+        private val REPLY_STATUS = "reply_to_status"
+        private val ACTION_REPLY = "reply"
+        fun addReplyInfo(intent: Intent, status: Status) {
+            intent.action = ACTION_REPLY
+            intent.putExtra(REPLY_STATUS, Gson().toJson(status))
+        }
+    }
 
     @BindView(R.id.container)
     lateinit var container: View
@@ -128,11 +139,17 @@ class TootActivity : AppCompatActivity() {
 
     var isNotSafeForWork = false
 
+    var replyToStatus: Status? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_toot)
         ButterKnife.bind(this)
         FabTransform.setup(this, container)
+
+        if(intent.action == ACTION_REPLY) {
+            setUpReply()
+        }
 
         cameraUri = savedInstanceState?.getParcelable("CameraUri")
         cameraFilePath = savedInstanceState?.getString("CameraFilePath")
@@ -141,20 +158,9 @@ class TootActivity : AppCompatActivity() {
             it.forEach { e -> addThumbnail(e.key) }
         }
 
-        tootText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                updateTootButtonState()
-                p0?.let {
-                    checkTextCount(it)
-                }
-            }
+        tootText.addTextChangedListener(textWatcher)
+        spoilerText.addTextChangedListener(textWatcher)
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        })
         updateTootButtonState()
         updateVisibilityButtonState()
     }
@@ -188,6 +194,7 @@ class TootActivity : AppCompatActivity() {
 
         MastodonUtil.api?.postStatus(
                 StatusBuilder(
+                        replyTo = replyToStatus?.id,
                         visibility = tootVisibility.value,
                         spoilerText = getSpoilerText(),
                         mediaIds = uriAttachmentsMap.filter { e -> e.value != null }.map { e -> e.value!!.id },
@@ -218,6 +225,7 @@ class TootActivity : AppCompatActivity() {
             }
 
             tootText.text.clear()
+            replyToStatus = null
         }
     }
 
@@ -306,7 +314,7 @@ class TootActivity : AppCompatActivity() {
                             popup.setOnMenuItemClickListener { _ ->
                                 imageAttachmentParent.removeView(v)
                                 uriAttachmentsMap.remove(uri)
-                                if(uriAttachmentsMap.isEmpty())
+                                if (uriAttachmentsMap.isEmpty())
                                     nsfwButton.visibility = View.GONE
                                 return@setOnMenuItemClickListener true
                             }
@@ -328,7 +336,7 @@ class TootActivity : AppCompatActivity() {
         imageAttachmentParent.addView(v)
     }
 
-    private fun uploadMedia(uri: Uri){
+    private fun uploadMedia(uri: Uri) {
         val dialog = ProgressDialog(this)
         dialog.isIndeterminate = true
         dialog.setCancelable(false)
@@ -486,12 +494,41 @@ class TootActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkTextCount(text: CharSequence){
-        textCount.text = (MAX_TOOT_LENGTH - text.length).toString()
-        if(text.length > MAX_TOOT_LENGTH){
+    private val textWatcher = object : TextWatcher {
+        override fun afterTextChanged(p0: Editable?) {
+            updateTootButtonState()
+            checkTextCount()
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+    }
+
+    private fun checkTextCount() {
+        val total = spoilerText.length() + tootText.length()
+        textCount.text = (MAX_TOOT_LENGTH - total).toString()
+        if (total > MAX_TOOT_LENGTH) {
             textCount.setTextColor(ContextCompat.getColor(this, R.color.text_error))
         } else {
             textCount.setTextColor(ContextCompat.getColor(this, R.color.text_secondary_dark))
         }
+    }
+
+    private fun setUpReply(){
+        val status = Gson().fromJson(intent.extras.getString(REPLY_STATUS), Status::class.java)
+        tootVisibility = status.getVisibility()
+        if(status.spoilerText.isNotEmpty()){
+            if(!isContentWarningEnabled) {
+                toggleContentWarning()
+            }
+            spoilerText.setText(status.spoilerText)
+        }
+        tootText.setText("@${status.account.username} ")
+        tootText.requestFocus()
+        tootText.setSelection(tootText.length())
+        replyToStatus = status
     }
 }

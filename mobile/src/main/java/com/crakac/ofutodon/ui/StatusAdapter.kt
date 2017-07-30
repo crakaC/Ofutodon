@@ -24,7 +24,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     val TAG: String = "StatusAdapter"
     val statusArray = ArrayList<Status>()
 
-    var listener: OnRecyclerItemClickListener? = null
+    var statusListener: OnClickStatusListener? = null
 
     fun getItem(position: Int): Status {
         return statusArray[position]
@@ -75,22 +75,22 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         val holder = StatusViewHolder(View.inflate(context, R.layout.status, null))
         holder.itemView.setOnClickListener { _ ->
             val status = getItem(holder.adapterPosition)
-            listener?.onItemClicked(status)
+            statusListener?.onItemClicked(status)
         }
 
         holder.icon.setOnClickListener { v ->
-            listener?.onIconClicked(v as ImageView, getItem(holder.adapterPosition))
+            statusListener?.onIconClicked(v as ImageView, getItem(holder.adapterPosition))
         }
 
         holder.reply.setOnClickListener { _ ->
-            listener?.onReplyClicked(getItem(holder.adapterPosition))
+            statusListener?.onReplyClicked(getItem(holder.adapterPosition))
         }
 
         holder.boost.setOnClickListener { _ ->
-            listener?.onBoostClicked(getItem(holder.adapterPosition))
+            statusListener?.onBoostClicked(getItem(holder.adapterPosition))
         }
         holder.favorite.setOnClickListener { _ ->
-            listener?.onFavoriteClicked(getItem(holder.adapterPosition))
+            statusListener?.onFavoriteClicked(getItem(holder.adapterPosition))
         }
 
         holder.more.setOnClickListener { _ ->
@@ -99,7 +99,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             popup.setOnMenuItemClickListener { item ->
                 val status = getItem(holder.adapterPosition)
                 val menuItemId = item.itemId
-                listener?.onMenuClicked(status, menuItemId)
+                statusListener?.onMenuClicked(status, menuItemId)
                 Log.d(TAG, "menu item clicked!")
                 return@setOnMenuItemClickListener true
             }
@@ -214,7 +214,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
     }
 
-    interface OnRecyclerItemClickListener {
+    interface OnClickStatusListener {
         fun onItemClicked(status: Status)
         fun onIconClicked(icon: ImageView, status: Status)
         fun onReplyClicked(status: Status)
