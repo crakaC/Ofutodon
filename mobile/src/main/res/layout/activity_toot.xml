@@ -44,7 +44,9 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:hint="@string/spoiler_hint"
-                android:inputType="textMultiLine"
+                android:inputType="text"
+                android:maxLines="1"
+                android:nextFocusDown="@+id/toot_text"
                 android:padding="@dimen/spacing_mid_large"
                 android:textColor="@color/text_primary_dark"
                 android:textColorHint="@color/text_secondary_dark"
@@ -56,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:hint="@string/toot_hint"
+                android:imeOptions="actionDone"
                 android:inputType="textMultiLine"
                 android:padding="@dimen/spacing_mid_large"
                 android:textColor="@color/text_primary_dark"
@@ -69,7 +72,7 @@
                     android:id="@+id/image_attachments_root"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"/>
+                    android:orientation="horizontal" />
             </HorizontalScrollView>
 
         </LinearLayout>
@@ -130,7 +133,6 @@
                 android:layout_height="@dimen/image_button"
                 android:layout_alignParentEnd="true"
                 android:drawableStart="@drawable/ic_lock_white"
-                android:foreground="@drawable/light_ripple"
                 android:text="@string/toot_public"
                 android:textAppearance="@style/TextAppearance.DarkButton" />
 

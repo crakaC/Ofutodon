@@ -71,6 +71,9 @@ class TootActivity : AppCompatActivity() {
     @BindView(R.id.container)
     lateinit var container: View
 
+    @BindView(R.id.spoiler_text)
+    lateinit var spoilerText: EditText
+
     @BindView(R.id.toot_text)
     lateinit var tootText: EditText
 
@@ -86,6 +89,9 @@ class TootActivity : AppCompatActivity() {
     @BindView(R.id.toot_visibility)
     lateinit var visibilityButton: ImageView
 
+    @BindView(R.id.content_warning)
+    lateinit var cwButton: TextView
+
     var isPosting = false
 
     // using for picking up attachmentUris by other app
@@ -98,6 +104,15 @@ class TootActivity : AppCompatActivity() {
     var tootVisibility = Status.Visibility.valueOf(
             PrefsUtil.getString(TOOT_VISIBILITY, Status.Visibility.Public.toString())!!
     )
+
+    var isContentWarningEnabled = false
+
+    fun getSpoilerText(): String?{
+        if (!isContentWarningEnabled){
+            return null
+        }
+        return spoilerText.text.toString()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,29 +168,35 @@ class TootActivity : AppCompatActivity() {
         isPosting = true
         tootButton.isEnabled = false
 
-        MastodonUtil.api?.postStatus(StatusBuilder(
-                visibility = tootVisibility.value,
-                mediaIds = uriAttachmentsMap.filter { e -> e.value != null }.map { e -> e.value!!.id },
-                text = tootText.text.toString())
-        )?.enqueue(
-                object : Callback<Status> {
-                    override fun onFailure(call: Call<Status>?, t: Throwable?) {
-                        isPosting = false
-                        Log.d(TAG, "Failed")
-                    }
+        MastodonUtil.api?.postStatus(
+                StatusBuilder(
+                        visibility = tootVisibility.value,
+                        spoilerText = getSpoilerText(),
+                        mediaIds = uriAttachmentsMap.filter { e -> e.value != null }.map { e -> e.value!!.id },
+                        text = tootText.text.toString()
+                ))?.enqueue(onTootFinished)
+    }
 
-                    override fun onResponse(call: Call<Status>?, response: Response<Status>?) {
-                        isPosting = false
-                        if (response == null || !response.isSuccessful) {
-                            Log.d(TAG, "Failed")
-                            return
-                        }
-                        Log.d(TAG, "Success:" + response.body()?.content)
-                        tootText.setText("")
-                        clearAttachments()
-                    }
-                }
-        )
+    var onTootFinished = object : Callback<Status> {
+        override fun onFailure(call: Call<Status>?, t: Throwable?) {
+            isPosting = false
+            Log.d(TAG, "Failed")
+        }
+
+        override fun onResponse(call: Call<Status>?, response: Response<Status>?) {
+            isPosting = false
+            if (response == null || !response.isSuccessful) {
+                Log.d(TAG, "Failed")
+                return
+            }
+            Log.d(TAG, "Success:" + response.body()?.content)
+
+            clearAttachments()
+            if(isContentWarningEnabled){
+                toggleContentWarning()
+            }
+            tootText.text.clear()
+        }
     }
 
     @OnClick(R.id.add_photo)
@@ -307,14 +328,18 @@ class TootActivity : AppCompatActivity() {
                 })
     }
 
-    @OnClick(R.id.toot_visibility)
-    fun toggleTootVisibility() {
-
-    }
-
     @OnClick(R.id.content_warning)
     fun toggleContentWarning() {
-
+        isContentWarningEnabled = !isContentWarningEnabled
+        if (isContentWarningEnabled) {
+            cwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
+            spoilerText.visibility = View.VISIBLE
+            spoilerText.requestFocus()
+        } else {
+            cwButton.setTextColor(ContextCompat.getColor(this, R.color.text_primary_dark))
+            spoilerText.text.clear()
+            spoilerText.visibility = View.GONE
+        }
     }
 
     @OnClick(R.id.nsfw)
