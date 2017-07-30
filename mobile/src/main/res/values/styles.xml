@@ -42,7 +42,7 @@
 
     <style name="Ofuton.Toot" parent="Ofuton.Translucent">
         <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:colorButtonNormal">@color/button_color</item>
         <item name="android:colorControlHighlight">@color/ripple_dark</item>
         <item name="android:textAppearanceButton">@style/TextAppearance.DarkButton</item>
     </style>

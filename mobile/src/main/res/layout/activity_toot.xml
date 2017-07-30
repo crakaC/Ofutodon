@@ -124,16 +124,13 @@
                 android:text="@string/toot_NSFW"
                 android:textColor="@color/text_primary_dark" />
 
-            <TextView
+            <Button
                 android:id="@+id/toot"
                 android:layout_width="@dimen/button_large"
                 android:layout_height="@dimen/image_button"
                 android:layout_alignParentEnd="true"
-                android:background="@drawable/toot_button_background"
                 android:drawableStart="@drawable/ic_lock_white"
                 android:foreground="@drawable/light_ripple"
-                android:gravity="center"
-                android:padding="@dimen/padding_micro"
                 android:text="@string/toot_public"
                 android:textAppearance="@style/TextAppearance.DarkButton" />
 
