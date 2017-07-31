@@ -1,5 +1,6 @@
 package com.crakac.ofutodon.ui
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -22,6 +23,7 @@ import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.transition.FabTransform
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -177,10 +179,12 @@ class StatusFragment : Fragment(),
     override fun onIconClicked(icon: ImageView, status: Status) {
     }
 
-    override fun onReplyClicked(status: Status) {
+    override fun onReplyClicked(icon: ImageView, status: Status) {
         val intent = Intent (activity, TootActivity::class.java)
+        FabTransform.addExtras(intent, ContextCompat.getColor(activity, R.color.background_dark), R.drawable.ic_reply, icon.alpha)
         TootActivity.addReplyInfo(intent, status)
-        startActivity(intent)
+        val options = ActivityOptions.makeSceneTransitionAnimation(activity, icon, getString(R.string.transition_name_toot_dialog));
+        startActivity(intent, options.toBundle())
     }
 
     override fun onBoostClicked(status: Status) {

@@ -13,6 +13,7 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.ColorInt
 import android.support.annotation.DrawableRes
+import android.support.annotation.FloatRange
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.animation.FastOutLinearInInterpolator
 import android.support.v4.view.animation.FastOutSlowInInterpolator
@@ -34,14 +35,16 @@ class FabTransform : Transition {
         val TAG = "FabTransform"
         val EXTRA_FAB_COLOR = "EXTRA_FAB_COLOR"
         val EXTRA_FAB_ICON_RES_ID = "EXTRA_FAB_ICON_RES_ID"
+        val EXTRA_ICON_ALPHA = "EXTRA_ICON_ALPHA"
         val DEFAULT_DURATION = 240L
         val PROP_BOUNDS = "ofutodon:fabTransform:bounds"
         val TRANSITION_PROPERTIES = arrayOf(PROP_BOUNDS)
 
         fun addExtras(intent: Intent, @ColorInt fabColor: Int,
-                               @DrawableRes fabIconResId: Int) {
+                               @DrawableRes fabIconResId: Int, @FloatRange(from = 0.0, to = 1.0) alpha: Float = 1f) {
             intent.putExtra(EXTRA_FAB_COLOR, fabColor)
             intent.putExtra(EXTRA_FAB_ICON_RES_ID, fabIconResId)
+            intent.putExtra(EXTRA_ICON_ALPHA, alpha)
         }
 
         fun setup(activity: Activity, target: View?): Boolean {
@@ -52,7 +55,8 @@ class FabTransform : Transition {
 
             val color = intent.getIntExtra(EXTRA_FAB_COLOR, Color.TRANSPARENT)
             val icon = intent.getIntExtra(EXTRA_FAB_ICON_RES_ID, -1)
-            val sharedEnter = FabTransform(color, icon)
+            val alpha = intent.getFloatExtra(EXTRA_ICON_ALPHA, 1f)
+            val sharedEnter = FabTransform(color, icon, alpha)
             if (target != null) {
                 sharedEnter.addTarget(target)
             }
@@ -63,10 +67,12 @@ class FabTransform : Transition {
 
     private var color: Int = 0
     private var icon: Int = 0
+    private var iconAlpha: Int = 255
 
-    constructor(@ColorInt color: Int, @ColorInt resId: Int){
+    constructor(@ColorInt color: Int, @ColorInt resId: Int, alpha: Float){
         this.color = color
         this.icon = resId
+        this.iconAlpha = (alpha * 255).toInt()
         pathMotion = GravityArcMotion()
         duration = DEFAULT_DURATION
     }
@@ -144,7 +150,7 @@ class FabTransform : Transition {
         fabIcon.setBounds(iconLeft, iconTop,
                 iconLeft + fabIcon.intrinsicWidth,
                 iconTop + fabIcon.intrinsicHeight)
-        if (!fromFab) fabIcon.alpha = 0
+        fabIcon.alpha = if (fromFab) iconAlpha else 0
         view.overlay.add(fabIcon)
 
         // Circular clip from/to the FAB size
@@ -212,7 +218,7 @@ class FabTransform : Transition {
 
         // Fade in/out the fab color & icon overlays
         val colorFade = ObjectAnimator.ofInt(fabColor, "alpha", if (fromFab) 0 else 255)
-        val iconFade = ObjectAnimator.ofInt(fabIcon, "alpha", if (fromFab) 0 else 255)
+        val iconFade = ObjectAnimator.ofInt(fabIcon, "alpha", if (fromFab) 0 else iconAlpha)
         if (!fromFab) {
             colorFade.startDelay = halfDuration
             iconFade.startDelay = halfDuration

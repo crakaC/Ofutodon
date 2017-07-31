@@ -83,7 +83,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
 
         holder.reply.setOnClickListener { _ ->
-            statusListener?.onReplyClicked(getItem(holder.adapterPosition))
+            statusListener?.onReplyClicked(holder.reply, getItem(holder.adapterPosition))
         }
 
         holder.boost.setOnClickListener { _ ->
@@ -217,7 +217,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     interface OnClickStatusListener {
         fun onItemClicked(status: Status)
         fun onIconClicked(icon: ImageView, status: Status)
-        fun onReplyClicked(status: Status)
+        fun onReplyClicked(icon: ImageView, status: Status)
         fun onBoostClicked(status: Status)
         fun onFavoriteClicked(status: Status)
         fun onMenuClicked(status: Status, menuId: Int)
