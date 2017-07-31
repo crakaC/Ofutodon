@@ -124,9 +124,13 @@ class TootActivity : AppCompatActivity() {
     // keep attachmentUris
     var uriAttachmentsMap = HashMap<Uri, Attachment?>()
 
-    var tootVisibility = Status.Visibility.valueOf(
-            PrefsUtil.getString(TOOT_VISIBILITY, Status.Visibility.Public.toString())!!
-    )
+    var tootVisibility = defaultVisibility
+
+    val defaultVisibility: Status.Visibility
+        get() {
+        return Status.Visibility.valueOf(
+                PrefsUtil.getString(TOOT_VISIBILITY, Status.Visibility.Public.toString())!!)
+        }
 
     var isContentWarningEnabled = false
 
@@ -563,7 +567,7 @@ class TootActivity : AppCompatActivity() {
 
     private fun setUpReply(){
         val status = Gson().fromJson(intent.extras.getString(REPLY_STATUS), Status::class.java)
-        tootVisibility = status.getVisibility()
+        tootVisibility = Status.Visibility.values()[Math.max(defaultVisibility.ordinal, status.getVisibility().ordinal)]
         if(status.spoilerText.isNotEmpty()){
             if(!isContentWarningEnabled) {
                 toggleContentWarning()
