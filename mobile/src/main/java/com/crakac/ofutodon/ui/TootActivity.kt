@@ -574,7 +574,7 @@ class TootActivity : AppCompatActivity() {
             }
             spoilerText.setText(status.spoilerText)
         }
-        tootText.setText("@${status.account.username} ")
+        tootText.setText("@${status.account.acct} ")
         tootText.requestFocus()
         tootText.setSelection(tootText.length())
         replyToStatus = status

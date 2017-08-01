@@ -57,8 +57,5 @@ class SwipeRefreshListView : SwipeRefreshLayout {
                 mLoadMoreListener?.onLoadMore()
             }
         }
-
-        override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-        }
     }
 }
