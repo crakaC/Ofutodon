@@ -19,7 +19,6 @@ import butterknife.Unbinder
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Link
 import com.crakac.ofutodon.model.api.MastodonStreaming
-import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
@@ -31,7 +30,7 @@ import retrofit2.Response
 /**
  * Created by Kosuke on 2017/04/26.
  */
-class StatusFragment : Fragment(),
+abstract class StatusFragment : Fragment(),
         SwipeRefreshLayout.OnRefreshListener,
         MastodonStreaming.StreamingCallback,
         SwipeRefreshListView.OnLoadMoreListener,
@@ -49,7 +48,7 @@ class StatusFragment : Fragment(),
 
     var streaming: MastodonStreaming? = null
 
-    private var isLoadingNext = false
+    protected var isLoadingNext = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_status, container, false)
@@ -69,7 +68,7 @@ class StatusFragment : Fragment(),
         swipeRefresh.setOnRefreshListener(this)
         swipeRefresh.setOnLoadMoreListener(this)
 
-        streaming = MastodonStreaming("friends.nico")
+//        streaming = MastodonStreaming("friends.nico")
         swipeRefresh.isRefreshing = true
         onRefresh()
         return view
@@ -92,20 +91,7 @@ class StatusFragment : Fragment(),
         connectStreamingIfNeeded()
     }
 
-    fun getTitle(): String = "テスト"
-
-    override fun onRefresh() {
-        MastodonUtil.api?.getPublicTimeline(prevRange.q, isLocal = true)?.enqueue(onStatus)
-    }
-
-    override fun onLoadMore() {
-        if (isLoadingNext || nextRange.maxId == null) return
-        MastodonUtil.api?.getHomeTimeline(nextRange.q)?.enqueue(onNextStatus)
-        isLoadingNext = true
-    }
-
-
-    private val onStatus = object : Callback<List<Status>> {
+    protected val onStatus = object : Callback<List<Status>> {
         override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
             swipeRefresh.isRefreshing = false
         }
@@ -126,7 +112,7 @@ class StatusFragment : Fragment(),
         }
     }
 
-    private val onNextStatus = object : Callback<List<Status>> {
+    protected val onNextStatus = object : Callback<List<Status>> {
         override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
             isLoadingNext = false
         }
@@ -215,4 +201,6 @@ class StatusFragment : Fragment(),
         streaming?.callBack = this
         streaming?.connect()
     }
+
+    abstract fun getTitle(): String
 }

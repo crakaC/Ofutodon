@@ -89,8 +89,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //fragments
         if (adapter == null) {
             adapter = MyFragmentPagerAdapter(supportFragmentManager)
-            val fragment = StatusFragment()
-            adapter?.add(fragment)
+            adapter?.add(HomeTimelineFragment())
+            adapter?.add(LocalTimelineFragment())
         }
 
         pager.adapter = adapter
