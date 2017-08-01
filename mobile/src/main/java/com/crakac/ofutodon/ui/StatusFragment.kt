@@ -69,9 +69,9 @@ class StatusFragment : Fragment(),
         swipeRefresh.setOnRefreshListener(this)
         swipeRefresh.setOnLoadMoreListener(this)
 
-        streaming = MastodonStreaming()
-        streaming?.callBack = this
-//        streaming?.connect()
+        streaming = MastodonStreaming("friends.nico")
+        swipeRefresh.isRefreshing = true
+        onRefresh()
         return view
     }
 
@@ -79,18 +79,27 @@ class StatusFragment : Fragment(),
         super.onDestroyView()
         adapter.statusListener = null
         unbinder.unbind()
+    }
+
+    override fun onStop() {
+        super.onStop()
         streaming?.callBack = null
         streaming?.close()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        connectStreamingIfNeeded()
     }
 
     fun getTitle(): String = "テスト"
 
     override fun onRefresh() {
-        MastodonUtil.api?.getHomeTimeline(prevRange.q)?.enqueue(onStatus)
+        MastodonUtil.api?.getPublicTimeline(prevRange.q, isLocal = true)?.enqueue(onStatus)
     }
 
     override fun onLoadMore() {
-        if(isLoadingNext) return
+        if (isLoadingNext || nextRange.maxId == null) return
         MastodonUtil.api?.getHomeTimeline(nextRange.q)?.enqueue(onNextStatus)
         isLoadingNext = true
     }
@@ -107,12 +116,13 @@ class StatusFragment : Fragment(),
                 return
             }
             insertQuietly(response.body())
-            Link.parse(response.headers().get("link"))?.let{
+            Link.parse(response.headers().get("link"))?.let {
                 prevRange = it.prevRange()
-                if(nextRange.maxId == null){
+                if (nextRange.maxId == null) {
                     nextRange = it.nextRange()
                 }
             }
+            connectStreamingIfNeeded()
         }
     }
 
@@ -136,22 +146,22 @@ class StatusFragment : Fragment(),
     var firstVisibleStatus: Status? = null
     var firstVisibleOffset = 0
 
-    private fun savePosition(){
-        if(adapter.isEmpty || recyclerView.getChildAt(0) == null){
+    private fun savePosition() {
+        if (adapter.isEmpty || recyclerView.getChildAt(0) == null) {
             return
         }
         firstVisibleStatus = adapter.getItem(layoutManager.findFirstVisibleItemPosition())
         firstVisibleOffset = recyclerView.getChildAt(0).top
     }
 
-    private fun restorePosition(){
-        firstVisibleStatus?.let{
+    private fun restorePosition() {
+        firstVisibleStatus?.let {
             val pos = adapter.getPosition(it)
             layoutManager.scrollToPositionWithOffset(pos, firstVisibleOffset)
         }
     }
 
-    fun insertQuietly(statuses: List<Status>){
+    fun insertQuietly(statuses: List<Status>) {
         savePosition()
         adapter.addTop(statuses)
         restorePosition()
@@ -159,8 +169,10 @@ class StatusFragment : Fragment(),
 
     override fun onStatus(status: Status?) {
         status?.let {
-            adapter.addTop(status)
-            adapter.notifyDataSetChanged()
+            if(!adapter.contains(status.id)) {
+                adapter.addTop(status)
+                adapter.notifyDataSetChanged()
+            }
         }
     }
 
@@ -180,7 +192,7 @@ class StatusFragment : Fragment(),
     }
 
     override fun onReplyClicked(icon: ImageView, status: Status) {
-        val intent = Intent (activity, TootActivity::class.java)
+        val intent = Intent(activity, TootActivity::class.java)
         FabTransform.addExtras(intent, ContextCompat.getColor(activity, R.color.background_dark), R.drawable.ic_reply, icon.alpha)
         TootActivity.addReplyInfo(intent, status)
         val options = ActivityOptions.makeSceneTransitionAnimation(activity, icon, getString(R.string.transition_name_toot_dialog));
@@ -194,5 +206,13 @@ class StatusFragment : Fragment(),
     }
 
     override fun onMenuClicked(status: Status, menuId: Int) {
+    }
+
+    fun connectStreamingIfNeeded(){
+        if(streaming == null || streaming!!.isConnected || adapter.isEmpty)
+            return
+
+        streaming?.callBack = this
+        streaming?.connect()
     }
 }

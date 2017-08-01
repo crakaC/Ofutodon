@@ -23,11 +23,16 @@ import java.util.*
 class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
     val TAG: String = "StatusAdapter"
     val statusArray = ArrayList<Status>()
+    val ids = TreeSet<Long>()
 
     var statusListener: OnClickStatusListener? = null
 
     fun getItem(position: Int): Status {
         return statusArray[position]
+    }
+
+    fun contains(id: Long): Boolean{
+        return ids.contains(id)
     }
 
     override fun getItemId(position: Int): Long {
@@ -40,16 +45,19 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
     fun addTop(status: Status) {
         statusArray.add(0, status)
+        ids.add(status.id)
         notifyDataSetChanged()
     }
 
     fun addTop(statuses: Collection<Status>) {
         statusArray.addAll(0, statuses)
+        statuses.forEach { e -> ids.add(e.id) }
         notifyDataSetChanged()
     }
 
     fun addBottom(statuses: Collection<Status>) {
         statusArray.addAll(statuses)
+        statuses.forEach { e -> ids.add(e.id) }
         notifyDataSetChanged()
     }
 
@@ -57,6 +65,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         val target = statusArray.find { it.id == id }
         target?.let {
             statusArray.remove(target)
+            ids.remove(id)
             notifyDataSetChanged()
         }
     }

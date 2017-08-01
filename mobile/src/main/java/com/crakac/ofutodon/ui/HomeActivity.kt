@@ -74,18 +74,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        //fragments
-        if (adapter == null) {
-            adapter = MyFragmentPagerAdapter(supportFragmentManager)
-            adapter?.add(StatusFragment())
-            adapter?.add(StatusFragment())
-            adapter?.add(StatusFragment())
-        }
-
-        pager.adapter = adapter
-        tabLayout.setupWithViewPager(pager)
-
-
         if (MastodonUtil.hasAccessToken(instanceDomain)){
             val token = MastodonUtil.getAccessToken(instanceDomain)
             mastodon = MastodonUtil.api(instanceDomain, token)
@@ -98,6 +86,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
+        //fragments
+        if (adapter == null) {
+            adapter = MyFragmentPagerAdapter(supportFragmentManager)
+            val fragment = StatusFragment()
+            adapter?.add(fragment)
+        }
+
+        pager.adapter = adapter
+        tabLayout.setupWithViewPager(pager)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

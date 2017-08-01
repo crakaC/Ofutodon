@@ -1,25 +1,25 @@
 package com.crakac.ofutodon.model.api
 
 import android.os.Handler
-import com.crakac.ofutodon.BuildConfig
+import android.util.Log
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.model.api.entity.StreamingContent
 import com.google.gson.Gson
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 
 /**
  * Created by Kosuke on 2017/05/04.
  */
-class MastodonStreaming : WebSocketListener(){
+class MastodonStreaming(val domain:String) : WebSocketListener() {
     val TAG = "MastodonStreaming"
     val handler = Handler()
     val gson = Gson()
     var callBack: StreamingCallback? = null
+
+    private var mIsConnected = false
+    val isConnected: Boolean get() = mIsConnected
 
     private var ws: WebSocket? = null
 
@@ -30,8 +30,14 @@ class MastodonStreaming : WebSocketListener(){
     }
 
     fun connect() {
+        val token = MastodonUtil.getAccessToken(domain)
+        if (token == null) {
+            Log.w(TAG, "Invalid access token")
+            return
+        }
+
         val request = Request.Builder()
-                .url("wss://mstdn.jp/api/v1/streaming/?access_token=${BuildConfig.DEBUG_TOKEN}&stream=user")
+                .url("wss://$domain/api/v1/streaming/?stream=public:local")
                 .build()
 
         val logger = HttpLoggingInterceptor()
@@ -42,15 +48,14 @@ class MastodonStreaming : WebSocketListener(){
                 .addInterceptor {
                     val org = it.request()
                     val builder = org.newBuilder()
-                    builder.addHeader("Authorization", "Bearer ${BuildConfig.DEBUG_TOKEN}")
+                    builder.addHeader("Authorization", "Bearer $token")
                     val newRequest = builder.build()
                     it.proceed(newRequest)
                 }.build()
         ws = client.newWebSocket(request, this)
     }
 
-    fun close()
-    {
+    fun close() {
         ws?.close(1000, "")
     }
 
@@ -83,5 +88,15 @@ class MastodonStreaming : WebSocketListener(){
                 System.out.println("unknown event")
             }
         }
+    }
+
+    override fun onOpen(webSocket: WebSocket?, response: Response?) {
+        mIsConnected = true
+        Log.d(TAG, "open connection")
+    }
+
+    override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
+        mIsConnected = false
+        Log.d(TAG, "closing")
     }
 }

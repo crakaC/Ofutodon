@@ -316,7 +316,9 @@ interface Mastodon {
     @GET("/api/v1/timelines/public")
     fun getPublicTimeline(
             @QueryMap
-            pager: Map<String, String> = emptyMap()
+            pager: Map<String, String> = emptyMap(),
+            @Query("local")
+            isLocal: Boolean?
     ): Call<List<Status>>
 
     @GET("/api/v1/timelines/tag/{hashtag}")
