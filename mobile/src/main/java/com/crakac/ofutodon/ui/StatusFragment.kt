@@ -89,6 +89,7 @@ abstract class StatusFragment : Fragment(),
     override fun onStart() {
         super.onStart()
         connectStreamingIfNeeded()
+        updateRelativeTime()
     }
 
     protected val onStatus = object : Callback<List<Status>> {
@@ -203,4 +204,8 @@ abstract class StatusFragment : Fragment(),
     }
 
     abstract fun getTitle(): String
+
+    fun updateRelativeTime(){
+        adapter.notifyDataSetChanged()
+    }
 }

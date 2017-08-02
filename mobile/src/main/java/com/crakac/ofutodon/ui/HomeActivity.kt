@@ -94,6 +94,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         pager.adapter = adapter
+        pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+            override fun onPageSelected(position: Int) {
+                adapter?.getItem(position)?.updateRelativeTime()
+            }
+        })
         tabLayout.setupWithViewPager(pager)
     }
 
