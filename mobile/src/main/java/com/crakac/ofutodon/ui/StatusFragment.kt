@@ -94,10 +94,14 @@ abstract class StatusFragment : Fragment(),
 
     protected val onStatus = object : Callback<List<Status>> {
         override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
+            if (!isAdded) return
             swipeRefresh.isRefreshing = false
+            updateRelativeTime()
         }
 
         override fun onResponse(call: Call<List<Status>>?, response: Response<List<Status>>?) {
+            if (!isAdded) return
+            updateRelativeTime()
             swipeRefresh.isRefreshing = false
             if (response == null || !response.isSuccessful) {
                 return
@@ -120,7 +124,7 @@ abstract class StatusFragment : Fragment(),
 
         override fun onResponse(call: Call<List<Status>>?, response: Response<List<Status>>?) {
             isLoadingNext = false
-            if (response == null || !response.isSuccessful) {
+            if (response == null || !response.isSuccessful || !isAdded) {
                 return
             }
             adapter.addBottom(response.body())
@@ -156,9 +160,8 @@ abstract class StatusFragment : Fragment(),
 
     override fun onStatus(status: Status?) {
         status?.let {
-            if(!adapter.contains(status.id)) {
+            if (!adapter.contains(status.id)) {
                 adapter.addTop(status)
-                adapter.notifyDataSetChanged()
             }
         }
     }
@@ -195,8 +198,8 @@ abstract class StatusFragment : Fragment(),
     override fun onMenuClicked(status: Status, menuId: Int) {
     }
 
-    fun connectStreamingIfNeeded(){
-        if(streaming == null || streaming!!.isConnected || adapter.isEmpty)
+    fun connectStreamingIfNeeded() {
+        if (streaming == null || streaming!!.isConnected || adapter.isEmpty)
             return
 
         streaming?.callBack = this
@@ -205,7 +208,14 @@ abstract class StatusFragment : Fragment(),
 
     abstract fun getTitle(): String
 
-    fun updateRelativeTime(){
-        adapter.notifyDataSetChanged()
+    fun updateRelativeTime() {
+        if (!isAdded) return
+        for (i in 0..(recyclerView.childCount - 1)) {
+            val child = recyclerView.getChildAt(i)
+            val holder = recyclerView.getChildViewHolder(child) as StatusAdapter.StatusViewHolder?
+            holder?.let {
+                it.updateRelativeTime()
+            }
+        }
     }
 }

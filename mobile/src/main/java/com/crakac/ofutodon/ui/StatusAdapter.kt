@@ -46,27 +46,29 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     fun addTop(status: Status) {
         statusArray.add(0, status)
         ids.add(status.id)
-        notifyDataSetChanged()
+        notifyItemInserted(0)
     }
 
     fun addTop(statuses: Collection<Status>) {
         statusArray.addAll(0, statuses)
         statuses.forEach { e -> ids.add(e.id) }
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0, statuses.size)
     }
 
     fun addBottom(statuses: Collection<Status>) {
+        val oldSize = statusArray.size
         statusArray.addAll(statuses)
         statuses.forEach { e -> ids.add(e.id) }
-        notifyDataSetChanged()
+        notifyItemRangeInserted(oldSize, statuses.size)
     }
 
     fun removeById(id: Long) {
         val target = statusArray.find { it.id == id }
         target?.let {
+            val pos = getPosition(target)
             statusArray.remove(target)
             ids.remove(id)
-            notifyDataSetChanged()
+            notifyItemRemoved(pos)
         }
     }
 
@@ -118,7 +120,6 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             }
         }
 
-
         return holder
     }
 
@@ -166,15 +167,17 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         @BindView(R.id.more)
         lateinit var more: ImageView
 
+        var createdAtString: String? = null
+
         init {
             ButterKnife.bind(this, v)
         }
 
         fun setData(context: Context, status: Status) {
-            name.text = status.account?.dispNameWithEmoji
+            name.text = status.account.dispNameWithEmoji
             content.text = status.spannedContent
             Glide.with(context)
-                    .load(status.account?.avatar)
+                    .load(status.account.avatar)
                     .centerCrop()
                     .crossFade()
                     .bitmapTransform(CropCircleTransformation(context))
@@ -220,6 +223,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                     direct.visibility = View.GONE
                 }
             }
+            createdAtString = status.createdAt
+        }
+        fun updateRelativeTime(){
+            createdAt.text = TextUtil.parseCreatedAt(createdAtString!!)
         }
     }
 
