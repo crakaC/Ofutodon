@@ -196,7 +196,11 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    adapter.update(response.body().reblog!!)
+                    if(status.reblog != null){
+                        adapter.replace(status, response.body())
+                    } else {
+                        adapter.update(response.body())
+                    }
                 } else {
                     adapter.update(status)
                 }
@@ -228,7 +232,11 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    adapter.update(response.body())
+                    if(status.reblog != null){
+                        adapter.replace(status, response.body())
+                    } else {
+                        adapter.update(response.body())
+                    }
                 } else {
                     adapter.update(status)
                 }

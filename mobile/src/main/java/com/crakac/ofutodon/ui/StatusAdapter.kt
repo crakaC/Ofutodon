@@ -73,6 +73,12 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
     }
 
+    fun replace(old: Status, new: Status){
+        val pos = getPositionById(old.id)!!
+        statusArray[pos] = new
+        notifyItemChanged(pos)
+    }
+
     fun removeById(id: Long) {
         val target = statusArray.find { it.id == id }
         target?.let {
@@ -186,7 +192,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
         fun setData(context: Context, status: Status) {
             name.text = status.account.dispNameWithEmoji
-            content.text = status.spannedContent
+            content.text = status.spannedContent!!
             Glide.with(context)
                     .load(status.account.avatar)
                     .centerCrop()
@@ -196,13 +202,13 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
             createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
 
-            if(status.isReblogged){
+            if(status.isReblogged || (status.reblog != null && status.reblog.isReblogged)){
                 boost.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
             } else {
                 boost.clearColorFilter()
             }
 
-            if(status.isFavourited){
+            if(status.isFavourited || (status.reblog != null && status.reblog.isFavourited)){
                 favorite.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
             } else {
                 favorite.clearColorFilter()
