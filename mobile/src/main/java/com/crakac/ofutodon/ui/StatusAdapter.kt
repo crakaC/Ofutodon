@@ -39,6 +39,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         return getItem(position).id
     }
 
+    fun getPositionById(id: Long): Int?{
+        return statusArray.indexOfFirst { e -> e.id == id }
+    }
+
     fun getPosition(item: Status): Int {
         return statusArray.indexOf(item)
     }
@@ -60,6 +64,13 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         statusArray.addAll(statuses)
         statuses.forEach { e -> ids.add(e.id) }
         notifyItemRangeInserted(oldSize, statuses.size)
+    }
+
+    fun update(status: Status){
+        getPositionById(status.id)?.let{ pos ->
+            statusArray[pos] = status
+            notifyItemChanged(pos)
+        }
     }
 
     fun removeById(id: Long) {
@@ -98,10 +109,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
 
         holder.boost.setOnClickListener { _ ->
-            statusListener?.onBoostClicked(getItem(holder.adapterPosition))
+            statusListener?.onBoostClicked(holder.boost, getItem(holder.adapterPosition))
         }
         holder.favorite.setOnClickListener { _ ->
-            statusListener?.onFavoriteClicked(getItem(holder.adapterPosition))
+            statusListener?.onFavoriteClicked(holder.favorite, getItem(holder.adapterPosition))
         }
 
         holder.more.setOnClickListener { _ ->
@@ -234,8 +245,8 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         fun onItemClicked(status: Status)
         fun onIconClicked(icon: ImageView, status: Status)
         fun onReplyClicked(icon: ImageView, status: Status)
-        fun onBoostClicked(status: Status)
-        fun onFavoriteClicked(status: Status)
+        fun onBoostClicked(icon: ImageView, status: Status)
+        fun onFavoriteClicked(icon: ImageView, status: Status)
         fun onMenuClicked(status: Status, menuId: Int)
     }
 }

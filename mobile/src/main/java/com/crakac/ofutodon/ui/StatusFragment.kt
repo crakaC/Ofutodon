@@ -19,6 +19,7 @@ import butterknife.Unbinder
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Link
 import com.crakac.ofutodon.model.api.MastodonStreaming
+import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
@@ -189,10 +190,67 @@ abstract class StatusFragment : Fragment(),
         startActivity(intent, options.toBundle())
     }
 
-    override fun onBoostClicked(status: Status) {
+    override fun onBoostClicked(icon: ImageView, status: Status) {
+        val onResponse = object : Callback<Status> {
+            override fun onResponse(call: Call<Status>?, response: Response<Status>?) {
+                if (!isAdded) return
+
+                if (response != null && response.isSuccessful) {
+                    adapter.update(response.body().reblog!!)
+                } else {
+                    adapter.update(status)
+                }
+
+            }
+
+            override fun onFailure(call: Call<Status>?, t: Throwable?) {
+                if (!isAdded) return
+                adapter.update(status)
+            }
+        }
+
+        if (!status.isReblogged) {
+            MastodonUtil.api?.run {
+                reblogStatus(status.id)
+            }?.enqueue(onResponse)
+            icon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
+        } else {
+            MastodonUtil.api?.run {
+                unreblogStatus(status.id)
+            }?.enqueue(onResponse)
+            icon.clearColorFilter()
+        }
     }
 
-    override fun onFavoriteClicked(status: Status) {
+    override fun onFavoriteClicked(icon: ImageView, status: Status) {
+        val onResponse = object : Callback<Status> {
+            override fun onResponse(call: Call<Status>?, response: Response<Status>?) {
+                if (!isAdded) return
+
+                if (response != null && response.isSuccessful) {
+                    adapter.update(response.body())
+                } else {
+                    adapter.update(status)
+                }
+
+            }
+
+            override fun onFailure(call: Call<Status>?, t: Throwable?) {
+                if (!isAdded) return
+                adapter.update(status)
+            }
+        }
+        if (!status.isFavourited) {
+            MastodonUtil.api?.run {
+                favouriteStatus(status.id)
+            }?.enqueue(onResponse)
+            icon.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
+        } else {
+            MastodonUtil.api?.run {
+                unfavouriteStatus(status.id)
+            }?.enqueue(onResponse)
+            icon.clearColorFilter()
+        }
     }
 
     override fun onMenuClicked(status: Status, menuId: Int) {
