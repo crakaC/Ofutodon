@@ -201,13 +201,12 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             if (status.reblog != null) {
                 val original = status.reblog
                 setup(context, original)
-                enableRetweetedView(true)
+                enableReblogView(true)
                 setupRebloggedStatus(context, status)
             } else {
                 setup(context, status)
-                enableRetweetedView(false)
+                enableReblogView(false)
             }
-            createdAtString = status.createdAt
         }
 
         fun updateRelativeTime() {
@@ -265,9 +264,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                 }
             }
 
+            createdAtString = status.createdAt
         }
 
-        private fun enableRetweetedView(isEnabled: Boolean) {
+        private fun enableReblogView(isEnabled: Boolean) {
             for (v in arrayOf(rebloggedBy, rebloggedByIcon)) {
                 v.visibility = if (isEnabled) View.VISIBLE else View.GONE
             }
