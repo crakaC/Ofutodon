@@ -25,7 +25,7 @@ class Status{
     @SerializedName("in_reply_to_account_id")
     val inReplyToAccountId: Long = 0L
     @SerializedName("reblog")
-    val reblog: Status? = null
+    var reblog: Status? = null
     @SerializedName("content")
     val content: String = ""
     @SerializedName("created_at")
@@ -67,4 +67,18 @@ class Status{
         return Visibility.values().first { e -> e.value == visibility}
     }
 
+    val apiId: Long
+    get(){
+        return reblog?.id ?: id
+    }
+
+    val isFaved: Boolean
+    get() {
+        return reblog?.isFavourited ?: isFavourited
+    }
+
+    val isBoosted: Boolean
+    get() {
+        return reblog?.isReblogged ?: isReblogged
+    }
 }

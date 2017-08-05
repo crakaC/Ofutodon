@@ -196,11 +196,10 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    reblogSuccess(status, response.body())
+                    reblogSuccess(adapter.getItemById(status.id), response.body())
                 } else {
                     adapter.update(status)
                 }
-
             }
 
             override fun onFailure(call: Call<Status>?, t: Throwable?) {
@@ -209,29 +208,34 @@ abstract class StatusFragment : Fragment(),
             }
 
             fun reblogSuccess(oldStatus: Status, newStatus: Status){
-                if(oldStatus.reblog != null){
-                    oldStatus.isReblogged = newStatus.isReblogged
+                val isReblogAction = newStatus.reblog != null
+                if(isReblogAction){
+                    if(oldStatus.reblog != null) {
+                        oldStatus.reblog = newStatus.reblog
+                    } else {
+                        oldStatus.isReblogged = true
+                    }
                     adapter.update(oldStatus)
                 } else {
-                    adapter.update(newStatus)
+                    oldStatus.isReblogged = false
+                    if(oldStatus.reblog != null){
+                        oldStatus.reblog!!.isReblogged = false
+                    }
+                    adapter.update(oldStatus)
                 }
             }
         }
 
-        if (!status.isReblogged) {
+        if (status.isBoosted) {
             MastodonUtil.api?.run {
-                reblogStatus(status.id)
-            }?.enqueue(onResponse)
-            icon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
-        } else {
-            MastodonUtil.api?.run {
-                if(status.reblog != null){
-                    unreblogStatus(status.reblog.id)
-                } else {
-                    unreblogStatus(status.id)
-                }
+                unreblogStatus(status.apiId)
             }?.enqueue(onResponse)
             icon.clearColorFilter()
+        } else {
+            MastodonUtil.api?.run {
+                reblogStatus(status.apiId)
+            }?.enqueue(onResponse)
+            icon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
         }
     }
 
@@ -241,7 +245,7 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    favoriteSuccess(status, response.body())
+                    favoriteSuccess(adapter.getItemById(status.id), response.body())
                 } else {
                     adapter.update(status)
                 }
@@ -254,23 +258,23 @@ abstract class StatusFragment : Fragment(),
 
             fun favoriteSuccess(oldStatus: Status, newStatus: Status){
                 if(oldStatus.reblog != null){
-                    oldStatus.isFavourited = newStatus.isFavourited
+                    oldStatus.reblog = newStatus
                     adapter.update(oldStatus)
                 } else {
                     adapter.update(newStatus)
                 }
             }
         }
-        if (!status.isFavourited) {
+        if (status.isFaved) {
             MastodonUtil.api?.run {
-                favouriteStatus(status.id)
-            }?.enqueue(onResponse)
-            icon.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
-        } else {
-            MastodonUtil.api?.run {
-                unfavouriteStatus(status.id)
+                unfavouriteStatus(status.apiId)
             }?.enqueue(onResponse)
             icon.clearColorFilter()
+        } else {
+            MastodonUtil.api?.run {
+                favouriteStatus(status.apiId)
+            }?.enqueue(onResponse)
+            icon.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
         }
     }
 

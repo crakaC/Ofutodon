@@ -43,6 +43,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         return statusArray.indexOfFirst { e -> e.id == id }
     }
 
+    fun getItemById(id: Long): Status{
+        return statusArray.first{ e -> e.id == id }
+    }
+
     fun getPosition(item: Status): Int {
         return statusArray.indexOf(item)
     }
@@ -199,7 +203,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
         fun setData(context: Context, status: Status) {
             if (status.reblog != null) {
-                val original = status.reblog
+                val original = status.reblog!!
                 setup(context, original)
                 enableReblogView(true)
                 setupRebloggedStatus(context, status)
