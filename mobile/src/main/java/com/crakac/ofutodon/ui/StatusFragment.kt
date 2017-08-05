@@ -196,11 +196,7 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    if(status.reblog != null){
-                        adapter.replace(status, response.body())
-                    } else {
-                        adapter.update(response.body())
-                    }
+                    reblogSuccess(status, response.body())
                 } else {
                     adapter.update(status)
                 }
@@ -211,6 +207,15 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
                 adapter.update(status)
             }
+
+            fun reblogSuccess(oldStatus: Status, newStatus: Status){
+                if(oldStatus.reblog != null){
+                    oldStatus.isReblogged = newStatus.isReblogged
+                    adapter.update(oldStatus)
+                } else {
+                    adapter.update(newStatus)
+                }
+            }
         }
 
         if (!status.isReblogged) {
@@ -220,7 +225,11 @@ abstract class StatusFragment : Fragment(),
             icon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
         } else {
             MastodonUtil.api?.run {
-                unreblogStatus(status.id)
+                if(status.reblog != null){
+                    unreblogStatus(status.reblog.id)
+                } else {
+                    unreblogStatus(status.id)
+                }
             }?.enqueue(onResponse)
             icon.clearColorFilter()
         }
@@ -232,20 +241,24 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    if(status.reblog != null){
-                        adapter.replace(status, response.body())
-                    } else {
-                        adapter.update(response.body())
-                    }
+                    favoriteSuccess(status, response.body())
                 } else {
                     adapter.update(status)
                 }
-
             }
 
             override fun onFailure(call: Call<Status>?, t: Throwable?) {
                 if (!isAdded) return
                 adapter.update(status)
+            }
+
+            fun favoriteSuccess(oldStatus: Status, newStatus: Status){
+                if(oldStatus.reblog != null){
+                    oldStatus.isFavourited = newStatus.isFavourited
+                    adapter.update(oldStatus)
+                } else {
+                    adapter.update(newStatus)
+                }
             }
         }
         if (!status.isFavourited) {

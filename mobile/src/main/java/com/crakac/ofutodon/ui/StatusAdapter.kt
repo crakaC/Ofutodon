@@ -31,7 +31,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         return statusArray[position]
     }
 
-    fun contains(id: Long): Boolean{
+    fun contains(id: Long): Boolean {
         return ids.contains(id)
     }
 
@@ -39,7 +39,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         return getItem(position).id
     }
 
-    fun getPositionById(id: Long): Int?{
+    fun getPositionById(id: Long): Int? {
         return statusArray.indexOfFirst { e -> e.id == id }
     }
 
@@ -66,14 +66,14 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         notifyItemRangeInserted(oldSize, statuses.size)
     }
 
-    fun update(status: Status){
-        getPositionById(status.id)?.let{ pos ->
+    fun update(status: Status) {
+        getPositionById(status.id)?.let { pos ->
             statusArray[pos] = status
             notifyItemChanged(pos)
         }
     }
 
-    fun replace(old: Status, new: Status){
+    fun replace(old: Status, new: Status) {
         val pos = getPositionById(old.id)!!
         statusArray[pos] = new
         notifyItemChanged(pos)
@@ -145,12 +145,19 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     }
 
     override fun onViewRecycled(holder: StatusViewHolder?) {
-        if(holder is StatusViewHolder){
+        if (holder is StatusViewHolder) {
             holder.icon.setImageBitmap(null)
         }
     }
 
     class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+        @BindView(R.id.reblogged_by_icon)
+        lateinit var rebloggedByIcon: ImageView
+
+        @BindView(R.id.reblogged_by_name)
+        lateinit var rebloggedBy: TextView
+
         @BindView(R.id.displayName)
         lateinit var name: TextView
 
@@ -191,6 +198,23 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
 
         fun setData(context: Context, status: Status) {
+            if (status.reblog != null) {
+                val original = status.reblog
+                setup(context, original)
+                enableRetweetedView(true)
+                setupRebloggedStatus(context, status)
+            } else {
+                setup(context, status)
+                enableRetweetedView(false)
+            }
+            createdAtString = status.createdAt
+        }
+
+        fun updateRelativeTime() {
+            createdAt.text = TextUtil.parseCreatedAt(createdAtString!!)
+        }
+
+        private fun setup(context: Context, status: Status) {
             name.text = status.account.dispNameWithEmoji
             content.text = status.spannedContent!!
             Glide.with(context)
@@ -202,19 +226,19 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
             createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
 
-            if(status.isReblogged || (status.reblog != null && status.reblog.isReblogged)){
+            if (status.isReblogged) {
                 boost.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
             } else {
                 boost.clearColorFilter()
             }
 
-            if(status.isFavourited || (status.reblog != null && status.reblog.isFavourited)){
+            if (status.isFavourited) {
                 favorite.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
             } else {
                 favorite.clearColorFilter()
             }
 
-            when(status.visibility){
+            when (status.visibility) {
                 Status.Visibility.Direct.value -> {
                     boost.visibility = View.GONE
                     unlisted.visibility = View.GONE
@@ -227,7 +251,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                     followersOnly.visibility = View.VISIBLE
                     direct.visibility = View.GONE
                 }
-                Status.Visibility.UnListed.value ->{
+                Status.Visibility.UnListed.value -> {
                     boost.visibility = View.VISIBLE
                     unlisted.visibility = View.VISIBLE
                     followersOnly.visibility = View.GONE
@@ -240,10 +264,23 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                     direct.visibility = View.GONE
                 }
             }
-            createdAtString = status.createdAt
+
         }
-        fun updateRelativeTime(){
-            createdAt.text = TextUtil.parseCreatedAt(createdAtString!!)
+
+        private fun enableRetweetedView(isEnabled: Boolean) {
+            for (v in arrayOf(rebloggedBy, rebloggedByIcon)) {
+                v.visibility = if (isEnabled) View.VISIBLE else View.GONE
+            }
+        }
+
+        private fun setupRebloggedStatus(context: Context, status: Status) {
+            Glide.with(context)
+                    .load(status.account.avatar)
+                    .centerCrop()
+                    .crossFade()
+                    .bitmapTransform(CropCircleTransformation(context))
+                    .into(rebloggedByIcon)
+            rebloggedBy.text = status.account.dispNameWithEmoji + context.getString(R.string.boosted_by)
         }
     }
 
