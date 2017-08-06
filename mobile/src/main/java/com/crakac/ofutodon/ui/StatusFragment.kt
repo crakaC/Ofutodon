@@ -59,7 +59,7 @@ abstract class StatusFragment : Fragment(),
 
         recyclerView = swipeRefresh.recyclerView
         recyclerView.adapter = adapter
-        layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        layoutManager = FastScrollLinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
         val divider = DividerItemDecoration(activity, layoutManager.orientation).apply {
             setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
@@ -300,5 +300,10 @@ abstract class StatusFragment : Fragment(),
                 it.updateRelativeTime()
             }
         }
+    }
+
+    fun scrollToTop(){
+        if(!isAdded) return
+        recyclerView.smoothScrollToPosition(0)
     }
 }

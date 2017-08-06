@@ -104,6 +104,19 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
         tabLayout.setupWithViewPager(pager)
+        tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                tab?.position?.let{
+                    adapter?.getItem(it)?.scrollToTop()
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+            }
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
