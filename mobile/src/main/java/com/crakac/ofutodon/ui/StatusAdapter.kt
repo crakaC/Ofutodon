@@ -77,12 +77,6 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
     }
 
-    fun replace(old: Status, new: Status) {
-        val pos = getPositionById(old.id)!!
-        statusArray[pos] = new
-        notifyItemChanged(pos)
-    }
-
     fun removeById(id: Long) {
         val target = statusArray.find { it.id == id }
         target?.let {
