@@ -1,7 +1,6 @@
 package com.crakac.ofutodon
 
 import android.app.Application
-import butterknife.ButterKnife
 import com.crakac.ofutodon.util.PrefsUtil
 
 /**
@@ -10,7 +9,6 @@ import com.crakac.ofutodon.util.PrefsUtil
 class OfutodonApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        ButterKnife.setDebug(BuildConfig.DEBUG)
         PrefsUtil.init(this)
     }
 }
