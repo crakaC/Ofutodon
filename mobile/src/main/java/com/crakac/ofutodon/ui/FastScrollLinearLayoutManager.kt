@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSmoothScroller
 import android.support.v7.widget.RecyclerView
+import android.util.DisplayMetrics
 
 class FastScrollLinearLayoutManager(context: Context): LinearLayoutManager(context) {
     val TAG: String = "FastScrollLinearLayoutManager"
@@ -19,6 +20,11 @@ class FastScrollLinearLayoutManager(context: Context): LinearLayoutManager(conte
                     isScrolled = true
                 }
             }
+
+            override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
+                return 5f / displayMetrics.densityDpi
+            }
+
         }
         scroller.targetPosition = position
         startSmoothScroll(scroller)
