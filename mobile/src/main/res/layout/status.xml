@@ -69,6 +69,7 @@
         android:layout_below="@id/status"
         android:layout_marginTop="-4dp"
         android:layout_toEndOf="@+id/icon"
+        android:layout_marginStart="-12dp"
         android:orientation="horizontal">
 
         <ImageView
