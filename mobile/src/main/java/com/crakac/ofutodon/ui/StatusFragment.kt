@@ -304,6 +304,6 @@ abstract class StatusFragment : Fragment(),
 
     fun scrollToTop(){
         if(!isAdded) return
-        recyclerView.smoothScrollToPosition(0)
+        recyclerView.scrollToPosition(0)
     }
 }
