@@ -283,7 +283,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                     .crossFade()
                     .bitmapTransform(CropCircleTransformation(context))
                     .into(rebloggedByIcon)
-            rebloggedBy.text = status.account.dispNameWithEmoji + context.getString(R.string.boosted_by)
+            rebloggedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
         }
     }
 

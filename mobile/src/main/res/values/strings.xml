@@ -22,5 +22,5 @@
     <string name="visibility_unlisted">未収載</string>
     <string name="visibility_followes">フォロワーだけに公開</string>
     <string name="visibility_direct">ダイレクト</string>
-    <string name="boosted_by">さんがブーストしました</string>
+    <string name="boosted_by">%sさんがブーストしました</string>
 </resources>
