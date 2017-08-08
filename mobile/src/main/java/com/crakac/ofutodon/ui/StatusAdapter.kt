@@ -6,6 +6,9 @@ import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.view.menu.MenuPopupHelper
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.TextAppearanceSpan
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -149,7 +152,6 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     }
 
     class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-
         @BindView(R.id.reblogged_by_icon)
         lateinit var rebloggedByIcon: ImageView
 
@@ -188,8 +190,11 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
         var createdAtString: String? = null
 
+        val accrAppearance: TextAppearanceSpan
+
         init {
             ButterKnife.bind(this, v)
+            accrAppearance = TextAppearanceSpan(v.context, R.style.TextAppearance_AppCompat_Caption)
         }
 
         fun setData(context: Context, status: Status) {
@@ -209,7 +214,14 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
 
         private fun setup(context: Context, status: Status) {
-            name.text = status.account.dispNameWithEmoji
+            val sb = SpannableStringBuilder()
+            sb.append(status.account.dispNameWithEmoji)
+
+            val start = sb.length
+            sb.append(" @${status.account.acct}")
+            sb.setSpan(accrAppearance, start, sb.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            name.text = sb
+
             content.text = status.spannedContent!!
             Glide.with(context)
                     .load(status.account.avatar)
