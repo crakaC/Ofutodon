@@ -188,6 +188,9 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         @BindView(R.id.more)
         lateinit var more: ImageView
 
+        @BindView(R.id.preview)
+        lateinit var preview: InlineImagePreview
+
         var createdAtString: String? = null
 
         val accrAppearance: TextAppearanceSpan
@@ -267,6 +270,13 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                 }
             }
 
+            if(status.mediaAttachments.isNotEmpty()){
+                preview.visibility = View.VISIBLE
+                preview.setMedia(status.mediaAttachments)
+            } else {
+                preview.visibility = View.GONE
+            }
+
             createdAtString = status.createdAt
         }
 
@@ -279,7 +289,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         private fun setupRebloggedStatus(context: Context, status: Status) {
             Glide.with(context)
                     .load(status.account.avatar)
-                    .centerCrop()
+                    .fitCenter()
                     .crossFade()
                     .bitmapTransform(CropCircleTransformation(context))
                     .into(rebloggedByIcon)

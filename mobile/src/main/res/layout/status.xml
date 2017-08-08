@@ -67,11 +67,20 @@
         android:layout_marginTop="@dimen/spacing_micro"
         android:layout_toEndOf="@+id/icon" />
 
+    <com.crakac.ofutodon.ui.InlineImagePreview
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/status"
+        android:layout_alignStart="@+id/status"
+        android:visibility="gone"
+    />
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/status"
+        android:layout_below="@id/preview"
         android:layout_marginStart="-12dp"
         android:layout_marginTop="-4dp"
         android:layout_toEndOf="@+id/icon">
