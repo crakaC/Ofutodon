@@ -46,7 +46,7 @@ static def getProps(String key) {
 dependencies {
     ext.support_library_version = '26.0.0'
     ext.glide_version = '3.8.0'
-    ext.butterknife_version = '8.7.0'
+    ext.butterknife_version = '8.8.0'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
