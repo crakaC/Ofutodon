@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_camera" />
+            android:scaleType="centerCrop" />
 
         <View
             android:id="@+id/separator_left"
@@ -29,8 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_save" />
+            android:scaleType="centerCrop" />
 
     </LinearLayout>
 
@@ -51,8 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_all_inclusive" />
+            android:scaleType="centerCrop"/>
 
         <View
             android:id="@+id/separator_right"
@@ -64,8 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_star" />
+            android:scaleType="centerCrop"/>
 
     </LinearLayout>
 
