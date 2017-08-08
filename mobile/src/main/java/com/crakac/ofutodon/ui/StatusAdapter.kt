@@ -174,9 +174,6 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         @BindView(R.id.boost)
         lateinit var boost: ImageView
 
-        @BindView(R.id.unlisted)
-        lateinit var unlisted: ImageView
-
         @BindView(R.id.followers_only)
         lateinit var followersOnly: ImageView
 
@@ -238,25 +235,21 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             when (status.visibility) {
                 Status.Visibility.Direct.value -> {
                     boost.visibility = View.GONE
-                    unlisted.visibility = View.GONE
                     followersOnly.visibility = View.GONE
                     direct.visibility = View.VISIBLE
                 }
                 Status.Visibility.Private.value -> {
                     boost.visibility = View.GONE
-                    unlisted.visibility = View.GONE
                     followersOnly.visibility = View.VISIBLE
                     direct.visibility = View.GONE
                 }
                 Status.Visibility.UnListed.value -> {
                     boost.visibility = View.VISIBLE
-                    unlisted.visibility = View.VISIBLE
                     followersOnly.visibility = View.GONE
                     direct.visibility = View.GONE
                 }
                 else -> {
                     boost.visibility = View.VISIBLE
-                    unlisted.visibility = View.GONE
                     followersOnly.visibility = View.GONE
                     direct.visibility = View.GONE
                 }

@@ -2,20 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_dark"
+    android:background="@color/background_super_dark"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
     android:paddingEnd="@dimen/list_item_padding"
     android:paddingStart="@dimen/list_item_padding"
-    android:paddingTop="@dimen/list_item_padding">
+    android:paddingTop="@dimen/spacing_mid_large"
+    android:paddingBottom="@dimen/spacing_micro">
 
     <ImageView
         android:id="@+id/reblogged_by_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/status"
+        android:layout_alignStart="@+id/icon"
         android:layout_marginBottom="@dimen/list_item_padding" />
 
     <TextView
@@ -24,9 +25,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_micro"
-        android:drawableEnd="@drawable/ic_boost"
-        android:drawableTint="@color/boosted"
-        android:layout_toEndOf="@+id/reblogged_by_icon" />
+        android:layout_toEndOf="@+id/reblogged_by_icon"
+        android:drawableStart="@drawable/ic_boost"
+        android:drawableTint="@color/boosted" />
 
     <TextView
         android:id="@+id/displayName"
@@ -52,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/displayName"
+        android:layout_marginTop="@dimen/spacing_micro"
         android:layout_toEndOf="@+id/icon" />
 
     <TextView
@@ -62,72 +64,78 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@id/reblogged_by_icon" />
 
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/status"
-        android:layout_marginTop="-4dp"
-        android:layout_toEndOf="@+id/icon"
         android:layout_marginStart="-12dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="-4dp"
+        android:layout_toEndOf="@+id/icon">
 
-        <ImageView
-            android:id="@+id/reply"
-            style="@style/StatusActionItem"
-            android:layout_marginEnd="@dimen/image_inner_padding"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_reply" />
+        <TableRow>
 
-        <ImageView
-            android:id="@+id/boost"
-            style="@style/StatusActionItem"
-            android:layout_marginEnd="@dimen/image_inner_padding"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_boost" />
+            <FrameLayout android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/unlisted"
-            style="@style/StatusActionItem"
-            android:layout_marginEnd="@dimen/image_inner_padding"
-            android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_lock_open"
-            android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/reply"
+                    style="@style/StatusActionItem"
+                    android:layout_gravity="center|center_horizontal"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:padding="@dimen/image_inner_padding"
+                    android:src="@drawable/ic_reply" />
+            </FrameLayout>
 
-        <ImageView
-            android:id="@+id/followers_only"
-            style="@style/StatusActionItem"
-            android:layout_marginEnd="@dimen/image_inner_padding"
-            android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_lock"
-            android:visibility="gone" />
+            <FrameLayout android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/direct"
-            style="@style/StatusActionItem"
-            android:layout_marginEnd="@dimen/image_inner_padding"
-            android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_private_message"
-            android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/boost"
+                    style="@style/StatusActionItem"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:padding="@dimen/image_inner_padding"
+                    android:src="@drawable/ic_boost" />
 
-        <ImageView
-            android:id="@+id/favorite"
-            style="@style/StatusActionItem"
-            android:layout_marginEnd="@dimen/image_inner_padding"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_star" />
+                <ImageView
+                    android:id="@+id/followers_only"
+                    style="@style/StatusActionItem"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/image_inner_padding"
+                    android:src="@drawable/ic_lock"
+                    android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/more"
-            style="@style/StatusActionItem"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/image_inner_padding"
-            android:src="@drawable/ic_more" />
+                <ImageView
+                    android:id="@+id/direct"
+                    style="@style/StatusActionItem"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/image_inner_padding"
+                    android:src="@drawable/ic_private_message"
+                    android:visibility="gone" />
+            </FrameLayout>
 
-    </LinearLayout>
+            <FrameLayout android:layout_weight="1">
 
+                <ImageView
+                    android:id="@+id/favorite"
+                    style="@style/StatusActionItem"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:padding="@dimen/image_inner_padding"
+                    android:src="@drawable/ic_star" />
+            </FrameLayout>
+
+            <FrameLayout android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/more"
+                    style="@style/StatusActionItem"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:padding="@dimen/image_inner_padding"
+                    android:src="@drawable/ic_more" />
+            </FrameLayout>
+        </TableRow>
+
+    </TableLayout>
 
 </RelativeLayout>
