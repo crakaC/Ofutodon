@@ -71,83 +71,86 @@
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/status"
         android:layout_alignStart="@+id/status"
-        android:visibility="gone"
-    />
+        android:layout_below="@+id/status"
+        android:visibility="gone" />
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/preview"
         android:layout_marginStart="-12dp"
-        android:layout_marginTop="-4dp"
-        android:layout_toEndOf="@+id/icon">
+        android:layout_toEndOf="@+id/icon"
+        android:orientation="horizontal">
 
-        <TableRow>
 
-            <FrameLayout android:layout_weight="1">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
-                <ImageView
-                    android:id="@+id/reply"
-                    style="@style/StatusActionItem"
-                    android:layout_gravity="center|center_horizontal"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:padding="@dimen/image_inner_padding"
-                    android:src="@drawable/ic_reply" />
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/reply"
+                style="@style/StatusActionItem"
+                android:layout_gravity="center|center_horizontal"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_reply" />
+        </FrameLayout>
 
-            <FrameLayout android:layout_weight="1">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
-                <ImageView
-                    android:id="@+id/boost"
-                    style="@style/StatusActionItem"
-                    android:layout_gravity="center"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:padding="@dimen/image_inner_padding"
-                    android:src="@drawable/ic_boost" />
+            <ImageView
+                android:id="@+id/boost"
+                style="@style/StatusActionItem"
+                android:layout_gravity="center"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_boost" />
 
-                <ImageView
-                    android:id="@+id/followers_only"
-                    style="@style/StatusActionItem"
-                    android:layout_gravity="center"
-                    android:padding="@dimen/image_inner_padding"
-                    android:src="@drawable/ic_lock"
-                    android:visibility="gone" />
+            <ImageView
+                android:id="@+id/followers_only"
+                style="@style/StatusActionItem"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_lock"
+                android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/direct"
-                    style="@style/StatusActionItem"
-                    android:layout_gravity="center"
-                    android:padding="@dimen/image_inner_padding"
-                    android:src="@drawable/ic_private_message"
-                    android:visibility="gone" />
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/direct"
+                style="@style/StatusActionItem"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_private_message"
+                android:visibility="gone" />
+        </FrameLayout>
 
-            <FrameLayout android:layout_weight="1">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
-                <ImageView
-                    android:id="@+id/favorite"
-                    style="@style/StatusActionItem"
-                    android:layout_gravity="center"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:padding="@dimen/image_inner_padding"
-                    android:src="@drawable/ic_star" />
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/favorite"
+                style="@style/StatusActionItem"
+                android:layout_gravity="center"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_star" />
+        </FrameLayout>
 
-            <FrameLayout android:layout_weight="1">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
-                <ImageView
-                    android:id="@+id/more"
-                    style="@style/StatusActionItem"
-                    android:layout_gravity="center"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:padding="@dimen/image_inner_padding"
-                    android:src="@drawable/ic_more" />
-            </FrameLayout>
-        </TableRow>
+            <ImageView
+                android:id="@+id/more"
+                style="@style/StatusActionItem"
+                android:layout_gravity="center"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_more" />
+        </FrameLayout>
 
-    </TableLayout>
+    </LinearLayout>
 
 </RelativeLayout>
