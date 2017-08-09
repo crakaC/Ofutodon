@@ -14,6 +14,7 @@ import com.crakac.ofutodon.model.api.entity.Attachment
 
 class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     val TAG: String = "InlineImagePreview"
+    val PREVIEW_MAX_NUM = 4
 
     var medias: List<Attachment>? = null
 
@@ -31,6 +32,8 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     init {
         val v = View.inflate(context, R.layout.inline_preview, this)
+        val padding = resources.getDimensionPixelSize(R.dimen.spacing_micro)
+        v.setPadding(0, padding, 0, padding)
         ButterKnife.bind(v)
     }
 
@@ -49,7 +52,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(c
         }
         rightContainer.visibility = if (attachments.size >= 2) View.VISIBLE else View.GONE
         separators.forEach { e -> e.visibility = View.GONE }
-        for(i in 0..(attachments.size - 2)){
+        for(i in 0..Math.min(attachments.size - 2, PREVIEW_MAX_NUM)){
             separators[i].visibility = View.VISIBLE
         }
     }
