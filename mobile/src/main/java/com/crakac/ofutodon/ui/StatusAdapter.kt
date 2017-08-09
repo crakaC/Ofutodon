@@ -2,8 +2,6 @@ package com.crakac.ofutodon.ui
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
-import android.support.v7.view.menu.MenuBuilder
-import android.support.v7.view.menu.MenuPopupHelper
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
@@ -124,7 +122,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
         holder.more.setOnClickListener { _ ->
             val popup = PopupMenu(context, holder.more)
-            popup.inflate(R.menu.activity_home_drawer)
+            popup.inflate(R.menu.status_popup)
             popup.setOnMenuItemClickListener { item ->
                 val status = getItem(holder.adapterPosition)
                 val menuItemId = item.itemId
@@ -132,10 +130,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                 Log.d(TAG, "menu item clicked!")
                 return@setOnMenuItemClickListener true
             }
-            MenuPopupHelper(context, popup.menu as MenuBuilder, holder.more).apply {
-                setForceShowIcon(true)
-                show()
-            }
+            popup.show()
         }
 
         return holder

@@ -16,7 +16,10 @@
     <string name="toot_unpublic">トゥート</string>
     <string name="toot_content_warning">CW</string>
     <string name="toot_NSFW">NSFW</string>
-    <string name="delete">削除する</string>
+    <string name="delete_attachment">削除する</string>
+    <string name="delete_status">削除</string>
+    <string name="mute_user">ミュート</string>
+    <string name="block_user">ブロック</string>
     <string name="uploading_media">アップロード中…</string>
     <string name="visibility_public">公開</string>
     <string name="visibility_unlisted">未収載</string>
