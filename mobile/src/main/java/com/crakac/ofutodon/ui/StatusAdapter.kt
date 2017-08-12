@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.TextAppearanceSpan
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -132,6 +131,11 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             popup.show()
         }
 
+        holder.preview.setOnPreviewClickListener(object : InlineImagePreview.OnClickPreviewListener {
+            override fun onClick(attachmentIndex: Int) {
+                statusListener?.onClickAttachment(getItem(holder.adapterPosition), attachmentIndex)
+            }
+        })
         return holder
     }
 
@@ -298,5 +302,6 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         fun onBoostClicked(icon: ImageView, status: Status)
         fun onFavoriteClicked(icon: ImageView, status: Status)
         fun onMenuClicked(status: Status, menuId: Int)
+        fun onClickAttachment(status: Status, attachmentIndex: Int)
     }
 }
