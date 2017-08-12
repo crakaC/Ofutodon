@@ -17,10 +17,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.Link
-import com.crakac.ofutodon.model.api.MastodonStreaming
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.Range
+import com.crakac.ofutodon.model.api.*
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.transition.FabTransform
@@ -279,6 +276,10 @@ abstract class StatusFragment : Fragment(),
     }
 
     override fun onMenuClicked(status: Status, menuId: Int) {
+
+        MastodonUtil.api?.run{
+
+        }
     }
 
     fun connectStreamingIfNeeded() {

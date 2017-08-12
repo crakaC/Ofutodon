@@ -25,6 +25,7 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Mastodon
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.AccessToken
+import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.model.api.entity.AppCredentials
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.util.C
@@ -258,6 +259,17 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //save access token in preferences
         MastodonUtil.saveAccessToken(domain, accessToken)
         MastodonUtil.api(domain, accessToken)
+        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
+            override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
+                if(response == null || !response.isSuccessful) {
+                    Log.w(TAG, "fetchCurrentAccount Failed")
+                    return
+                }
+            }
+
+            override fun onFailure(call: Call<Account>?, t: Throwable?) {
+            }
+        })
         Snackbar.make(fab, "Login Success: $domain", Snackbar.LENGTH_SHORT).show()
     }
 }

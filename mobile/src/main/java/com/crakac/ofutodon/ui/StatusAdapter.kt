@@ -121,13 +121,12 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
 
         holder.more.setOnClickListener { _ ->
+            val status = getItem(holder.adapterPosition)
             val popup = PopupMenu(context, holder.more)
             popup.inflate(R.menu.status_popup)
             popup.setOnMenuItemClickListener { item ->
-                val status = getItem(holder.adapterPosition)
                 val menuItemId = item.itemId
                 statusListener?.onMenuClicked(status, menuItemId)
-                Log.d(TAG, "menu item clicked!")
                 return@setOnMenuItemClickListener true
             }
             popup.show()

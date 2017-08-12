@@ -47,6 +47,7 @@ interface Mastodon {
             @Field("scope")
             scope: String
     ): Call<AccessToken>
+
     @GET("/api/v1/accounts/verify_credentials")
     fun getCurrentAccount(): Call<Account>
 
