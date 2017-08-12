@@ -577,6 +577,7 @@ class TootActivity : AppCompatActivity() {
         tootText.setText("@${status.account.acct} ")
         tootText.requestFocus()
         tootText.setSelection(tootText.length())
+        checkTextCount()
         replyToStatus = status
     }
 }
