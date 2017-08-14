@@ -23,18 +23,17 @@ class AttachmentsPreviewActivity : AppCompatActivity() {
     var targetStatus: Status? = null
 
     companion object {
-        private val ACTION_ATTACHMENTS_PREVIEW = "from_preview"
-        private val ACTION_STATUS = "from_status"
-        private val TARGET_STATUS = "status"
+        private val TARGET = "target"
         private val INDEX = "index"
-
-        fun setPreviewInfo(intent: Intent, uris: Array<Uri>) {
-            intent.action = PreviewAction.Preview.toString()
-        }
 
         fun setup(intent: Intent, status: Status, index: Int = 0) {
             intent.action = PreviewAction.Detail.toString()
-            intent.putExtra(TARGET_STATUS, Gson().toJson(status))
+            intent.putExtra(TARGET, Gson().toJson(status))
+            intent.putExtra(INDEX, index)
+        }
+        fun setup(intent: Intent, uris: ArrayList<Uri>, index: Int = 0){
+            intent.action = PreviewAction.Preview.toString()
+            intent.putExtra(TARGET, uris)
             intent.putExtra(INDEX, index)
         }
     }
@@ -45,23 +44,28 @@ class AttachmentsPreviewActivity : AppCompatActivity() {
         ButterKnife.bind(this)
         when (PreviewAction.valueOf(intent.action)) {
             PreviewAction.Preview -> {
+                setupWithUris()
             }
             PreviewAction.Detail -> {
-                setupPreviewWithTargetStatus()
+                setupWithTargetStatus()
             }
         }
     }
 
-    private fun setupPreviewWithTargetStatus() {
-        targetStatus = Gson().fromJson(intent.extras.getString(TARGET_STATUS), Status::class.java)
+    private fun setupWithTargetStatus() {
+        targetStatus = Gson().fromJson(intent.extras.getString(TARGET), Status::class.java)
         val attachments = if(targetStatus!!.reblog != null){
              targetStatus!!.reblog!!.mediaAttachments
         } else {
             targetStatus!!.mediaAttachments
         }
-        val adapter = AttachmentPreviewAdapter(attachments)
-        val index = intent.extras.getInt(INDEX, 0)
-        pager.adapter = adapter
-        pager.currentItem = index
+        pager.adapter = AttachmentPreviewAdapter(attachments)
+        pager.currentItem = intent.extras.getInt(INDEX, 0)
+    }
+
+    private fun setupWithUris(){
+        val uris = intent.extras.getParcelableArrayList<Uri>(TARGET) as ArrayList<Uri>
+        pager.adapter = UploadedMediaPreviewAdapter(uris)
+        pager.currentItem = intent.extras.getInt(INDEX, 0)
     }
 }

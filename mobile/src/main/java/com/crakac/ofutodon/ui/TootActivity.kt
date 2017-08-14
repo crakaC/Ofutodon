@@ -347,11 +347,18 @@ class TootActivity : AppCompatActivity() {
                         v.setOnClickListener { _ ->
                             val popup = PopupMenu(this@TootActivity, v)
                             popup.inflate(R.menu.attachment_thumbnail)
-                            popup.setOnMenuItemClickListener { _ ->
-                                imageAttachmentParent.removeView(v)
-                                uriAttachmentsMap.remove(uri)
-                                if (uriAttachmentsMap.isEmpty())
-                                    nsfwButton.visibility = View.GONE
+                            popup.setOnMenuItemClickListener { menu ->
+                                when(menu.itemId){
+                                    R.id.preview -> {
+                                        preview(uri)
+                                    }
+                                    R.id.delete -> {
+                                        imageAttachmentParent.removeView(v)
+                                        uriAttachmentsMap.remove(uri)
+                                        if (uriAttachmentsMap.isEmpty())
+                                            nsfwButton.visibility = View.GONE
+                                    }
+                                }
                                 return@setOnMenuItemClickListener true
                             }
                             MenuPopupHelper(this@TootActivity, popup.menu as MenuBuilder, v).apply {
@@ -579,5 +586,12 @@ class TootActivity : AppCompatActivity() {
         tootText.setSelection(tootText.length())
         checkTextCount()
         replyToStatus = status
+    }
+
+    private fun preview(uri: Uri){
+        val intent = Intent(this, AttachmentsPreviewActivity::class.java)
+        val uris = ArrayList<Uri>(uriAttachmentsMap.keys)
+        AttachmentsPreviewActivity.setup(intent, uris, 0)
+        startActivity(intent)
     }
 }
