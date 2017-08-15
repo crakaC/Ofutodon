@@ -75,7 +75,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        if (MastodonUtil.hasAccessToken(instanceDomain)){
+        if (MastodonUtil.hasAccessToken(instanceDomain)) {
             val token = MastodonUtil.getAccessToken(instanceDomain)
             mastodon = MastodonUtil.api(instanceDomain, token)
         } else {
@@ -101,22 +101,19 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                adapter?.getItem(position)?.updateRelativeTime()
+                val fragment = adapter?.instantiateItem(pager, position) as StatusFragment
+                fragment.updateRelativeTime()
             }
         })
         tabLayout.setupWithViewPager(pager)
-        tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                tab?.position?.let{
-                    adapter?.getItem(it)?.scrollToTop()
-                }
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                val fragment = adapter?.instantiateItem(pager, tab.position) as StatusFragment
+                fragment.scrollToTop()
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabSelected(tab: TabLayout.Tab?) {}
         })
     }
 
@@ -187,7 +184,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (code != null) {
             val domain = PrefsUtil.getString(C.OAUTH_TARGET_DOMAIN)
-            if(domain == null){
+            if (domain == null) {
                 Log.e(TAG, "target domain is null")
                 //TODO Show dialog
                 return
@@ -241,14 +238,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @OnClick(R.id.fab)
     fun onClickFab(fab: View) {
-        val tootIntent = Intent(this , TootActivity::class.java)
+        val tootIntent = Intent(this, TootActivity::class.java)
         FabTransform.addExtras(tootIntent, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_message)
         val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_toot_dialog));
         startActivityForResult(tootIntent, 128, options.toBundle())
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if(keyCode == KeyEvent.KEYCODE_N){
+        if (keyCode == KeyEvent.KEYCODE_N) {
             onClickFab(fab)
             return true
         }
@@ -261,7 +258,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         MastodonUtil.api(domain, accessToken)
         MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
             override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                if(response == null || !response.isSuccessful) {
+                if (response == null || !response.isSuccessful) {
                     Log.w(TAG, "fetchCurrentAccount Failed")
                     return
                 }
