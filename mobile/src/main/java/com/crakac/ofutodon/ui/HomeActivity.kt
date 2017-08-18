@@ -189,23 +189,46 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 //TODO Show dialog
                 return
             }
-            MastodonUtil.fetchAccessToken(domain, oauthRedirectUri, code)
-                    .enqueue(object : Callback<AccessToken> {
-                        override fun onResponse(call: Call<AccessToken>?, response: Response<AccessToken>?) {
-                            if (response == null || !response.isSuccessful) {
-                                Log.w(TAG, "fetchOAuthToken is not successful")
-                                return
-                            }
-
-                            onLoginSuccess(domain, response.body().accessToken)
-                            PrefsUtil.remove(C.OAUTH_TARGET_DOMAIN)
-                        }
-
-                        override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
-                            Log.w(TAG, "fetchOAuthTokenFailed")
-                        }
-                    })
+            MastodonUtil.fetchAccessToken(domain, oauthRedirectUri, code).enqueue(fetchAccessTokenCallback)
         }
+    }
+
+    val fetchAccessTokenCallback = object : Callback<AccessToken> {
+        override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>?) {
+            if (response == null || !response.isSuccessful) {
+                Log.w(TAG, "fetchOAuthToken is not successful")
+                return
+            }
+            val domain = call.request().url().host()
+            onFetchAccessTokenSuccess(domain, response.body().accessToken)
+            PrefsUtil.remove(C.OAUTH_TARGET_DOMAIN)
+        }
+
+        override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
+            Log.w(TAG, "fetchOAuthTokenFailed")
+        }
+    }
+
+    fun onFetchAccessTokenSuccess(domain: String, accessToken: String) {
+        //save access token
+        MastodonUtil.saveAccessToken(domain, accessToken)
+
+        MastodonUtil.api(domain, accessToken)
+
+        //verify credentials
+        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
+            override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
+                if (response == null || !response.isSuccessful) {
+                    Log.w(TAG, "fetchCurrentAccount Failed")
+                    return
+                }
+                Snackbar.make(fab, "Login Success: $domain", Snackbar.LENGTH_SHORT).show()
+            }
+
+            override fun onFailure(call: Call<Account>?, t: Throwable?) {
+                Snackbar.make(fab, "Login Failed: $domain", Snackbar.LENGTH_SHORT).show()
+            }
+        })
     }
 
     fun registerApplication() {
@@ -250,23 +273,5 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             return true
         }
         return super.onKeyDown(keyCode, event)
-    }
-
-    fun onLoginSuccess(domain: String, accessToken: String) {
-        //save access token in preferences
-        MastodonUtil.saveAccessToken(domain, accessToken)
-        MastodonUtil.api(domain, accessToken)
-        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
-            override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                if (response == null || !response.isSuccessful) {
-                    Log.w(TAG, "fetchCurrentAccount Failed")
-                    return
-                }
-            }
-
-            override fun onFailure(call: Call<Account>?, t: Throwable?) {
-            }
-        })
-        Snackbar.make(fab, "Login Success: $domain", Snackbar.LENGTH_SHORT).show()
     }
 }
