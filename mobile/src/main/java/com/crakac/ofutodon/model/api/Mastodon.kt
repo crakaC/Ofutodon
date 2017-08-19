@@ -319,7 +319,7 @@ interface Mastodon {
             @QueryMap
             pager: Map<String, String> = emptyMap(),
             @Query("local")
-            isLocal: Boolean?
+            isLocal: Boolean? = null
     ): Call<List<Status>>
 
     @GET("/api/v1/timelines/tag/{hashtag}")
