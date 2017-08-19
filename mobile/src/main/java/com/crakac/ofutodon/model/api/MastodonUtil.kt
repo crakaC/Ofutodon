@@ -22,25 +22,7 @@ class MastodonUtil private constructor() {
         val TAG: String = "MastodonUtil"
         val dispatcher: Dispatcher = Dispatcher()
         fun api(domain: String, accessToken: String? = null): Mastodon {
-
-            val clientBuilder = getLoggableHttpClientBuilder()
-            accessToken.let {
-                clientBuilder.addInterceptor {
-                    val org = it.request()
-                    val builder = org.newBuilder()
-                    builder.addHeader("Authorization", "Bearer $accessToken")
-                    val newRequest = builder.build()
-                    it.proceed(newRequest)
-                }
-            }
-
-            val okHttpClient = clientBuilder.dispatcher(dispatcher).build()
-            val retrofit = Retrofit.Builder()
-                    .baseUrl("https://$domain")
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-            instance = retrofit.create(Mastodon::class.java)
+            instance = MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
             return instance!!
         }
 
@@ -114,40 +96,41 @@ class MastodonUtil private constructor() {
         }
     }
 
-    class MastodonBuilder(){
+    class MastodonBuilder() {
         companion object {
             val dispatcher: Dispatcher = Dispatcher()
         }
 
         private var account: Account? = null
         private var host: String = ""
+        private var token: String? = null
 
-        constructor(account: Account): this(){
+        constructor(account: Account) : this() {
             setAccount(account)
         }
 
-        fun setHost(host: String): MastodonBuilder{
+        fun setHost(host: String): MastodonBuilder {
             this.host = host
             return this
         }
 
-        fun setAccount(account: Account): MastodonBuilder{
+        fun setAccount(account: Account): MastodonBuilder {
             this.account = account
             this.host = account.host
             return this
         }
 
-        fun build(): MastodonApi{
+        fun setAccessToken(accessToken: String?): MastodonBuilder {
+            this.token = accessToken
+            return this
+        }
 
-            val clientBuilder = getLoggableHttpClientBuilder()
-            account?.accessToken?.let { token ->
-                clientBuilder.addInterceptor {
-                    val org = it.request()
-                    val builder = org.newBuilder()
-                    builder.addHeader("Authorization", "Bearer $token")
-                    val newRequest = builder.build()
-                    it.proceed(newRequest)
-                }
+        fun build(): MastodonApi {
+
+            val clientBuilder = if (token != null) {
+                createMastodonHttpClientBuilder(token)
+            } else {
+                createMastodonHttpClientBuilder(account?.accessToken)
             }
 
             val okHttpClient = clientBuilder.dispatcher(MastodonUtil.dispatcher).build()
@@ -157,15 +140,29 @@ class MastodonUtil private constructor() {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
             return MastodonApi(retrofit.create(Mastodon::class.java), account)
-
         }
+
+        private fun createMastodonHttpClientBuilder(bearerToken: String?): OkHttpClient.Builder {
+            val httpClientBuilder = getLoggableHttpClientBuilder()
+            bearerToken?.let { token ->
+                httpClientBuilder.addInterceptor {
+                    val org = it.request()
+                    val builder = org.newBuilder()
+                    builder.addHeader("Authorization", "Bearer $token")
+                    val newRequest = builder.build()
+                    it.proceed(newRequest)
+                }
+            }
+            return httpClientBuilder
+        }
+
     }
 
-    class MastodonApi(delegate: Mastodon, account: Account? = null): Mastodon by delegate{
+    class MastodonApi(delegate: Mastodon, account: Account? = null) : Mastodon by delegate {
         var currentId = 0L
             private set
 
-        init{
+        init {
             currentId = account?.userId ?: 0L
         }
     }
@@ -175,5 +172,7 @@ class MastodonUtil private constructor() {
             val userId: Long,
             val userName: String,
             val accessToken: String
-    )
+    ) {
+        val acct: String get() = "$host@$userName"
+    }
 }
