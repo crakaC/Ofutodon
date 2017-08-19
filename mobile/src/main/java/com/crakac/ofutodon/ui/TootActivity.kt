@@ -141,7 +141,7 @@ class TootActivity : AppCompatActivity() {
         return spoilerText.text.toString()
     }
 
-    var isNotSafeForWork = false
+    var isNsfw = false
 
     var replyToStatus: Status? = null
 
@@ -178,7 +178,7 @@ class TootActivity : AppCompatActivity() {
         outState.putString("tootText", tootText.text.toString())
         outState.putString("spoilerText", spoilerText.text.toString())
         outState.putBoolean("cw", isContentWarningEnabled)
-        outState.putBoolean("nsfw", isNotSafeForWork)
+        outState.putBoolean("nsfw", isNsfw)
         outState.putSerializable("visibility", tootVisibility)
         if(replyToStatus != null){
             outState.putString(REPLY_STATUS, Gson().toJson(replyToStatus))
@@ -234,7 +234,7 @@ class TootActivity : AppCompatActivity() {
                         visibility = tootVisibility.value,
                         spoilerText = getSpoilerText(),
                         mediaIds = uriAttachmentsMap.filter { e -> e.value != null }.map { e -> e.value!!.id },
-                        isSensitive = isNotSafeForWork,
+                        isSensitive = isNsfw,
                         text = tootText.text.toString()
                 ))?.enqueue(onTootFinished)
     }
@@ -438,8 +438,8 @@ class TootActivity : AppCompatActivity() {
 
     @OnClick(R.id.nsfw)
     fun toggleNotSafeForWork() {
-        isNotSafeForWork = !isNotSafeForWork
-        setNotSafeForWorkEnabled(isNotSafeForWork)
+        isNsfw = !isNsfw
+        setNotSafeForWorkEnabled(isNsfw)
     }
 
     fun setNotSafeForWorkEnabled(isEnabled: Boolean){
@@ -477,7 +477,7 @@ class TootActivity : AppCompatActivity() {
     private fun clearAttachments() {
         imageAttachmentParent.removeAllViews()
         uriAttachmentsMap.clear()
-        if (isNotSafeForWork) {
+        if (isNsfw) {
             toggleNotSafeForWork()
         }
         nsfwButton.visibility = View.GONE
@@ -591,7 +591,7 @@ class TootActivity : AppCompatActivity() {
     private fun preview(uri: Uri){
         val intent = Intent(this, AttachmentsPreviewActivity::class.java)
         val uris = ArrayList<Uri>(uriAttachmentsMap.keys)
-        AttachmentsPreviewActivity.setup(intent, uris, 0)
+        AttachmentsPreviewActivity.setup(intent, uris, uris.indexOf(uri))
         startActivity(intent)
     }
 }

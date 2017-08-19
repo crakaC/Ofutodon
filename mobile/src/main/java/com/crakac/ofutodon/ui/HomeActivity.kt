@@ -90,8 +90,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //fragments
         if (adapter == null) {
             adapter = MyFragmentPagerAdapter(supportFragmentManager)
-            adapter?.add(HomeTimelineFragment())
-            adapter?.add(LocalTimelineFragment())
+            adapter!!.add(HomeTimelineFragment())
+            adapter!!.add(LocalTimelineFragment())
         }
 
         pager.adapter = adapter
@@ -101,15 +101,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                val fragment = adapter?.instantiateItem(pager, position) as StatusFragment
-                fragment.updateRelativeTime()
+                val fragment = adapter?.instantiateItem(pager, position) as StatusFragment?
+                fragment?.updateRelativeTime()
             }
         })
         tabLayout.setupWithViewPager(pager)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab) {
-                val fragment = adapter?.instantiateItem(pager, tab.position) as StatusFragment
-                fragment.scrollToTop()
+                val fragment = adapter?.instantiateItem(pager, tab.position) as StatusFragment?
+                fragment?.scrollToTop()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
