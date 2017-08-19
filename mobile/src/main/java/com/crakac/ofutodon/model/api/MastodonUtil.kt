@@ -106,11 +106,74 @@ class MastodonUtil private constructor() {
         private fun getLoggableHttpClientBuilder(): OkHttpClient.Builder {
             val logger = HttpLoggingInterceptor()
             if (BuildConfig.DEBUG) {
-                logger.level = HttpLoggingInterceptor.Level.HEADERS
+                logger.level = HttpLoggingInterceptor.Level.BODY
             } else {
                 logger.level = HttpLoggingInterceptor.Level.NONE
             }
             return OkHttpClient.Builder().addInterceptor(logger)
         }
     }
+
+    class MastodonBuilder(){
+        companion object {
+            val dispatcher: Dispatcher = Dispatcher()
+        }
+
+        private var account: Account? = null
+        private var host: String = ""
+
+        constructor(account: Account): this(){
+            setAccount(account)
+        }
+
+        fun setHost(host: String): MastodonBuilder{
+            this.host = host
+            return this
+        }
+
+        fun setAccount(account: Account): MastodonBuilder{
+            this.account = account
+            this.host = account.host
+            return this
+        }
+
+        fun build(): MastodonApi{
+
+            val clientBuilder = getLoggableHttpClientBuilder()
+            account?.accessToken?.let { token ->
+                clientBuilder.addInterceptor {
+                    val org = it.request()
+                    val builder = org.newBuilder()
+                    builder.addHeader("Authorization", "Bearer $token")
+                    val newRequest = builder.build()
+                    it.proceed(newRequest)
+                }
+            }
+
+            val okHttpClient = clientBuilder.dispatcher(MastodonUtil.dispatcher).build()
+            val retrofit = Retrofit.Builder()
+                    .baseUrl("https://$host")
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+            return MastodonApi(retrofit.create(Mastodon::class.java), account)
+
+        }
+    }
+
+    class MastodonApi(delegate: Mastodon, account: Account? = null): Mastodon by delegate{
+        var currentId = 0L
+            private set
+
+        init{
+            currentId = account?.userId ?: 0L
+        }
+    }
+
+    class Account(
+            val host: String,
+            val userId: Long,
+            val userName: String,
+            val accessToken: String
+    )
 }
