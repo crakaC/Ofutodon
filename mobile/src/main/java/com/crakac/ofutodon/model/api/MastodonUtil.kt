@@ -20,7 +20,6 @@ class MastodonUtil private constructor() {
                 return instance
             }
         val TAG: String = "MastodonUtil"
-        val dispatcher: Dispatcher = Dispatcher()
         fun api(domain: String, accessToken: String? = null): Mastodon {
             instance = MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
             return instance!!
@@ -84,16 +83,6 @@ class MastodonUtil private constructor() {
             val secret = getClientSecret(domain)!!
             return api(domain).fetchAccessToken(id, secret, redirectUri, code, C.AUTHORIZATION_CODE)
         }
-
-        private fun getLoggableHttpClientBuilder(): OkHttpClient.Builder {
-            val logger = HttpLoggingInterceptor()
-            if (BuildConfig.DEBUG) {
-                logger.level = HttpLoggingInterceptor.Level.BODY
-            } else {
-                logger.level = HttpLoggingInterceptor.Level.NONE
-            }
-            return OkHttpClient.Builder().addInterceptor(logger)
-        }
     }
 
     class MastodonBuilder() {
@@ -127,13 +116,7 @@ class MastodonUtil private constructor() {
 
         fun build(): MastodonApi {
 
-            val clientBuilder = if (token != null) {
-                createMastodonHttpClientBuilder(token)
-            } else {
-                createMastodonHttpClientBuilder(account?.accessToken)
-            }
-
-            val okHttpClient = clientBuilder.dispatcher(MastodonUtil.dispatcher).build()
+            val okHttpClient = createMastodonHttpClient(token ?: account?.accessToken)
             val retrofit = Retrofit.Builder()
                     .baseUrl("https://$host")
                     .client(okHttpClient)
@@ -142,20 +125,22 @@ class MastodonUtil private constructor() {
             return MastodonApi(retrofit.create(Mastodon::class.java), account)
         }
 
-        private fun createMastodonHttpClientBuilder(bearerToken: String?): OkHttpClient.Builder {
-            val httpClientBuilder = getLoggableHttpClientBuilder()
-            bearerToken?.let { token ->
+        private fun createMastodonHttpClient(bearerToken: String?): OkHttpClient {
+            val logger = HttpLoggingInterceptor()
+            logger.level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+
+            val httpClientBuilder = OkHttpClient.Builder().addInterceptor(logger).dispatcher(dispatcher)
+            if (bearerToken != null) {
                 httpClientBuilder.addInterceptor {
                     val org = it.request()
                     val builder = org.newBuilder()
-                    builder.addHeader("Authorization", "Bearer $token")
+                    builder.addHeader("Authorization", "Bearer $bearerToken")
                     val newRequest = builder.build()
                     it.proceed(newRequest)
                 }
             }
-            return httpClientBuilder
+            return httpClientBuilder.build()
         }
-
     }
 
     class MastodonApi(delegate: Mastodon, account: Account? = null) : Mastodon by delegate {
