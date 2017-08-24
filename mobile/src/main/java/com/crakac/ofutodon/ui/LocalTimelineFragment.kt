@@ -1,6 +1,8 @@
 package com.crakac.ofutodon.ui
 
 import com.crakac.ofutodon.model.api.MastodonUtil
+import com.crakac.ofutodon.model.api.entity.Status
+import retrofit2.Call
 
 class LocalTimelineFragment : StatusFragment() {
     val TAG: String = "LocalTimelineFragment"
@@ -9,13 +11,12 @@ class LocalTimelineFragment : StatusFragment() {
         return "ローカル"
     }
 
-    override fun onRefresh() {
-        MastodonUtil.api?.getPublicTimeline(prevRange.q, isLocal = true)?.enqueue(onStatus)
+    override fun onRefreshRequest(): Call<List<Status>>? {
+        return MastodonUtil.api?.getPublicTimeline(prevRange.q, isLocal = true)
     }
 
-    override fun onLoadMore() {
-        if (isLoadingNext || nextRange.maxId == null) return
-        MastodonUtil.api?.getPublicTimeline(nextRange.q, isLocal = true)?.enqueue(onNextStatus)
-        isLoadingNext = true
+    override fun onLoadMoreRequest(): Call<List<Status>>? {
+        if (isLoadingNext || nextRange.maxId == null) return null
+        return MastodonUtil.api?.getPublicTimeline(nextRange.q, isLocal = true)
     }
 }

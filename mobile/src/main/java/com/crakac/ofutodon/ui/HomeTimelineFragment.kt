@@ -1,21 +1,23 @@
 package com.crakac.ofutodon.ui
 
 import com.crakac.ofutodon.model.api.MastodonUtil
+import com.crakac.ofutodon.model.api.entity.Status
+import retrofit2.Call
 
-class HomeTimelineFragment: StatusFragment() {
+class HomeTimelineFragment : StatusFragment() {
     val TAG: String = "HomeTimelineFragment"
 
     override fun getTitle(): String {
         return "ホーム"
     }
 
-    override fun onRefresh() {
-        MastodonUtil.api?.getHomeTimeline(prevRange.q)?.enqueue(onStatus)
+    override fun onRefreshRequest(): Call<List<Status>>? {
+        return MastodonUtil.api?.getHomeTimeline(prevRange.q)
     }
 
-    override fun onLoadMore() {
-        if (isLoadingNext || nextRange.maxId == null) return
-        MastodonUtil.api?.getHomeTimeline(nextRange.q)?.enqueue(onNextStatus)
-        isLoadingNext = true
+    override fun onLoadMoreRequest(): Call<List<Status>>? {
+        if (isLoadingNext || nextRange.maxId == null)
+            return null
+        return MastodonUtil.api?.getHomeTimeline(nextRange.q)
     }
 }

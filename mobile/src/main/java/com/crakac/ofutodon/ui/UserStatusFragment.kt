@@ -3,6 +3,8 @@ package com.crakac.ofutodon.ui
 import android.os.Bundle
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Account
+import com.crakac.ofutodon.model.api.entity.Status
+import retrofit2.Call
 
 class UserStatusFragment: StatusFragment() {
     companion object {
@@ -28,11 +30,11 @@ class UserStatusFragment: StatusFragment() {
     }
 
     val TAG: String = "UserStatusFragment"
-    override fun onRefresh() {
-        MastodonUtil.api?.getStatuses(accountId, range = prevRange.q)?.enqueue(onStatus)
+    override fun onRefreshRequest(): Call<List<Status>>? {
+        return MastodonUtil.api?.getStatuses(accountId, range = prevRange.q)
     }
 
-    override fun onLoadMore() {
-        MastodonUtil.api?.getStatuses(accountId, range = nextRange.q)?.enqueue(onNextStatus)
+    override fun onLoadMoreRequest(): Call<List<Status>>? {
+        return MastodonUtil.api?.getStatuses(accountId, range = nextRange.q)
     }
 }

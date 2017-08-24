@@ -49,7 +49,7 @@ abstract class StatusFragment : Fragment(),
 
     var streaming: MastodonStreaming? = null
 
-    protected var isLoadingNext = false
+    var isLoadingNext = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_status, container, false)
@@ -93,7 +93,13 @@ abstract class StatusFragment : Fragment(),
         updateRelativeTime()
     }
 
-    protected val onStatus = object : Callback<List<Status>> {
+    abstract fun onRefreshRequest(): Call<List<Status>>?
+
+    override fun onRefresh() {
+        onRefreshRequest()?.enqueue(onStatus)
+    }
+
+    val onStatus = object : Callback<List<Status>> {
         override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
             if (!isAdded) return
             swipeRefresh.isRefreshing = false
@@ -118,7 +124,16 @@ abstract class StatusFragment : Fragment(),
         }
     }
 
-    protected val onNextStatus = object : Callback<List<Status>> {
+    abstract fun onLoadMoreRequest(): Call<List<Status>>?
+
+    override fun onLoadMore() {
+        onLoadMoreRequest()?.run {
+            enqueue(onNextStatus)
+            isLoadingNext = true
+        }
+    }
+
+    val onNextStatus = object : Callback<List<Status>> {
         override fun onFailure(call: Call<List<Status>>?, t: Throwable?) {
             isLoadingNext = false
         }
@@ -211,10 +226,10 @@ abstract class StatusFragment : Fragment(),
                 adapter.update(status)
             }
 
-            fun reblogSuccess(oldStatus: Status, newStatus: Status){
+            fun reblogSuccess(oldStatus: Status, newStatus: Status) {
                 val isReblogAction = newStatus.reblog != null
-                if(isReblogAction){
-                    if(oldStatus.reblog != null) {
+                if (isReblogAction) {
+                    if (oldStatus.reblog != null) {
                         oldStatus.reblog = newStatus.reblog
                     } else {
                         oldStatus.isReblogged = true
@@ -222,7 +237,7 @@ abstract class StatusFragment : Fragment(),
                     adapter.update(oldStatus)
                 } else {
                     oldStatus.isReblogged = false
-                    if(oldStatus.reblog != null){
+                    if (oldStatus.reblog != null) {
                         oldStatus.reblog!!.isReblogged = false
                     }
                     adapter.update(oldStatus)
@@ -260,8 +275,8 @@ abstract class StatusFragment : Fragment(),
                 adapter.update(status)
             }
 
-            fun favoriteSuccess(oldStatus: Status, newStatus: Status){
-                if(oldStatus.reblog != null){
+            fun favoriteSuccess(oldStatus: Status, newStatus: Status) {
+                if (oldStatus.reblog != null) {
                     oldStatus.reblog = newStatus
                     adapter.update(oldStatus)
                 } else {
@@ -283,8 +298,7 @@ abstract class StatusFragment : Fragment(),
     }
 
     override fun onMenuClicked(status: Status, menuId: Int) {
-
-        MastodonUtil.api?.run{
+        MastodonUtil.api?.run {
 
         }
     }
@@ -304,14 +318,12 @@ abstract class StatusFragment : Fragment(),
         for (i in 0..(recyclerView.childCount - 1)) {
             val child = recyclerView.getChildAt(i)
             val holder = recyclerView.getChildViewHolder(child) as StatusAdapter.StatusViewHolder?
-            holder?.let {
-                it.updateRelativeTime()
-            }
+            holder?.updateRelativeTime()
         }
     }
 
-    fun scrollToTop(){
-        if(!isAdded) return
+    fun scrollToTop() {
+        if (!isAdded) return
         recyclerView.scrollToPosition(0)
     }
 
