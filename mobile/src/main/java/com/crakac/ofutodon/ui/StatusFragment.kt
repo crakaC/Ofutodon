@@ -180,6 +180,10 @@ abstract class StatusFragment : Fragment(),
     }
 
     override fun onIconClicked(icon: ImageView, status: Status) {
+        val intent = Intent(activity, UserActivity::class.java)
+        UserActivity.setUserInfo(intent, status.account)
+        val options = ActivityOptions.makeSceneTransitionAnimation(activity, icon, getString(R.string.transition_name_user_icon))
+        startActivity(intent, options.toBundle())
     }
 
     override fun onReplyClicked(icon: ImageView, status: Status) {

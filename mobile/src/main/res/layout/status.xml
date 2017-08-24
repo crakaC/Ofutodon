@@ -17,6 +17,7 @@
         android:layout_height="24dp"
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/icon"
+        android:transitionName="@string/transition_name_user_icon"
         android:layout_marginBottom="@dimen/list_item_padding" />
 
     <TextView
