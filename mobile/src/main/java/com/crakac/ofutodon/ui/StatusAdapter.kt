@@ -156,6 +156,9 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         @BindView(R.id.reblogged_by_name)
         lateinit var rebloggedBy: TextView
 
+        @BindView(R.id.reblogged_icon)
+        lateinit var rebloggedMark: ImageView
+
         @BindView(R.id.displayName)
         lateinit var name: TextView
 
@@ -279,7 +282,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         }
 
         private fun enableReblogView(isEnabled: Boolean) {
-            for (v in arrayOf(rebloggedBy, rebloggedByIcon)) {
+            for (v in arrayOf(rebloggedBy, rebloggedByIcon, rebloggedMark)) {
                 v.visibility = if (isEnabled) View.VISIBLE else View.GONE
             }
         }

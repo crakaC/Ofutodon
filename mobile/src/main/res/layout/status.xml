@@ -17,18 +17,25 @@
         android:layout_height="24dp"
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/icon"
-        android:transitionName="@string/transition_name_user_icon"
-        android:layout_marginBottom="@dimen/list_item_padding" />
+        android:layout_marginBottom="@dimen/list_item_padding"
+        android:transitionName="@string/transition_name_user_icon" />
+
+    <ImageView
+        android:id="@+id/reblogged_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_toStartOf="@+id/reblogged_by_name"
+        android:src="@drawable/ic_boost"
+        android:tint="@color/boosted"/>
 
     <TextView
         android:id="@+id/reblogged_by_name"
         style="@style/Base.TextAppearance.AppCompat.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_micro"
-        android:layout_toEndOf="@+id/reblogged_by_icon"
-        android:drawableStart="@drawable/ic_boost"
-        android:drawableTint="@color/boosted" />
+        android:text="aaaaaaaaaaaaaaaaaa"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/icon" />
 
     <TextView
         android:id="@+id/displayName"
@@ -94,7 +101,7 @@
             <ImageView
                 android:id="@+id/reply"
                 style="@style/StatusActionItem"
-                android:layout_gravity="center|center_horizontal"
+                android:layout_gravity="center"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_reply" />
         </FrameLayout>
