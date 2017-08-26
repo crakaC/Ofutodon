@@ -122,14 +122,14 @@ class TootActivity : AppCompatActivity() {
     var cameraFilePath: String? = null
 
     // keep attachmentUris
-    var uriAttachmentsMap = HashMap<Uri, Attachment?>()
+    var uriAttachmentsList = ArrayList<Pair<Uri, Attachment>>(MAX_ATTACHMENTS_NUM)
 
     var tootVisibility = defaultVisibility
 
     val defaultVisibility: Status.Visibility
         get() {
-        return Status.Visibility.valueOf(
-                PrefsUtil.getString(TOOT_VISIBILITY, Status.Visibility.Public.toString())!!)
+            return Status.Visibility.valueOf(
+                    PrefsUtil.getString(TOOT_VISIBILITY, Status.Visibility.Public.toString())!!)
         }
 
     var isContentWarningEnabled = false
@@ -151,17 +151,11 @@ class TootActivity : AppCompatActivity() {
         ButterKnife.bind(this)
         FabTransform.setup(this, container)
 
-        if(intent.action == ACTION_REPLY) {
+        if (intent.action == ACTION_REPLY) {
             setUpReply()
         }
 
-        cameraUri = savedInstanceState?.getParcelable("CameraUri")
-        cameraFilePath = savedInstanceState?.getString("CameraFilePath")
-        (savedInstanceState?.getSerializable("Attachments") as HashMap<Uri, Attachment?>?)?.let {
-            uriAttachmentsMap = it
-            it.forEach { e -> addThumbnail(e.key) }
-            nsfwButton.visibility = View.VISIBLE
-        }
+        nsfwButton.visibility = View.VISIBLE
 
         tootText.addTextChangedListener(textWatcher)
         spoilerText.addTextChangedListener(textWatcher)
@@ -173,33 +167,46 @@ class TootActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable("CameraUri", cameraUri)
         outState.putString("CameraFilePath", cameraFilePath)
-        outState.putSerializable("Attachments", uriAttachmentsMap)
+        outState.putParcelableArrayList("AttachmentUris", ArrayList(uriAttachmentsList.map { (uri) -> uri }))
+        outState.putSerializable("Attachments", uriAttachmentsList.map { (_, attachment) -> attachment }.toTypedArray())
 
         outState.putString("tootText", tootText.text.toString())
         outState.putString("spoilerText", spoilerText.text.toString())
         outState.putBoolean("cw", isContentWarningEnabled)
         outState.putBoolean("nsfw", isNsfw)
         outState.putSerializable("visibility", tootVisibility)
-        if(replyToStatus != null){
+        if (replyToStatus != null) {
             outState.putString(REPLY_STATUS, Gson().toJson(replyToStatus))
         }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        cameraUri = savedInstanceState.getParcelable("CameraUri")
+        cameraFilePath = savedInstanceState.getString("CameraFilePath")
+        val savedAttachments = savedInstanceState.getSerializable("Attachments") as Array<Attachment>
+        val savedUris = savedInstanceState.getParcelableArrayList<Uri>("AttachmentUris")
+
+        for (i in savedAttachments.indices) {
+            uriAttachmentsList.add(Pair(savedUris[i], savedAttachments[i]))
+        }
+
+        savedUris.forEach { e -> addThumbnail(e) }
+
+
         tootText.setText(savedInstanceState.getString("tootText"))
         spoilerText.setText(savedInstanceState.getString("spoilerText"))
 
         tootVisibility = savedInstanceState.getSerializable("visibility") as Status.Visibility
         updateVisibilityButtonState()
 
-        if(savedInstanceState.getBoolean("cw", false)){
+        if (savedInstanceState.getBoolean("cw", false)) {
             toggleContentWarning()
         }
-        if(savedInstanceState.getBoolean("nsfw", false)){
+        if (savedInstanceState.getBoolean("nsfw", false)) {
             toggleNotSafeForWork()
         }
 
-        savedInstanceState.getString(REPLY_STATUS)?.let{
+        savedInstanceState.getString(REPLY_STATUS)?.let {
             replyToStatus = Gson().fromJson(it, Status::class.java)
         }
 
@@ -233,7 +240,7 @@ class TootActivity : AppCompatActivity() {
                         replyTo = replyToStatus?.id,
                         visibility = tootVisibility.value,
                         spoilerText = getSpoilerText(),
-                        mediaIds = uriAttachmentsMap.filter { e -> e.value != null }.map { e -> e.value!!.id },
+                        mediaIds = uriAttachmentsList.map { (_, attachment) -> attachment.id },
                         isSensitive = isNsfw,
                         text = tootText.text.toString()
                 ))?.enqueue(onTootFinished)
@@ -348,14 +355,15 @@ class TootActivity : AppCompatActivity() {
                             val popup = PopupMenu(this@TootActivity, v)
                             popup.inflate(R.menu.attachment_thumbnail)
                             popup.setOnMenuItemClickListener { menu ->
-                                when(menu.itemId){
+                                when (menu.itemId) {
                                     R.id.preview -> {
                                         preview(uri)
                                     }
                                     R.id.delete -> {
                                         imageAttachmentParent.removeView(v)
-                                        uriAttachmentsMap.remove(uri)
-                                        if (uriAttachmentsMap.isEmpty())
+                                        val removed = uriAttachmentsList.indexOfFirst { (u) -> u == uri }
+                                        uriAttachmentsList.removeAt(removed)
+                                        if (uriAttachmentsList.isEmpty())
                                             nsfwButton.visibility = View.GONE
                                     }
                                 }
@@ -401,7 +409,7 @@ class TootActivity : AppCompatActivity() {
                                 object : Callback<Attachment> {
                                     override fun onResponse(call: Call<Attachment>?, response: Response<Attachment>?) {
                                         response?.let {
-                                            uriAttachmentsMap.put(uri, it.body())
+                                            uriAttachmentsList.add(Pair(uri, it.body()))
                                         }
                                         dialog.dismiss()
                                     }
@@ -422,7 +430,7 @@ class TootActivity : AppCompatActivity() {
         setContentWarning(isContentWarningEnabled)
     }
 
-    fun setContentWarning(isEnabled: Boolean){
+    fun setContentWarning(isEnabled: Boolean) {
         if (isEnabled) {
             cwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
             spoilerText.visibility = View.VISIBLE
@@ -442,7 +450,7 @@ class TootActivity : AppCompatActivity() {
         setNotSafeForWorkEnabled(isNsfw)
     }
 
-    fun setNotSafeForWorkEnabled(isEnabled: Boolean){
+    fun setNotSafeForWorkEnabled(isEnabled: Boolean) {
         if (isEnabled) {
             nsfwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
         } else {
@@ -460,12 +468,12 @@ class TootActivity : AppCompatActivity() {
 
     private fun updateTootButtonState() {
         val hasText = tootText.text.isNotEmpty() && (tootText.text.length <= MAX_TOOT_LENGTH)
-        val hasMedia = uriAttachmentsMap.isNotEmpty()
+        val hasMedia = uriAttachmentsList.isNotEmpty()
         tootButton.isEnabled = (hasText || hasMedia) && !isPosting
     }
 
     private fun updateAttachmentButtonState() {
-        attachmentButton.isEnabled = (uriAttachmentsMap.size < MAX_ATTACHMENTS_NUM)
+        attachmentButton.isEnabled = (uriAttachmentsList.size < MAX_ATTACHMENTS_NUM)
         val d = attachmentButton.drawable.mutate()
         if (attachmentButton.isEnabled) {
             d.clearColorFilter()
@@ -476,7 +484,7 @@ class TootActivity : AppCompatActivity() {
 
     private fun clearAttachments() {
         imageAttachmentParent.removeAllViews()
-        uriAttachmentsMap.clear()
+        uriAttachmentsList.clear()
         if (isNsfw) {
             toggleNotSafeForWork()
         }
@@ -567,16 +575,16 @@ class TootActivity : AppCompatActivity() {
             textCount.setTextColor(ContextCompat.getColor(this, R.color.text_secondary_dark))
         }
 
-        if(total == 0){
+        if (total == 0) {
             replyToStatus = null
         }
     }
 
-    private fun setUpReply(){
+    private fun setUpReply() {
         val status = Gson().fromJson(intent.extras.getString(REPLY_STATUS), Status::class.java)
         tootVisibility = Status.Visibility.values()[Math.max(defaultVisibility.ordinal, status.getVisibility().ordinal)]
-        if(status.spoilerText.isNotEmpty()){
-            if(!isContentWarningEnabled) {
+        if (status.spoilerText.isNotEmpty()) {
+            if (!isContentWarningEnabled) {
                 toggleContentWarning()
             }
             spoilerText.setText(status.spoilerText)
@@ -588,10 +596,10 @@ class TootActivity : AppCompatActivity() {
         replyToStatus = status
     }
 
-    private fun preview(uri: Uri){
+    private fun preview(uri: Uri) {
         val intent = Intent(this, AttachmentsPreviewActivity::class.java)
-        val uris = ArrayList<Uri>(uriAttachmentsMap.keys)
-        AttachmentsPreviewActivity.setup(intent, uris, uris.indexOf(uri))
+        val uris = ArrayList<Uri>(uriAttachmentsList.map {(u) -> u})
+        AttachmentsPreviewActivity.setup(intent, uris, uris.indexOfFirst { e -> e == uri })
         startActivity(intent)
     }
 }
