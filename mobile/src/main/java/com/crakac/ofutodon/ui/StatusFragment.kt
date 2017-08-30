@@ -197,8 +197,7 @@ abstract class StatusFragment : Fragment(),
     override fun onIconClicked(icon: ImageView, status: Status) {
         val intent = Intent(activity, UserActivity::class.java)
         UserActivity.setUserInfo(intent, status.reblog?.account ?: status.account)
-        val options = ActivityOptions.makeSceneTransitionAnimation(activity, icon, getString(R.string.transition_name_user_icon))
-        startActivity(intent, options.toBundle())
+        startActivity(intent)
     }
 
     override fun onReplyClicked(icon: ImageView, status: Status) {

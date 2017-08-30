@@ -38,4 +38,8 @@
     <dimen name="image_button_small">40dp</dimen>
     <dimen name="image_inner_padding_small">8dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
+
+    <!-- user detail-->
+    <dimen name="top_icon_final">32dp</dimen>
+    <dimen name="top_icon">120dp</dimen>
 </resources>

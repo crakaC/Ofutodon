@@ -3,11 +3,25 @@ package com.crakac.ofutodon.util
 import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.support.v4.util.ArrayMap
+import android.view.View
+import android.view.animation.AlphaAnimation
 import java.util.*
 
 
 class AnimUtils {
 
+    companion object {
+        fun startAlphaAnimation(v: View, duration: Long, visibility: Int){
+            val alphaAnimation = if(visibility == View.VISIBLE){
+                AlphaAnimation(0f, 1f)
+            } else {
+                AlphaAnimation(1f, 0f)
+            }
+            alphaAnimation.duration = duration
+            alphaAnimation.fillAfter = true
+            v.startAnimation(alphaAnimation)
+        }
+    }
     /**
      * https://halfthought.wordpress.com/2014/11/07/reveal-transition/
      *
@@ -134,5 +148,4 @@ class AnimUtils {
             mListener.onAnimationRepeat(mAnimator)
         }
     }
-
 }

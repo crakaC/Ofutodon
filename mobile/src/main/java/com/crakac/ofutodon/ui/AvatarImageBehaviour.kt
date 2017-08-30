@@ -47,7 +47,7 @@ class AvatarImageBehaviour(val context: Context, attrs: AttributeSet) : Coordina
     }
 
     fun bindDimensions() {
-        mAvatarMaxSize = context.resources.getDimension(R.dimen.image_button)
+        mAvatarMaxSize = context.resources.getDimension(R.dimen.top_icon)
     }
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: ImageView, dependency: View): Boolean {
@@ -62,7 +62,7 @@ class AvatarImageBehaviour(val context: Context, attrs: AttributeSet) : Coordina
         if(expandedPercentageFactor < mChangeBehaviorPoint){
             val heightFactor = (mChangeBehaviorPoint - expandedPercentageFactor) / mChangeBehaviorPoint
             val distanceXToSubtract = ((mStartXPosition - mFinalXPosition) * heightFactor) + (child.height / 2)
-            val distanceYToSubtract = ((mStartYPosition - mFinalYPosition) * (1f * expandedPercentageFactor)) + (child.height / 2)
+            val distanceYToSubtract = ((mStartYPosition - mFinalYPosition) * (1f - expandedPercentageFactor)) + (child.height / 2)
 
             child.x = mStartXPosition - distanceXToSubtract
             child.y = mStartYPosition - distanceYToSubtract

@@ -1,5 +1,7 @@
 package com.crakac.ofutodon.model.api.entity
 
+import android.text.Spanned
+import com.crakac.ofutodon.util.HtmlUtil
 import com.emojione.Emojione
 import com.google.gson.annotations.SerializedName
 
@@ -39,11 +41,14 @@ class Account {
     val headerStatic: String = ""
 
     var _dn: String? = null
-    val dispNameWithEmoji: String?
+    val dispNameWithEmoji: String
     get(){
         if(_dn == null ){
             _dn = Emojione.shortnameToUnicode(displayName)
         }
-        return _dn
+        return _dn ?: ""
     }
+
+    val noteWithEmoji: Spanned
+    get() = HtmlUtil.parse(note)
 }
