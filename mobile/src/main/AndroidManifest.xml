@@ -57,7 +57,7 @@
         <activity
             android:name=".ui.UserActivity"
             android:label="@string/title_activity_user"
-            android:theme="@style/Ofuton"></activity>
+            android:theme="@style/Ofuton.User"/>
     </application>
 
 </manifest>

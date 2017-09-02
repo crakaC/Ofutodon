@@ -47,6 +47,10 @@
         <item name="android:textAppearanceButton">@style/TextAppearance.DarkButton</item>
     </style>
 
+    <style name="Ofuton.User">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="TextAppearance.DarkButton" parent="@android:style/TextAppearance.Material.Widget.Button">
         <item name="android:textColor">@android:color/white</item>
     </style>

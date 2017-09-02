@@ -27,7 +27,6 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     private val PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f
     private val ALPHA_ANIMATIONS_DURATION = 200L
 
-
     private var isTheTitleVisible = false
     private var isTheTitleContainerVisible = true
 
@@ -72,7 +71,10 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        toolbar.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+        supportActionBar?.let {
+            it.setDisplayShowTitleEnabled(false)
+        }
 
         appBar.addOnOffsetChangedListener(this)
 
