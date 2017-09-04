@@ -44,10 +44,13 @@ static def getProps(String key) {
 
 
 dependencies {
-    ext.support_library_version = '26.0.0'
-    ext.glide_version = '3.8.0'
-    ext.butterknife_version = '8.8.0'
-
+    ext {
+        support_library_version = '26.0.2'
+        glide_version = '3.8.0'
+        butterknife_version = '8.8.0'
+        retrofit_version = '2.3.0'
+        okhttp_version = '3.8.1'
+    }
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -63,14 +66,14 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife_version"
     kapt "com.jakewharton:butterknife-compiler:$butterknife_version"
     compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.7.0'
+    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
+    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    compile "com.squareup.okhttp3:okhttp:$okhttp_version"
+    compile "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     compile 'jp.wasabeef:glide-transformations:2.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'com.squareup.retrofit2:retrofit-mock:2.2.0'
-    testCompile 'com.squareup.okhttp3:mockwebserver:3.7.0'
+    testCompile "com.squareup.retrofit2:retrofit-mock:$retrofit_version"
+    testCompile "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     testCompile 'junit:junit:4.12'
     compile 'com.github.chrisbanes:PhotoView:2.1.3'
 

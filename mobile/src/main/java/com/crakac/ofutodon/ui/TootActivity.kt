@@ -408,8 +408,8 @@ class TootActivity : AppCompatActivity() {
                         MastodonUtil.api?.uploadMediaAttachment(body)?.enqueue(
                                 object : Callback<Attachment> {
                                     override fun onResponse(call: Call<Attachment>?, response: Response<Attachment>?) {
-                                        response?.let {
-                                            uriAttachmentsList.add(Pair(uri, it.body()))
+                                        response?.body()?.let {
+                                            uriAttachmentsList.add(Pair(uri, it))
                                         }
                                         dialog.dismiss()
                                     }

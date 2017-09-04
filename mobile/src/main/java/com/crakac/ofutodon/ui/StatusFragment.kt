@@ -113,7 +113,9 @@ abstract class StatusFragment : Fragment(),
             if (response == null || !response.isSuccessful) {
                 return
             }
-            insertQuietly(response.body())
+            response.body()?.let {
+                insertQuietly(it)
+            }
             Link.parse(response.headers().get("link"))?.let {
                 prevRange = it.prevRange()
                 if (nextRange.maxId == null) {
@@ -143,7 +145,9 @@ abstract class StatusFragment : Fragment(),
             if (response == null || !response.isSuccessful || !isAdded) {
                 return
             }
-            adapter.addBottom(response.body())
+            response.body()?.let {
+                adapter.addBottom(it)
+            }
             Link.parse(response.headers().get("link"))?.let {
                 nextRange = it.nextRange()
             }
@@ -214,7 +218,9 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    reblogSuccess(adapter.getItemById(status.id), response.body())
+                    response.body()?.let {
+                        reblogSuccess(adapter.getItemById(status.id), it)
+                    }
                 } else {
                     adapter.update(status)
                 }
@@ -263,7 +269,9 @@ abstract class StatusFragment : Fragment(),
                 if (!isAdded) return
 
                 if (response != null && response.isSuccessful) {
-                    favoriteSuccess(adapter.getItemById(status.id), response.body())
+                    response.body()?.let {
+                        favoriteSuccess(adapter.getItemById(status.id), it)
+                    }
                 } else {
                     adapter.update(status)
                 }
@@ -314,7 +322,7 @@ abstract class StatusFragment : Fragment(),
 
     fun updateRelativeTime() {
         if (!isAdded) return
-        for (i in 0..(recyclerView.childCount - 1)) {
+        for (i in 0 until recyclerView.childCount) {
             val child = recyclerView.getChildAt(i)
             val holder = recyclerView.getChildViewHolder(child) as StatusAdapter.StatusViewHolder?
             holder?.updateRelativeTime()

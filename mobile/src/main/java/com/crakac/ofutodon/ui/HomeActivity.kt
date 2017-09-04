@@ -200,7 +200,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return
             }
             val domain = call.request().url().host()
-            onFetchAccessTokenSuccess(domain, response.body().accessToken)
+            response.body()?.accessToken?.let { token ->
+                onFetchAccessTokenSuccess(domain, token)
+            }
             PrefsUtil.remove(C.OAUTH_TARGET_DOMAIN)
         }
 
@@ -244,8 +246,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             //TODO Retry
                         }
 
-                        val credential = response.body()
-                        MastodonUtil.saveAppCredential(instanceDomain, credential)
+                        response.body()?.let { credential ->
+                            MastodonUtil.saveAppCredential(instanceDomain, credential)
+                        }
                         startAuthorize(instanceDomain)
                     }
                 })
