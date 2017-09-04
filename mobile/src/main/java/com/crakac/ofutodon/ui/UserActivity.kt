@@ -23,8 +23,8 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation
 
 class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
-    private val PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f
-    private val PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f
+    private val PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.67f
+    private val PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.33f
     private val ALPHA_ANIMATIONS_DURATION = 200L
 
     private var isTheTitleVisible = false
@@ -71,9 +71,9 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        toolbar.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
         supportActionBar?.let {
             it.setDisplayShowTitleEnabled(false)
+            it.setDisplayHomeAsUpEnabled(true)
         }
 
         appBar.addOnOffsetChangedListener(this)
@@ -91,7 +91,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
         userDescription.text = account.noteWithEmoji
-        Glide.with(this).load(account.headerStatic).crossFade().centerCrop().into(header)
+        Glide.with(this).load(account.headerStatic).placeholder(R.drawable.placeholder).centerCrop().crossFade().into(header)
         Glide.with(this).load(account.avatar).bitmapTransform(CropCircleTransformation(this)).crossFade().into(icon)
         val adapter = MyFragmentPagerAdapter(supportFragmentManager)
         adapter.add(UserStatusFragment.newInstance(account))

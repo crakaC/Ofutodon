@@ -35,6 +35,8 @@ class UserStatusFragment: StatusFragment() {
     }
 
     override fun onLoadMoreRequest(): Call<List<Status>>? {
+        if (isLoadingNext || nextRange.maxId == null)
+            return null
         return MastodonUtil.api?.getStatuses(accountId, range = nextRange.q)
     }
 }
