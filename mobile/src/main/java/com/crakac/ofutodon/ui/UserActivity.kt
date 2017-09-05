@@ -3,8 +3,7 @@ package com.crakac.ofutodon.ui
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
+import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -39,9 +38,6 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     @BindView(R.id.pager)
     lateinit var pager: ViewPager
 
-    @BindView(R.id.fab)
-    lateinit var fab: FloatingActionButton
-
     @BindView(R.id.app_bar)
     lateinit var appBar: AppBarLayout
 
@@ -57,9 +53,11 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     @BindView(R.id.user_description)
     lateinit var userDescription: TextView
 
+    lateinit var account: Account
+
     companion object {
         val TARGET_ACCOUNT = "account"
-        fun setUserInfo(intent: Intent, account: Account){
+        fun setUserInfo(intent: Intent, account: Account) {
             intent.putExtra(TARGET_ACCOUNT, Gson().toJson(account))
         }
     }
@@ -78,24 +76,26 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
         appBar.addOnOffsetChangedListener(this)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-        setupUserInfo()
+        account = Gson().fromJson(intent.getStringExtra(TARGET_ACCOUNT), Account::class.java)
+        setupAccountInfo()
+
+        val adapter = MyFragmentPagerAdapter(supportFragmentManager)
+        adapter.add(UserStatusFragment.newInstance(account, getString(R.string.tab_toots)))
+        adapter.add(UserStatusFragment.newInstance(account, getString(R.string.tab_media), onlyMedia = true))
+        pager.adapter = adapter
+
+        val tab = findViewById<TabLayout>(R.id.tab)
+        tab.setupWithViewPager(pager)
+
         AnimUtils.startAlphaAnimation(titleText, 0, View.INVISIBLE)
     }
 
-    private fun setupUserInfo(){
-        val account = Gson().fromJson(intent.getStringExtra(TARGET_ACCOUNT), Account::class.java)
+    private fun setupAccountInfo() {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
         userDescription.text = account.noteWithEmoji
         Glide.with(this).load(account.headerStatic).placeholder(R.drawable.placeholder).centerCrop().crossFade().into(header)
         Glide.with(this).load(account.avatar).bitmapTransform(CropCircleTransformation(this)).crossFade().into(icon)
-        val adapter = MyFragmentPagerAdapter(supportFragmentManager)
-        adapter.add(UserStatusFragment.newInstance(account))
-        pager.adapter = adapter
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout, offset: Int) {
@@ -105,14 +105,14 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         handleToolbarTitleVisibility(percentage)
     }
 
-    private fun handleAlphaOnTitle(percentage: Float){
-        if(percentage >= PERCENTAGE_TO_HIDE_TITLE_DETAILS){
-            if(isTheTitleContainerVisible){
-                AnimUtils.startAlphaAnimation(titleContainer, ALPHA_ANIMATIONS_DURATION, View.INVISIBLE )
+    private fun handleAlphaOnTitle(percentage: Float) {
+        if (percentage >= PERCENTAGE_TO_HIDE_TITLE_DETAILS) {
+            if (isTheTitleContainerVisible) {
+                AnimUtils.startAlphaAnimation(titleContainer, ALPHA_ANIMATIONS_DURATION, View.INVISIBLE)
                 isTheTitleContainerVisible = false
             }
         } else {
-            if(!isTheTitleContainerVisible){
+            if (!isTheTitleContainerVisible) {
                 AnimUtils.startAlphaAnimation(titleContainer, ALPHA_ANIMATIONS_DURATION, View.VISIBLE)
                 isTheTitleContainerVisible = true
             }
@@ -120,14 +120,14 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
     }
 
-    private fun handleToolbarTitleVisibility(percentage: Float){
-        if(percentage >= PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR){
-            if(!isTheTitleVisible){
-                AnimUtils.startAlphaAnimation(titleText, ALPHA_ANIMATIONS_DURATION, View.VISIBLE )
+    private fun handleToolbarTitleVisibility(percentage: Float) {
+        if (percentage >= PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR) {
+            if (!isTheTitleVisible) {
+                AnimUtils.startAlphaAnimation(titleText, ALPHA_ANIMATIONS_DURATION, View.VISIBLE)
                 isTheTitleVisible = true
             }
         } else {
-            if(isTheTitleVisible){
+            if (isTheTitleVisible) {
                 AnimUtils.startAlphaAnimation(titleText, ALPHA_ANIMATIONS_DURATION, View.INVISIBLE)
                 isTheTitleVisible = false
             }
