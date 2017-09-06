@@ -37,7 +37,7 @@ android {
 }
 
 static def getProps(String key) {
-    def Properties props = new Properties()
+    Properties props = new Properties()
     props.load(new FileInputStream(new File(key)))
     return props
 }
@@ -47,7 +47,7 @@ dependencies {
     ext {
         support_library_version = '26.0.2'
         glide_version = '3.8.0'
-        butterknife_version = '8.8.0'
+        butterknife_version = '8.8.1'
         retrofit_version = '2.3.0'
         okhttp_version = '3.8.1'
     }
@@ -65,7 +65,7 @@ dependencies {
     compile "com.jakewharton:butterknife:$butterknife_version"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife_version"
     kapt "com.jakewharton:butterknife-compiler:$butterknife_version"
-    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-core:11.2.0'
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
     compile "com.squareup.okhttp3:okhttp:$okhttp_version"
