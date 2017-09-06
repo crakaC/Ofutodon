@@ -19,9 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/scrim"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:statusBarScrim="@color/scrim">
+            app:statusBarScrim="@android:color/transparent">
 
             <com.crakac.ofutodon.ui.FitParentImageView
                 android:id="@+id/header"
@@ -96,7 +95,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="?attr/colorPrimary"
             app:tabGravity="fill"
             app:tabMode="fixed" />
 
