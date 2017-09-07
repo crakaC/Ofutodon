@@ -14,10 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -63,6 +60,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         ButterKnife.bind(this)
+
+        drawer.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -115,6 +114,28 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {}
         })
+
+        drawer.setOnApplyWindowInsetsListener { v, insets ->
+            // inset the toolbar down by the status bar height
+            val lpToolbar = toolbar
+                    .layoutParams as ViewGroup.MarginLayoutParams
+            lpToolbar.topMargin += insets.systemWindowInsetTop
+            lpToolbar.leftMargin += insets.systemWindowInsetLeft
+            lpToolbar.rightMargin += insets.systemWindowInsetRight
+            toolbar.layoutParams = lpToolbar
+
+            // inset the fab for the navbar
+            val lpFab = fab
+                    .layoutParams as ViewGroup.MarginLayoutParams
+            lpFab.bottomMargin += insets.systemWindowInsetBottom // portrait
+            lpFab.rightMargin += insets.systemWindowInsetRight // landscape
+            fab.layoutParams = lpFab
+
+            // clear this listener so insets aren't re-applied
+            drawer.setOnApplyWindowInsetsListener(null)
+
+            insets.consumeSystemWindowInsets()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

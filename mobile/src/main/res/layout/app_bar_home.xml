@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     tools:context="com.crakac.ofutodon.ui.HomeActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -24,8 +25,8 @@
             android:id="@+id/tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
             android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:tabGravity="fill"
             app:tabMode="fixed" />
 
@@ -47,5 +48,18 @@
         android:stateListAnimator="@animator/raise"
         android:tint="@android:color/white"
         app:srcCompat="@drawable/ic_message" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="top"
+        android:background="@drawable/scrim_gradation" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:rotation="180"
+        android:background="@drawable/scrim_gradation" />
 
 </android.support.design.widget.CoordinatorLayout>

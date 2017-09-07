@@ -4,7 +4,8 @@ import android.text.Spanned
 import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.annotations.SerializedName
 
-class Status{
+class Status(@SerializedName("id")
+             val id: Long = 0L) {
     enum class Visibility(val value: String) {
         Public("public"),
         UnListed("unlisted"),
@@ -12,8 +13,6 @@ class Status{
         Direct("direct")
     }
 
-    @SerializedName("id")
-    val id: Long = 0L
     @SerializedName("uri")
     val uri: String = ""
     @SerializedName("url")
@@ -63,22 +62,22 @@ class Status{
             return _spannedContent
         }
 
-    fun getVisibility(): Visibility{
-        return Visibility.values().first { e -> e.value == visibility}
+    fun getVisibility(): Visibility {
+        return Visibility.values().first { e -> e.value == visibility }
     }
 
     val apiId: Long
-    get(){
-        return reblog?.id ?: id
-    }
+        get() {
+            return reblog?.id ?: id
+        }
 
     val isFaved: Boolean
-    get() {
-        return reblog?.isFavourited ?: isFavourited
-    }
+        get() {
+            return reblog?.isFavourited ?: isFavourited
+        }
 
     val isBoosted: Boolean
-    get() {
-        return reblog?.isReblogged ?: isReblogged
-    }
+        get() {
+            return reblog?.isReblogged ?: isReblogged
+        }
 }

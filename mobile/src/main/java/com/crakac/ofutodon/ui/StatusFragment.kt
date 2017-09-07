@@ -1,6 +1,7 @@
 package com.crakac.ofutodon.ui
 
 import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -338,5 +339,9 @@ abstract class StatusFragment : Fragment(),
         val intent = Intent(activity, AttachmentsPreviewActivity::class.java)
         AttachmentsPreviewActivity.setup(intent, status, attachmentIndex)
         startActivity(intent)
+    }
+
+    private class Divider(context: Context, orientation: Int): DividerItemDecoration(context, orientation){
+
     }
 }

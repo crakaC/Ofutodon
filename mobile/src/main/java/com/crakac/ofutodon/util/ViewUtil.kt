@@ -1,5 +1,6 @@
 package com.crakac.ofutodon.util
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,9 +9,17 @@ import android.support.annotation.ColorInt
 import android.support.annotation.FloatRange
 import android.support.v4.graphics.ColorUtils
 import android.support.v7.graphics.Palette
+import android.util.TypedValue
 
 class ViewUtil private constructor(){
     companion object {
+        fun getActionBarSize(context: Context): Int {
+            val value = TypedValue()
+            context.theme.resolveAttribute(android.R.attr.actionBarSize, value, true)
+            return TypedValue.complexToDimensionPixelSize(
+                    value.data, context.resources.displayMetrics)
+        }
+
         fun createRipple(palette: Palette,
                          @FloatRange(from = 0.0, to = 1.0) darkAlpha: Float,
                          @FloatRange(from = 0.0, to = 1.0) lightAlpha: Float,

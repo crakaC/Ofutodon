@@ -20,14 +20,19 @@ import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
 import java.util.*
 
+
 class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
     val TAG: String = "StatusAdapter"
     val statusArray = ArrayList<Status>()
     val ids = TreeSet<Long>()
+    val dummy = Status(-1)
 
     var statusListener: OnClickStatusListener? = null
 
     fun getItem(position: Int): Status {
+        if (position == statusArray.size) {
+            return dummy
+        }
         return statusArray[position]
     }
 
@@ -43,8 +48,8 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         return statusArray.indexOfFirst { e -> e.id == id }
     }
 
-    fun getItemById(id: Long): Status{
-        return statusArray.first{ e -> e.id == id }
+    fun getItemById(id: Long): Status {
+        return statusArray.first { e -> e.id == id }
     }
 
     fun getPosition(item: Status): Int {
@@ -64,9 +69,9 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     }
 
     fun addBottom(statuses: Collection<Status>) {
-        val oldSize = statusArray.size
+        val oldSize = itemCount
         statusArray.addAll(statuses)
-        statuses.forEach { e -> ids.add(e.id) }
+        ids.addAll(statuses.map { e -> e.id })
         notifyItemRangeInserted(oldSize, statuses.size)
     }
 
@@ -94,11 +99,16 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
 
     override fun onBindViewHolder(holder: StatusViewHolder?, position: Int) {
         val item = getItem(position)
-        holder?.setData(context, item)
+        if (holder is StatusHolder) {
+            holder.setData(context, item)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): StatusViewHolder {
-        val holder = StatusViewHolder(View.inflate(context, R.layout.status, null))
+        if (viewType == HolderType.Footer.rawValue) {
+            return FooterHolder(View.inflate(context, R.layout.dummy_status, null))
+        }
+        val holder = StatusHolder(View.inflate(context, R.layout.status, null))
         holder.itemView.setOnClickListener { _ ->
             val status = getItem(holder.adapterPosition)
             statusListener?.onItemClicked(status)
@@ -140,16 +150,33 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     }
 
     override fun getItemCount(): Int {
-        return statusArray.size
+        return if (isEmpty) 0 else statusArray.size + 1
     }
 
     override fun onViewRecycled(holder: StatusViewHolder?) {
-        if (holder is StatusViewHolder) {
+        if (holder is StatusHolder) {
             holder.icon.setImageBitmap(null)
         }
     }
 
-    class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    override fun getItemViewType(position: Int): Int {
+        return if (getItemId(position) < 0) {
+            HolderType.Footer.rawValue
+        } else {
+            HolderType.Status.rawValue
+        }
+    }
+
+    private enum class HolderType(val rawValue: Int) {
+        Status(3),
+        Footer(4)
+    }
+
+    abstract class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        open fun updateRelativeTime(){}
+    }
+
+    class StatusHolder(v: View) : StatusViewHolder(v) {
         @BindView(R.id.reblogged_by_icon)
         lateinit var rebloggedByIcon: ImageView
 
@@ -213,7 +240,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             }
         }
 
-        fun updateRelativeTime() {
+        override fun updateRelativeTime() {
             createdAt.text = TextUtil.parseCreatedAt(createdAtString!!)
         }
 
@@ -271,7 +298,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
                 }
             }
 
-            if(status.mediaAttachments.isNotEmpty()){
+            if (status.mediaAttachments.isNotEmpty()) {
                 preview.visibility = View.VISIBLE
                 preview.setMedia(status.mediaAttachments)
             } else {
@@ -297,6 +324,8 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             rebloggedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
         }
     }
+
+    class FooterHolder(v: View) : StatusViewHolder(v)
 
     interface OnClickStatusListener {
         fun onItemClicked(status: Status)

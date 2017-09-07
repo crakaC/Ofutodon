@@ -1,17 +1,17 @@
 package com.crakac.ofutodon.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.google.gson.Gson
 
-class AttachmentsPreviewActivity : AppCompatActivity() {
+class AttachmentsPreviewActivity : Activity() {
     enum class PreviewAction(val value: String) {
         Preview("preview"),
         Detail("detail")
