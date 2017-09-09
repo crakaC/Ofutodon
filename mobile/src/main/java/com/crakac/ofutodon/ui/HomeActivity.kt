@@ -288,7 +288,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val tootIntent = Intent(this, TootActivity::class.java)
         FabTransform.addExtras(tootIntent, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_message)
         val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_toot_dialog));
-        startActivityForResult(tootIntent, 128, options.toBundle())
+        startActivity(tootIntent, options.toBundle())
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
