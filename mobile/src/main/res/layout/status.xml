@@ -75,7 +75,7 @@
         android:layout_marginTop="@dimen/spacing_micro"
         android:layout_toEndOf="@+id/icon" />
 
-    <com.crakac.ofutodon.ui.InlineImagePreview
+    <com.crakac.ofutodon.ui.widget.InlineImagePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

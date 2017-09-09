@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.crakac.ofutodon.ui.AttachmentsPreviewActivity">
-    <com.crakac.ofutodon.ui.HackyViewPager
+    <com.crakac.ofutodon.ui.widget.HackyViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

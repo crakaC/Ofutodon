@@ -1,4 +1,4 @@
-package com.crakac.ofutodon.ui
+package com.crakac.ofutodon.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet

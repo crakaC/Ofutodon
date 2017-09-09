@@ -16,6 +16,7 @@ import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.ui.widget.InlineImagePreview
 import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
 import java.util.*

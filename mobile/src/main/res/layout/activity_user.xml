@@ -23,7 +23,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="@android:color/transparent">
 
-            <com.crakac.ofutodon.ui.FitParentImageView
+            <com.crakac.ofutodon.ui.widget.FitParentImageView
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -25,6 +25,8 @@ import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.transition.FabTransform
+import com.crakac.ofutodon.ui.widget.FastScrollLinearLayoutManager
+import com.crakac.ofutodon.ui.widget.SwipeRefreshListView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
