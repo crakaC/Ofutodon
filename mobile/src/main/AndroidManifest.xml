@@ -56,9 +56,10 @@
             android:theme="@style/Ofuton.Translucent" />
         <activity
             android:name=".ui.UserActivity"
-            android:parentActivityName=".ui.HomeActivity"
             android:label="@string/title_activity_user"
-            android:theme="@style/Ofuton.User"/>
+            android:parentActivityName=".ui.HomeActivity"
+            android:theme="@style/Ofuton.User" />
+        <activity android:name=".ui.StatusDetailActivity"></activity>
     </application>
 
 </manifest>
