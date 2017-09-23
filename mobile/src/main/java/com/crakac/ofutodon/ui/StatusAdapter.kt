@@ -29,7 +29,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
     var statusListener: OnClickStatusListener? = null
 
     override fun getItem(position: Int): Status {
-        if (isDummyPosition(position)) {
+        if (isFooter(position)) {
             return dummy
         }
         return super.getItem(position)
@@ -39,7 +39,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         return if (isEmpty) 0 else super.getItemCount() + 1 // for dummy item
     }
 
-    private fun isDummyPosition(position: Int): Boolean{
+    private fun isFooter(position: Int): Boolean{
         return position >= itemCount - 1
     }
 
