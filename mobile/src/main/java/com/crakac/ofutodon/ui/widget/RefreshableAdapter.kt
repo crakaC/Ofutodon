@@ -75,6 +75,12 @@ abstract class RefreshableAdapter<T : Identifiable>(val context: Context) : Recy
         notifyItemChanged(position)
     }
 
+    fun update(item: T) {
+        val position = getPositionById(item.id)
+        if (position < 0) return
+        replace(position, item)
+    }
+
     val isEmpty: Boolean
         get() {
             return items.isEmpty()

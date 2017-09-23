@@ -43,12 +43,6 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         return position >= itemCount - 1
     }
 
-    fun update(status: Status) {
-        val position = getPositionById(status.id)
-        if (position < 0) return
-        replace(position, status)
-    }
-
     override fun onBindViewHolder(holder: RefreshableViewHolder?, position: Int) {
         val item = getItem(position)
         if (holder is StatusHolder) {

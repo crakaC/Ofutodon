@@ -5,19 +5,19 @@ import com.crakac.ofutodon.model.api.entity.Status
 import retrofit2.Call
 
 class HomeTimelineFragment : StatusFragment() {
-    val TAG: String = "HomeTimelineFragment"
+    override val TAG: String = "HomeTimelineFragment"
 
     override fun getTitle(): String {
         return "ホーム"
     }
 
     override fun onRefreshRequest(): Call<List<Status>>? {
-        return MastodonUtil.api?.getHomeTimeline(prevRange.q)
+        return MastodonUtil.api?.getHomeTimeline(prev.q)
     }
 
     override fun onLoadMoreRequest(): Call<List<Status>>? {
-        if (isLoadingNext || nextRange.maxId == null)
+        if (isLoadingNext || next.maxId == null)
             return null
-        return MastodonUtil.api?.getHomeTimeline(nextRange.q)
+        return MastodonUtil.api?.getHomeTimeline(next.q)
     }
 }

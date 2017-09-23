@@ -5,7 +5,7 @@ import com.crakac.ofutodon.model.api.entity.Status
 import retrofit2.Call
 
 class ConversationFragment(): StatusFragment() {
-    val TAG: String = "ConversationFragment"
+    override val TAG: String = "ConversationFragment"
 
 
 

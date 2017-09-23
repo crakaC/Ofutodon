@@ -14,8 +14,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MastodonUtil private constructor() {
     companion object {
-        private var instance: Mastodon? = null
-        val api: Mastodon?
+        private var instance: MastodonApi? = null
+        val api: MastodonApi?
             get() {
                 return instance
             }

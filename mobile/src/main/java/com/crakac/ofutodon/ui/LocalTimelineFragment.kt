@@ -5,18 +5,18 @@ import com.crakac.ofutodon.model.api.entity.Status
 import retrofit2.Call
 
 class LocalTimelineFragment : StatusFragment() {
-    val TAG: String = "LocalTimelineFragment"
+    override val TAG: String = "LocalTimelineFragment"
 
     override fun getTitle(): String {
         return "ローカル"
     }
 
     override fun onRefreshRequest(): Call<List<Status>>? {
-        return MastodonUtil.api?.getPublicTimeline(prevRange.q, isLocal = true)
+        return MastodonUtil.api?.getPublicTimeline(prev.q, isLocal = true)
     }
 
     override fun onLoadMoreRequest(): Call<List<Status>>? {
-        if (isLoadingNext || nextRange.maxId == null) return null
-        return MastodonUtil.api?.getPublicTimeline(nextRange.q, isLocal = true)
+        if (isLoadingNext || next.maxId == null) return null
+        return MastodonUtil.api?.getPublicTimeline(next.q, isLocal = true)
     }
 }
