@@ -20,69 +20,33 @@ import com.crakac.ofutodon.ui.widget.RefreshableAdapter
 import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
-import java.util.*
 
 
 class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
     val TAG: String = "StatusAdapter"
-    val ids = TreeSet<Long>()
     val dummy = Status(-1)
 
     var statusListener: OnClickStatusListener? = null
 
     override fun getItem(position: Int): Status {
-        if (position == itemCount) {
+        if (isDummyPosition(position)) {
             return dummy
         }
         return super.getItem(position)
     }
 
-    fun contains(id: Long): Boolean {
-        return ids.contains(id)
+    override fun getItemCount(): Int {
+        return if (isEmpty) 0 else super.getItemCount() + 1 // for dummy item
     }
 
-    override fun getItemId(position: Int): Long {
-        return getItem(position).id
-    }
-
-    /**
-     * return -1 if not found
-     */
-    fun getPositionById(id: Long): Int {
-        return items.indexOfFirst { e -> e.id == id }
-    }
-
-    fun getItemById(id: Long): Status? {
-        return items.firstOrNull{ e -> e.id == id }
-    }
-
-    override fun addTop(item: Status) {
-        super.addTop(item)
-        ids.add(item.id)
-    }
-
-    override fun addTop(newItems: Collection<Status>) {
-        super.addTop(newItems)
-        ids.addAll(newItems.map { e -> e.id })
-    }
-
-    override  fun addBottom(newItems: Collection<Status>) {
-        super.addBottom(newItems)
-        ids.addAll(newItems.map { e -> e.id })
+    private fun isDummyPosition(position: Int): Boolean{
+        return position >= itemCount - 1
     }
 
     fun update(status: Status) {
         val position = getPositionById(status.id)
         if (position < 0) return
         replace(position, status)
-    }
-
-    fun removeById(id: Long) {
-        getItemById(id)?.let { item ->
-            val pos = getPosition(item)
-            remove(pos)
-            ids.remove(id)
-        }
     }
 
     override fun onBindViewHolder(holder: RefreshableViewHolder?, position: Int) {
@@ -135,10 +99,6 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             }
         })
         return holder
-    }
-
-    override fun getItemCount(): Int {
-        return if (isEmpty) 0 else super.getItemCount() // for dummy item
     }
 
     override fun onViewRecycled(holder: RefreshableViewHolder?) {

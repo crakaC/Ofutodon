@@ -4,8 +4,7 @@ import android.text.Spanned
 import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.annotations.SerializedName
 
-class Status(@SerializedName("id")
-             val id: Long = 0L) {
+class Status(id: Long = 0L) : Identifiable(id) {
     enum class Visibility(val value: String) {
         Public("public"),
         UnListed("unlisted"),
