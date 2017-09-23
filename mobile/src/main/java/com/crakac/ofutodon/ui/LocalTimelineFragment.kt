@@ -12,11 +12,10 @@ class LocalTimelineFragment : StatusFragment() {
     }
 
     override fun onRefreshRequest(): Call<List<Status>>? {
-        return MastodonUtil.api?.getPublicTimeline(prev.q, isLocal = true)
+        return MastodonUtil.api?.getPublicTimeline(prev, isLocal = true)
     }
 
     override fun onLoadMoreRequest(): Call<List<Status>>? {
-        if (isLoadingNext || next.maxId == null) return null
-        return MastodonUtil.api?.getPublicTimeline(next.q, isLocal = true)
+        return MastodonUtil.api?.getPublicTimeline(next, isLocal = true)
     }
 }

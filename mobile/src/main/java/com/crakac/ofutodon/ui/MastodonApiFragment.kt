@@ -39,8 +39,8 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
 
     private var nextRange: Range = Range()
     private var prevRange: Range = Range()
-    val next: Range get() = nextRange
-    val prev: Range get() = prevRange
+    val next: Map<String, String> get() = nextRange.q
+    val prev: Map<String, String> get() = prevRange.q
 
     var isLoadingNext = false
 
@@ -112,6 +112,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
     open fun onLoadMoreRequest(): Call<ResponseClass>? = null
 
     override fun onLoadMore() {
+        if (isLoadingNext || nextRange.maxId == null) return
         onLoadMoreRequest()?.run {
             enqueue(onLoadMoreResponse)
             isLoadingNext = true
@@ -137,7 +138,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         }
     }
 
-    abstract fun convertResponseToAdapterItem(response: ResponseClass) : List<AdapterClass>
+    abstract fun convertResponseToAdapterItem(response: ResponseClass): List<AdapterClass>
 
     var firstVisibleItem: AdapterClass? = null
     var firstVisibleOffset = 0

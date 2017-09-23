@@ -12,12 +12,10 @@ class HomeTimelineFragment : StatusFragment() {
     }
 
     override fun onRefreshRequest(): Call<List<Status>>? {
-        return MastodonUtil.api?.getHomeTimeline(prev.q)
+        return MastodonUtil.api?.getHomeTimeline(prev)
     }
 
     override fun onLoadMoreRequest(): Call<List<Status>>? {
-        if (isLoadingNext || next.maxId == null)
-            return null
-        return MastodonUtil.api?.getHomeTimeline(next.q)
+        return MastodonUtil.api?.getHomeTimeline(next)
     }
 }

@@ -39,20 +39,17 @@ class UserStatusFragment : StatusFragment() {
     override val TAG: String = "UserStatusFragment"
     override fun onRefreshRequest(): Call<List<Status>>? {
         return if(isOnlyMedia){
-            MastodonUtil.api?.getStatuses(accountId ,onlyMedia = true, range = prev.q)
+            MastodonUtil.api?.getStatuses(accountId ,onlyMedia = true, range = prev)
         } else {
-            MastodonUtil.api?.getStatuses(accountId, range = prev.q)
+            MastodonUtil.api?.getStatuses(accountId, range = prev)
         }
     }
 
     override fun onLoadMoreRequest(): Call<List<Status>>? {
-        if (isLoadingNext || next.maxId == null)
-            return null
-
         return if(isOnlyMedia){
-            MastodonUtil.api?.getStatuses(accountId, onlyMedia = true, range = next.q)
+            MastodonUtil.api?.getStatuses(accountId, onlyMedia = true, range = next)
         } else {
-            MastodonUtil.api?.getStatuses(accountId, range = next.q)
+            MastodonUtil.api?.getStatuses(accountId, range = next)
         }
     }
 }
