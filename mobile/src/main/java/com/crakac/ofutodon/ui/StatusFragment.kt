@@ -1,7 +1,6 @@
 package com.crakac.ofutodon.ui
 
 import android.app.ActivityOptions
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -222,7 +221,7 @@ abstract class StatusFragment : Fragment(),
 
                 if (response != null && response.isSuccessful) {
                     response.body()?.let {
-                        reblogSuccess(adapter.getItemById(status.id), it)
+                        reblogSuccess(status.id, it)
                     }
                 } else {
                     adapter.update(status)
@@ -234,7 +233,8 @@ abstract class StatusFragment : Fragment(),
                 adapter.update(status)
             }
 
-            fun reblogSuccess(oldStatus: Status, newStatus: Status) {
+            fun reblogSuccess(oldStatusId: Long, newStatus: Status) {
+                val oldStatus = adapter.getItemById(oldStatusId) ?: return
                 val isReblogAction = newStatus.reblog != null
                 if (isReblogAction) {
                     if (oldStatus.reblog != null) {
@@ -255,12 +255,12 @@ abstract class StatusFragment : Fragment(),
 
         if (status.isBoosted) {
             MastodonUtil.api?.run {
-                unreblogStatus(status.apiId)
+                unreblogStatus(status.originalId)
             }?.enqueue(onResponse)
             icon.clearColorFilter()
         } else {
             MastodonUtil.api?.run {
-                reblogStatus(status.apiId)
+                reblogStatus(status.originalId)
             }?.enqueue(onResponse)
             icon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
         }
@@ -273,7 +273,7 @@ abstract class StatusFragment : Fragment(),
 
                 if (response != null && response.isSuccessful) {
                     response.body()?.let {
-                        favoriteSuccess(adapter.getItemById(status.id), it)
+                        favoriteSuccess(status.id, it)
                     }
                 } else {
                     adapter.update(status)
@@ -285,7 +285,8 @@ abstract class StatusFragment : Fragment(),
                 adapter.update(status)
             }
 
-            fun favoriteSuccess(oldStatus: Status, newStatus: Status) {
+            fun favoriteSuccess(oldStatusId: Long, newStatus: Status) {
+                val oldStatus = adapter.getItemById(oldStatusId) ?: return
                 if (oldStatus.reblog != null) {
                     oldStatus.reblog = newStatus
                     adapter.update(oldStatus)
@@ -296,12 +297,12 @@ abstract class StatusFragment : Fragment(),
         }
         if (status.isFaved) {
             MastodonUtil.api?.run {
-                unfavouriteStatus(status.apiId)
+                unfavouriteStatus(status.originalId)
             }?.enqueue(onResponse)
             icon.clearColorFilter()
         } else {
             MastodonUtil.api?.run {
-                favouriteStatus(status.apiId)
+                favouriteStatus(status.originalId)
             }?.enqueue(onResponse)
             icon.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
         }
@@ -328,7 +329,7 @@ abstract class StatusFragment : Fragment(),
         for (i in 0 until recyclerView.childCount) {
             val child = recyclerView.getChildAt(i)
             val holder = recyclerView.getChildViewHolder(child) as StatusAdapter.StatusViewHolder?
-            holder?.updateRelativeTime()
+            holder?.refresh()
         }
     }
 
@@ -343,7 +344,4 @@ abstract class StatusFragment : Fragment(),
         startActivity(intent)
     }
 
-    private class Divider(context: Context, orientation: Int): DividerItemDecoration(context, orientation){
-
-    }
 }

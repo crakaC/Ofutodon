@@ -3,7 +3,6 @@ package com.crakac.ofutodon.ui
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
-import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.TextAppearanceSpan
@@ -17,24 +16,25 @@ import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.InlineImagePreview
+import com.crakac.ofutodon.ui.widget.RefreshableAdapter
+import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
 import java.util.*
 
 
-class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
+class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
     val TAG: String = "StatusAdapter"
-    val statusArray = ArrayList<Status>()
     val ids = TreeSet<Long>()
     val dummy = Status(-1)
 
     var statusListener: OnClickStatusListener? = null
 
-    fun getItem(position: Int): Status {
-        if (position == statusArray.size) {
+    override fun getItem(position: Int): Status {
+        if (position == itemCount) {
             return dummy
         }
-        return statusArray[position]
+        return super.getItem(position)
     }
 
     fun contains(id: Long): Boolean {
@@ -45,60 +45,47 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         return getItem(position).id
     }
 
-    fun getPositionById(id: Long): Int? {
-        return statusArray.indexOfFirst { e -> e.id == id }
+    /**
+     * return -1 if not found
+     */
+    fun getPositionById(id: Long): Int {
+        return items.indexOfFirst { e -> e.id == id }
     }
 
-    fun getItemById(id: Long): Status {
-        return statusArray.first { e -> e.id == id }
+    fun getItemById(id: Long): Status? {
+        return items.firstOrNull{ e -> e.id == id }
     }
 
-    fun getPosition(item: Status): Int {
-        return statusArray.indexOf(item)
+    override fun addTop(item: Status) {
+        super.addTop(item)
+        ids.add(item.id)
     }
 
-    fun addTop(status: Status) {
-        statusArray.add(0, status)
-        ids.add(status.id)
-        notifyItemInserted(0)
+    override fun addTop(newItems: Collection<Status>) {
+        super.addTop(newItems)
+        ids.addAll(newItems.map { e -> e.id })
     }
 
-    fun addTop(statuses: Collection<Status>) {
-        statusArray.addAll(0, statuses)
-        statuses.forEach { e -> ids.add(e.id) }
-        notifyItemRangeInserted(0, statuses.size)
-    }
-
-    fun addBottom(statuses: Collection<Status>) {
-        val oldSize = itemCount
-        statusArray.addAll(statuses)
-        ids.addAll(statuses.map { e -> e.id })
-        notifyItemRangeInserted(oldSize, statuses.size)
+    override  fun addBottom(newItems: Collection<Status>) {
+        super.addBottom(newItems)
+        ids.addAll(newItems.map { e -> e.id })
     }
 
     fun update(status: Status) {
-        getPositionById(status.id)?.let { pos ->
-            statusArray[pos] = status
-            notifyItemChanged(pos)
-        }
+        val position = getPositionById(status.id)
+        if (position < 0) return
+        replace(position, status)
     }
 
     fun removeById(id: Long) {
-        val target = statusArray.find { it.id == id }
-        target?.let {
-            val pos = getPosition(target)
-            statusArray.remove(target)
+        getItemById(id)?.let { item ->
+            val pos = getPosition(item)
+            remove(pos)
             ids.remove(id)
-            notifyItemRemoved(pos)
         }
     }
 
-    val isEmpty: Boolean
-        get() {
-            return statusArray.isEmpty()
-        }
-
-    override fun onBindViewHolder(holder: StatusViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RefreshableViewHolder?, position: Int) {
         val item = getItem(position)
         if (holder is StatusHolder) {
             holder.setData(context, item)
@@ -151,10 +138,10 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
     }
 
     override fun getItemCount(): Int {
-        return if (isEmpty) 0 else statusArray.size + 1
+        return if (isEmpty) 0 else super.getItemCount() // for dummy item
     }
 
-    override fun onViewRecycled(holder: StatusViewHolder?) {
+    override fun onViewRecycled(holder: RefreshableViewHolder?) {
         if (holder is StatusHolder) {
             holder.icon.setImageBitmap(null)
         }
@@ -173,9 +160,9 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
         Footer(4)
     }
 
-    abstract class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        open fun updateRelativeTime(){}
-    }
+    open class StatusViewHolder(v: View): RefreshableViewHolder(v)
+
+    class FooterHolder(v: View) : StatusViewHolder(v)
 
     class StatusHolder(v: View) : StatusViewHolder(v) {
         @BindView(R.id.reblogged_by_icon)
@@ -241,7 +228,7 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             }
         }
 
-        override fun updateRelativeTime() {
+        override fun refresh() {
             createdAt.text = TextUtil.parseCreatedAt(createdAtString!!)
         }
 
@@ -325,8 +312,6 @@ class StatusAdapter(val context: Context) : RecyclerView.Adapter<StatusAdapter.S
             rebloggedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
         }
     }
-
-    class FooterHolder(v: View) : StatusViewHolder(v)
 
     interface OnClickStatusListener {
         fun onItemClicked(status: Status)

@@ -66,7 +66,7 @@ class Status(@SerializedName("id")
         return Visibility.values().first { e -> e.value == visibility }
     }
 
-    val apiId: Long
+    val originalId: Long
         get() {
             return reblog?.id ?: id
         }
