@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
@@ -45,7 +46,8 @@ static def getProps(String key) {
 
 dependencies {
     ext {
-        support_library_version = '26.0.2'
+        support_library_version = '26.1.0'
+        firebase_version = '11.4.0'
         glide_version = '3.8.0'
         butterknife_version = '8.8.1'
         retrofit_version = '2.3.0'
@@ -63,9 +65,8 @@ dependencies {
     compile "com.android.support:support-annotations:$support_library_version"
     compile "com.github.bumptech.glide:glide:$glide_version"
     compile "com.jakewharton:butterknife:$butterknife_version"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife_version"
     kapt "com.jakewharton:butterknife-compiler:$butterknife_version"
-    compile 'com.google.firebase:firebase-core:11.2.0'
+    compile "com.google.firebase:firebase-core:$firebase_version"
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
     compile "com.squareup.okhttp3:okhttp:$okhttp_version"
