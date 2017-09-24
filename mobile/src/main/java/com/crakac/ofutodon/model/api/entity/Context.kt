@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 class Context {
     val TAG: String = "Context"
     @SerializedName("ancestors")
-    val ancestors: List<Status>? = null
+    val ancestors: List<Status> = emptyList()
     @SerializedName("descendants")
-    val descendants: List<Status>? = null
+    val descendants: List<Status> = emptyList()
 }

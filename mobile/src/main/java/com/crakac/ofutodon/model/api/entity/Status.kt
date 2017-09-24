@@ -3,8 +3,9 @@ package com.crakac.ofutodon.model.api.entity
 import android.text.Spanned
 import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class Status(id: Long = 0L) : Identifiable(id) {
+class Status(id: Long = 0L) : Identifiable(id), Serializable {
     enum class Visibility(val value: String) {
         Public("public"),
         UnListed("unlisted"),

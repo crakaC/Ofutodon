@@ -5,8 +5,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="oauth_redirect_host">com.crakac.ofutodon</string>
-    <string name="oauth_scheme">oauth2redirect</string>
+    <string name="oauth_redirect_host" translatable="false">com.crakac.ofutodon</string>
+    <string name="oauth_scheme" translatable="false">oauth2redirect</string>
 
     <string name="transition_name_toot_dialog" translatable="false">toot_dialog</string>
     <string name="transition_name_user_icon" translatable="false">user_icon</string>
