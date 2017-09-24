@@ -6,6 +6,7 @@ import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Context
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.RefreshableAdapter
+import com.google.gson.Gson
 import retrofit2.Call
 
 class ConversationFragment(): MastodonApiFragment<Status, Context>() {
@@ -17,7 +18,7 @@ class ConversationFragment(): MastodonApiFragment<Status, Context>() {
             val f = ConversationFragment()
             val args = Bundle()
             args.putLong(STATUS_ID, status.id)
-            args.putSerializable(STATUS, status)
+            args.putString(STATUS, Gson().toJson(status))
             f.arguments = args
             return f
         }
@@ -31,7 +32,7 @@ class ConversationFragment(): MastodonApiFragment<Status, Context>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         statusId = arguments.getLong(STATUS_ID)
-        status = arguments.getSerializable(STATUS) as Status
+        status = Gson().fromJson(arguments.getString(STATUS), Status::class.java)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

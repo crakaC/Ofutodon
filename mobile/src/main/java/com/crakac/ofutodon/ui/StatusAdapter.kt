@@ -5,7 +5,10 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
 import android.text.style.TextAppearanceSpan
+import android.text.style.URLSpan
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -194,8 +197,20 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             sb.append(" @${status.account.acct}")
             sb.setSpan(accrAppearance, start, sb.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             name.text = sb
+            sb.clear()
 
-            content.text = status.spannedContent!!
+            val spanned = status.spannedContent!!
+
+            spanned.getSpans(0, content.text.length, URLSpan::class.java).forEach { span ->
+                val start = spanned.getSpanStart(span)
+                val end = spanned.getSpanEnd(span)
+                val text = spanned.subSequence(start, end)
+                Log.d("Spanned", "start:$start, end:$end, url: ${span.url}, text:$text")
+            }
+
+            content.text = TextUtil.shortenLinks(spanned)
+
+            content.movementMethod = LinkMovementMethod.getInstance()
             Glide.with(context)
                     .load(status.account.avatar)
                     .centerCrop()
