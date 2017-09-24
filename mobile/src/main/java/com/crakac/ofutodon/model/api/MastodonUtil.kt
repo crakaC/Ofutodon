@@ -5,6 +5,8 @@ import com.crakac.ofutodon.BuildConfig
 import com.crakac.ofutodon.model.api.entity.AccessToken
 import com.crakac.ofutodon.model.api.entity.AppCredentials
 import com.crakac.ofutodon.util.PrefsUtil
+import com.google.gson.GsonBuilder
+import com.google.gson.LongSerializationPolicy
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -40,7 +42,7 @@ class MastodonUtil private constructor() {
         fun saveAppCredential(domain: String, credentials: AppCredentials) {
             PrefsUtil.putString("$domain.${C.CLIENT_ID}", credentials.clientId)
             PrefsUtil.putString("$domain.${C.CLIENT_SECRET}", credentials.clientSecret)
-            PrefsUtil.putLong("$domain.id", credentials.id)
+            PrefsUtil.putLong("$domain.${C.CREDENTIAL_ID}", credentials.id)
         }
 
         fun hasAppCredential(domain: String): Boolean {
@@ -120,7 +122,9 @@ class MastodonUtil private constructor() {
             val retrofit = Retrofit.Builder()
                     .baseUrl("https://$host")
                     .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(
+                            GsonConverterFactory.create(
+                                    GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create()))
                     .build()
             return MastodonApi(retrofit.create(Mastodon::class.java), account)
         }
