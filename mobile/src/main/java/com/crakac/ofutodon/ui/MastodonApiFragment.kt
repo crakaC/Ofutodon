@@ -11,9 +11,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Link
 import com.crakac.ofutodon.model.api.Range
@@ -31,9 +28,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         SwipeRefreshListView.OnLoadMoreListener {
     open val TAG: String = "MastodonApiFragment"
     lateinit var recyclerView: RecyclerView
-    @BindView(R.id.swipeRefresh)
     lateinit var swipeRefresh: SwipeRefreshListView
-    lateinit var unbinder: Unbinder
     lateinit var adapter: RefreshableAdapter<AdapterClass>
     lateinit var layoutManager: LinearLayoutManager
 
@@ -46,13 +41,17 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_status, container, false)
-        unbinder = ButterKnife.bind(this, view)
+
         adapter = createAdapter(activity)
+
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
         recyclerView = swipeRefresh.recyclerView
         recyclerView.adapter = adapter
+
         layoutManager = FastScrollLinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
+
         val divider = DividerItemDecoration(activity, layoutManager.orientation).apply {
             setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
         }
@@ -63,11 +62,6 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         swipeRefresh.isRefreshing = true
         onRefresh()
         return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        unbinder.unbind()
     }
 
     override fun onStart() {
@@ -83,7 +77,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         onRefreshRequest()?.enqueue(onRefreshResponse)
     }
 
-    val onRefreshResponse = object : Callback<ResponseClass> {
+    private val onRefreshResponse = object : Callback<ResponseClass> {
         override fun onFailure(call: Call<ResponseClass>?, t: Throwable?) {
             if (!isAdded) return
             swipeRefresh.isRefreshing = false
@@ -121,7 +115,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         }
     }
 
-    val onLoadMoreResponse = object : Callback<ResponseClass> {
+    private val onLoadMoreResponse = object : Callback<ResponseClass> {
         override fun onFailure(call: Call<ResponseClass>?, t: Throwable?) {
             isLoadingNext = false
         }

@@ -4,14 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.google.gson.Gson
 
 class ConversationActivity : AppCompatActivity() {
-    @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
 
     companion object {
@@ -28,7 +25,7 @@ class ConversationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conversation)
-        ButterKnife.bind(this)
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         val f = ConversationFragment.newInstance(getStatus(intent))
         supportFragmentManager.beginTransaction().replace(R.id.fragment, f).commit()

@@ -15,9 +15,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.*
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Mastodon
 import com.crakac.ofutodon.model.api.MastodonUtil
@@ -34,20 +31,16 @@ import retrofit2.Response
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     val TAG: String = "HomeActivity"
 
-    @BindView(R.id.tab)
-    lateinit var tabLayout: TabLayout
+    private val tabLayout by lazy { findViewById<TabLayout>(R.id.tab) }
 
-    @BindView(R.id.pager)
-    lateinit var pager: ViewPager
+    private val pager by lazy { findViewById<ViewPager>(R.id.pager) }
 
-    @BindView(R.id.fab)
-    lateinit var fab: View
+    private val fab by lazy { findViewById<View>(R.id.fab) }
 
-    @BindView(R.id.drawer_layout)
-    lateinit var drawer: DrawerLayout
+    private val drawer by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
 
     var adapter: MyFragmentPagerAdapter? = null
-    var instanceDomain: String = "friends.nico"
+    var instanceDomain: String = "don.crakac.com"
 
     var mastodon: Mastodon? = null
 
@@ -59,7 +52,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        ButterKnife.bind(this)
 
         drawer.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
@@ -136,6 +128,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             insets.consumeSystemWindowInsets()
         }
+
+
+        fab.setOnClickListener { v ->
+            onClickFab(v)
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -283,13 +281,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
-    @OnClick(R.id.fab)
-    fun onClickFab(fab: View) {
+    private fun onClickFab(fab: View) {
         val tootIntent = Intent(this, TootActivity::class.java)
         FabTransform.addExtras(tootIntent, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_message)
         val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_toot_dialog));
         startActivity(tootIntent, options.toBundle())
-    }
+   }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_N) {

@@ -1,11 +1,8 @@
 package com.crakac.ofutodon.ui
 
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
-import butterknife.ButterKnife
 import com.bumptech.glide.Glide
-import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Attachment
 
 class AttachmentPreviewAdapter(val attachments: List<Attachment>) : PreviewAdapter(){

@@ -11,8 +11,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Account
@@ -29,28 +27,13 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     private var isTheTitleVisible = false
     private var isTheTitleContainerVisible = true
 
-    @BindView(R.id.icon)
     lateinit var icon: ImageView
-
-    @BindView(R.id.header)
     lateinit var header: ImageView
-
-    @BindView(R.id.pager)
     lateinit var pager: ViewPager
-
-    @BindView(R.id.app_bar)
     lateinit var appBar: AppBarLayout
-
-    @BindView(R.id.title_text)
     lateinit var titleText: TextView
-
-    @BindView(R.id.title_container)
     lateinit var titleContainer: LinearLayout
-
-    @BindView(R.id.user_name)
     lateinit var userName: TextView
-
-    @BindView(R.id.user_description)
     lateinit var userDescription: TextView
 
     lateinit var account: Account
@@ -65,9 +48,18 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
-        ButterKnife.bind(this)
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+
+        icon = findViewById(R.id.icon)
+        header = findViewById(R.id.header)
+        pager = findViewById(R.id.pager)
+        appBar = findViewById(R.id.app_bar)
+        titleText = findViewById(R.id.title_text)
+        titleContainer = findViewById(R.id.title_container)
+        userName = findViewById(R.id.user_name)
+        userDescription = findViewById(R.id.user_description)
+
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

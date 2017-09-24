@@ -6,8 +6,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.crakac.ofutodon.R
 
 class SwipeRefreshListView : SwipeRefreshLayout {
@@ -16,12 +14,11 @@ class SwipeRefreshListView : SwipeRefreshLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    @BindView(R.id.recyclerView)
-    lateinit var recyclerView: RecyclerView
+    val recyclerView: RecyclerView
 
     init {
         val v = View.inflate(context, R.layout.swipe_refresh_list_view, this)
-        ButterKnife.bind(v)
+        recyclerView = v.findViewById(R.id.recyclerView)
     }
 
     override fun onAttachedToWindow() {

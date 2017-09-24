@@ -20,6 +20,8 @@ import retrofit2.Response
  */
 abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), StatusAdapter.OnClickStatusListener {
 
+    abstract fun getTitle(): String
+
     override fun createAdapter(context: Context): RefreshableAdapter<Status> {
         val adapter = StatusAdapter(context)
         adapter.statusListener = this
@@ -153,8 +155,6 @@ abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), Sta
 
         }
     }
-
-    abstract fun getTitle(): String
 
     fun updateRelativeTime() {
         if (!isAdded) return

@@ -13,8 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
@@ -42,7 +40,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         return if (isEmpty) 0 else super.getItemCount() + 1 // for dummy item
     }
 
-    private fun isFooter(position: Int): Boolean{
+    private fun isFooter(position: Int): Boolean {
         return position >= itemCount - 1
     }
 
@@ -117,61 +115,30 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         Footer(4)
     }
 
-    open class StatusViewHolder(v: View): RefreshableViewHolder(v)
+    open class StatusViewHolder(v: View) : RefreshableViewHolder(v)
 
     class FooterHolder(v: View) : StatusViewHolder(v)
 
     class StatusHolder(v: View) : StatusViewHolder(v) {
-        @BindView(R.id.reblogged_by_icon)
-        lateinit var rebloggedByIcon: ImageView
+        val rebloggedBy: TextView = v.findViewById(R.id.reblogged_by_name)
+        val rebloggedByIcon: ImageView = v.findViewById(R.id.reblogged_by_icon)
+        val rebloggedMark: ImageView = v.findViewById(R.id.reblogged_icon)
+        val name: TextView = v.findViewById(R.id.displayName)
+        val content: TextView = v.findViewById(R.id.status)
+        val icon: ImageView = v.findViewById(R.id.icon)
+        val createdAt: TextView = v.findViewById(R.id.createdAt)
+        val reply: ImageView = v.findViewById(R.id.reply)
+        val boost: ImageView = v.findViewById(R.id.boost)
+        val followersOnly: ImageView = v.findViewById(R.id.followers_only)
+        val direct: ImageView = v.findViewById(R.id.direct)
+        val favorite: ImageView = v.findViewById(R.id.favorite)
+        val more: ImageView = v.findViewById(R.id.more)
+        val preview: InlineImagePreview = v.findViewById(R.id.preview)
 
-        @BindView(R.id.reblogged_by_name)
-        lateinit var rebloggedBy: TextView
+        private var createdAtString: String? = null
 
-        @BindView(R.id.reblogged_icon)
-        lateinit var rebloggedMark: ImageView
+        private val accrAppearance = TextAppearanceSpan(v.context, R.style.TextAppearance_AppCompat_Caption)
 
-        @BindView(R.id.displayName)
-        lateinit var name: TextView
-
-        @BindView(R.id.status)
-        lateinit var content: TextView
-
-        @BindView(R.id.icon)
-        lateinit var icon: ImageView
-
-        @BindView(R.id.createdAt)
-        lateinit var createdAt: TextView
-
-        @BindView(R.id.reply)
-        lateinit var reply: ImageView
-
-        @BindView(R.id.boost)
-        lateinit var boost: ImageView
-
-        @BindView(R.id.followers_only)
-        lateinit var followersOnly: ImageView
-
-        @BindView(R.id.direct)
-        lateinit var direct: ImageView
-
-        @BindView(R.id.favorite)
-        lateinit var favorite: ImageView
-
-        @BindView(R.id.more)
-        lateinit var more: ImageView
-
-        @BindView(R.id.preview)
-        lateinit var preview: InlineImagePreview
-
-        var createdAtString: String? = null
-
-        val accrAppearance: TextAppearanceSpan
-
-        init {
-            ButterKnife.bind(this, v)
-            accrAppearance = TextAppearanceSpan(v.context, R.style.TextAppearance_AppCompat_Caption)
-        }
 
         fun setData(context: Context, status: Status) {
             if (status.reblog != null) {

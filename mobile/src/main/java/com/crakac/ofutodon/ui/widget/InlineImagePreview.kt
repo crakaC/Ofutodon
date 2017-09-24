@@ -7,10 +7,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import butterknife.BindView
-import butterknife.BindViews
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
@@ -22,30 +18,40 @@ import com.crakac.ofutodon.util.ViewUtil
 import java.lang.Exception
 
 class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
-    val TAG: String = "InlineImagePreview"
+    private val TAG: String = "InlineImagePreview"
     val PREVIEW_MAX_NUM = 4
 
     var medias: List<Attachment>? = null
 
-    @BindViews(R.id.image1, R.id.image2, R.id.image3, R.id.image4)
-    lateinit var images: List<@JvmSuppressWildcards ImageView>
+    private val images: ArrayList<@JvmSuppressWildcards ImageView> = ArrayList(PREVIEW_MAX_NUM)
 
-    @BindView(R.id.left)
-    lateinit var leftContainer: LinearLayout
+    private val leftContainer: LinearLayout
+    private val rightContainer: LinearLayout
 
-    @BindView(R.id.right)
-    lateinit var rightContainer: LinearLayout
-
-    @BindViews(R.id.separator_vertical, R.id.separator_right, R.id.separator_left)
-    lateinit var separators: List<@JvmSuppressWildcards View>
+    val separators: List<@JvmSuppressWildcards View>
 
     var listener: OnClickPreviewListener? = null
 
     init {
-        val v = View.inflate(context, R.layout.inline_preview, this)
+        View.inflate(context, R.layout.inline_preview, this)
+        arrayOf(R.id.image1, R.id.image2, R.id.image3, R.id.image4).forEachIndexed { i, id ->
+            val preview = findViewById<ImageView>(id)
+            preview.setOnClickListener{ v ->
+                onClickPreview(v)
+            }
+            images.add(preview)
+        }
+        leftContainer = findViewById(R.id.left)
+        rightContainer = findViewById(R.id.right)
+
+        val separatorIds = arrayOf(R.id.separator_vertical, R.id.separator_right, R.id.separator_left)
+        separators = ArrayList(separatorIds.size)
+        separatorIds.forEach { id ->
+            separators.add(findViewById<View>(id))
+        }
+
         val padding = resources.getDimensionPixelSize(R.dimen.spacing_micro)
-        v.setPadding(0, padding, 0, padding)
-        ButterKnife.bind(v)
+        setPadding(0, padding, 0, padding)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -84,8 +90,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(c
         }
     }
 
-    @OnClick(R.id.image1, R.id.image2, R.id.image3, R.id.image4)
-    fun onClick(v: View){
+    fun onClickPreview(v: View){
         listener?.let {
             val index = images.indexOf(v)
             it.onClick(index)

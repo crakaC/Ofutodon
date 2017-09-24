@@ -4,8 +4,6 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
@@ -14,10 +12,8 @@ import com.github.chrisbanes.photoview.PhotoView
 import java.lang.Exception
 
 abstract class PreviewAdapter: PagerAdapter() {
-    @BindView(R.id.image)
     lateinit var photoView: PhotoView
 
-    @BindView(R.id.progress)
     lateinit var progress: ProgressBar
 
     val dismissProgressOnReady = object : RequestListener<Any?, GlideDrawable> {
@@ -34,7 +30,8 @@ abstract class PreviewAdapter: PagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val v = View.inflate(container.context, R.layout.preview_item, null)
         container.addView(v)
-        ButterKnife.bind(this, v)
+        photoView = v.findViewById(R.id.image)
+        progress = v.findViewById(R.id.progress)
         setupPreview(container, position)
         return v
     }

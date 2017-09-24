@@ -28,9 +28,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.*
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
@@ -81,38 +78,16 @@ class TootActivity : AppCompatActivity() {
             intent.putExtra(REPLY_STATUS, Gson().toJson(status))
         }
     }
-
-    @BindView(R.id.container)
     lateinit var container: View
-
-    @BindView(R.id.spoiler_text)
     lateinit var spoilerText: EditText
-
-    @BindView(R.id.text_separator)
     lateinit var textSeparator: View
-
-    @BindView(R.id.toot_text)
     lateinit var tootText: EditText
-
-    @BindView(R.id.image_attachments_root)
     lateinit var imageAttachmentParent: LinearLayout
-
-    @BindView(R.id.toot)
     lateinit var tootButton: TextView
-
-    @BindView(R.id.add_photo)
     lateinit var attachmentButton: ImageView
-
-    @BindView(R.id.toot_visibility)
     lateinit var visibilityButton: ImageView
-
-    @BindView(R.id.content_warning)
     lateinit var cwButton: TextView
-
-    @BindView(R.id.nsfw)
     lateinit var nsfwButton: TextView
-
-    @BindView(R.id.text_count)
     lateinit var textCount: TextView
 
     var isPosting = false
@@ -148,14 +123,44 @@ class TootActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_toot)
-        ButterKnife.bind(this)
+
+        container = findViewById(R.id.container)
+        spoilerText = findViewById(R.id.spoiler_text)
+        textSeparator = findViewById(R.id.text_separator)
+        tootText = findViewById(R.id.toot_text)
+        imageAttachmentParent = findViewById(R.id.image_attachments_root)
+        tootButton = findViewById(R.id.toot)
+        tootButton.setOnClickListener {
+            toot()
+        }
+        attachmentButton = findViewById(R.id.add_photo)
+        attachmentButton.setOnClickListener{
+            onClickAttachment()
+        }
+        visibilityButton = findViewById(R.id.toot_visibility)
+        visibilityButton.setOnClickListener{ v ->
+            onClickVisibility(v)
+        }
+        cwButton = findViewById(R.id.content_warning)
+        cwButton.setOnClickListener{
+            toggleContentWarning()
+        }
+        nsfwButton = findViewById(R.id.nsfw)
+        nsfwButton.setOnClickListener{
+            toggleNotSafeForWork()
+        }
+
+        textCount = findViewById(R.id.text_count)
+
+        findViewById<View>(R.id.toot_background).setOnClickListener {
+            dismiss()
+        }
+
         FabTransform.setup(this, container)
 
         if (intent.action == ACTION_REPLY) {
             setUpReply()
         }
-
-        nsfwButton.visibility = View.VISIBLE
 
         tootText.addTextChangedListener(textWatcher)
         spoilerText.addTextChangedListener(textWatcher)
@@ -165,6 +170,7 @@ class TootActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         outState.putParcelable("CameraUri", cameraUri)
         outState.putString("CameraFilePath", cameraFilePath)
         outState.putParcelableArrayList("AttachmentUris", ArrayList(uriAttachmentsList.map { (uri) -> uri }))
@@ -224,12 +230,10 @@ class TootActivity : AppCompatActivity() {
         }
     }
 
-    @OnClick(R.id.toot_background)
     fun dismiss() {
         finishAfterTransition()
     }
 
-    @OnClick(R.id.toot)
     fun toot() {
         if (isPosting) return
         isPosting = true
@@ -272,7 +276,6 @@ class TootActivity : AppCompatActivity() {
         }
     }
 
-    @OnClick(R.id.add_photo)
     fun onClickAttachment() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -424,7 +427,6 @@ class TootActivity : AppCompatActivity() {
                 })
     }
 
-    @OnClick(R.id.content_warning)
     fun toggleContentWarning() {
         isContentWarningEnabled = !isContentWarningEnabled
         setContentWarning(isContentWarningEnabled)
@@ -444,7 +446,6 @@ class TootActivity : AppCompatActivity() {
         }
     }
 
-    @OnClick(R.id.nsfw)
     fun toggleNotSafeForWork() {
         isNsfw = !isNsfw
         setNotSafeForWorkEnabled(isNsfw)
@@ -492,7 +493,6 @@ class TootActivity : AppCompatActivity() {
     }
 
 
-    @OnClick(R.id.toot_visibility)
     fun onClickVisibility(v: View) {
         val popup = PopupMenu(this, v)
         popup.inflate(R.menu.toot_visibility)
@@ -598,7 +598,7 @@ class TootActivity : AppCompatActivity() {
 
     private fun preview(uri: Uri) {
         val intent = Intent(this, AttachmentsPreviewActivity::class.java)
-        val uris = ArrayList<Uri>(uriAttachmentsList.map {(u) -> u})
+        val uris = ArrayList<Uri>(uriAttachmentsList.map { (u) -> u })
         AttachmentsPreviewActivity.setup(intent, uris, uris.indexOfFirst { e -> e == uri })
         startActivity(intent)
     }

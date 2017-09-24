@@ -5,8 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.google.gson.Gson
@@ -17,7 +15,6 @@ class AttachmentsPreviewActivity : Activity() {
         Detail("detail")
     }
 
-    @BindView(R.id.pager)
     lateinit var pager: ViewPager
 
     var targetStatus: Status? = null
@@ -41,7 +38,7 @@ class AttachmentsPreviewActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_attachments_preview)
-        ButterKnife.bind(this)
+        pager = findViewById(R.id.pager)
         when (PreviewAction.valueOf(intent.action)) {
             PreviewAction.Preview -> {
                 setupWithUris()
