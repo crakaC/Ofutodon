@@ -26,11 +26,18 @@ abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), Sta
         return adapter
     }
 
-    override fun convertResponseToAdapterItem(response: List<Status>): List<Status> {
-        return response
+    override fun onRefreshSuccess(response: List<Status>) {
+        insertQuietly(response)
+    }
+
+    override fun onLoadMoreSuccess(response: List<Status>) {
+        adapter.addBottom(response)
     }
 
     override fun onItemClicked(status: Status) {
+        val intent = Intent(activity, ConversationActivity::class.java)
+        ConversationActivity.setStatus(intent, status)
+        startActivity(intent)
     }
 
     override fun onIconClicked(icon: ImageView, status: Status) {

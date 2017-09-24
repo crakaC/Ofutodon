@@ -98,7 +98,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
                 return
             }
             response.body()?.let {
-                insertQuietly(convertResponseToAdapterItem(it))
+                onRefreshSuccess(it)
             }
             Link.parse(response.headers().get("link"))?.let {
                 prevRange = it.prevRange()
@@ -108,6 +108,8 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
             }
         }
     }
+
+    abstract fun onRefreshSuccess(response: ResponseClass)
 
     open fun onLoadMoreRequest(): Call<ResponseClass>? = null
 
@@ -130,15 +132,14 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
                 return
             }
             response.body()?.let {
-                adapter.addBottom(convertResponseToAdapterItem(it))
+                onLoadMoreSuccess(it)
             }
             Link.parse(response.headers().get("link"))?.let {
                 nextRange = it.nextRange()
             }
         }
     }
-
-    abstract fun convertResponseToAdapterItem(response: ResponseClass): List<AdapterClass>
+    abstract  fun onLoadMoreSuccess(response: ResponseClass)
 
     var firstVisibleItem: AdapterClass? = null
     var firstVisibleOffset = 0
