@@ -66,7 +66,7 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@id/reblogged_by_icon" />
 
-    <TextView
+    <com.crakac.ofutodon.ui.widget.TouchTroughTextView
         android:id="@+id/status"
         style="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_width="match_parent"

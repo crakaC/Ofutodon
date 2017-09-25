@@ -5,7 +5,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.method.LinkMovementMethod
+import android.text.Spanned
 import android.text.style.TextAppearanceSpan
 import android.text.style.URLSpan
 import android.util.Log
@@ -16,9 +16,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
-import com.crakac.ofutodon.ui.widget.InlineImagePreview
-import com.crakac.ofutodon.ui.widget.RefreshableAdapter
-import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
+import com.crakac.ofutodon.ui.widget.*
 import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
 
@@ -139,6 +137,9 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
 
         private val accrAppearance = TextAppearanceSpan(v.context, R.style.TextAppearance_AppCompat_Caption)
 
+        init {
+            content.movementMethod = ContentMovementMethod.instance
+        }
 
         fun setData(context: Context, status: Status) {
             if (status.reblog != null) {
@@ -164,20 +165,22 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             sb.append(" @${status.account.acct}")
             sb.setSpan(accrAppearance, start, sb.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             name.text = sb
+
             sb.clear()
 
-            val spanned = status.spannedContent!!
-
-            spanned.getSpans(0, content.text.length, URLSpan::class.java).forEach { span ->
-                val start = spanned.getSpanStart(span)
-                val end = spanned.getSpanEnd(span)
-                val text = spanned.subSequence(start, end)
+            sb.append(status.spannedContent)
+            sb.getSpans(0, sb.length, URLSpan::class.java).forEach { span ->
+                val start = sb.getSpanStart(span)
+                val end = sb.getSpanEnd(span)
+                val text = sb.subSequence(start, end)
                 Log.d("Spanned", "start:$start, end:$end, url: ${span.url}, text:$text")
+                sb.removeSpan(span)
+                val clickableSpan = LinkClickableSpan(text.toString(), span.url)
+                sb.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
-            content.text = TextUtil.shortenLinks(spanned)
+            content.text = sb
 
-            content.movementMethod = LinkMovementMethod.getInstance()
             Glide.with(context)
                     .load(status.account.avatar)
                     .centerCrop()
