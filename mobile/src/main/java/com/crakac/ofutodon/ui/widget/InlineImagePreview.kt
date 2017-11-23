@@ -7,6 +7,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
@@ -17,7 +19,7 @@ import com.crakac.ofutodon.model.api.entity.Attachment
 import com.crakac.ofutodon.util.ViewUtil
 import java.lang.Exception
 
-class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs) {
     private val TAG: String = "InlineImagePreview"
     val PREVIEW_MAX_NUM = 4
 
@@ -29,6 +31,9 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(c
     private val rightContainer: LinearLayout
 
     val separators: List<@JvmSuppressWildcards View>
+    val hideMediaButton: View
+    val mediaMask: View
+    val cwText: TextView
 
     var listener: OnClickPreviewListener? = null
 
@@ -50,6 +55,13 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(c
             separators.add(findViewById<View>(id))
         }
 
+        hideMediaButton = findViewById(R.id.hide_image_button)
+        cwText = findViewById<TextView>(R.id.content_warning)
+        mediaMask = findViewById(R.id.nsfw_mask)
+
+        hideMediaButton.setOnClickListener{ _ -> mediaMask.visibility = View.VISIBLE}
+        mediaMask.setOnClickListener { v -> v.visibility = View.GONE }
+
         val padding = resources.getDimensionPixelSize(R.dimen.spacing_micro)
         setPadding(0, padding, 0, padding)
     }
@@ -59,7 +71,15 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(c
         super.onMeasure(widthMeasureSpec, height)
     }
 
-    fun setMedia(attachments: List<Attachment>) {
+    fun setMedia(attachments: List<Attachment>, isSensitive: Boolean) {
+        if(isSensitive){
+            mediaMask.visibility = View.VISIBLE
+            cwText.setText(R.string.sensitive_media)
+        } else {
+            mediaMask.visibility = View.GONE
+            cwText.setText(R.string.hidden_insensitive_media)
+        }
+
         medias = attachments
         images.forEach { e -> e.visibility = View.GONE }
         attachments.forEachIndexed { index, attachment ->

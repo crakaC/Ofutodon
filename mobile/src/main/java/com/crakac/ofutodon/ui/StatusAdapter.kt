@@ -227,7 +227,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
 
             if (status.mediaAttachments.isNotEmpty()) {
                 preview.visibility = View.VISIBLE
-                preview.setMedia(status.mediaAttachments)
+                preview.setMedia(status.mediaAttachments, status.sensitive)
             } else {
                 preview.visibility = View.GONE
             }

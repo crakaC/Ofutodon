@@ -33,4 +33,8 @@
 
     <string name="tab_toots">投稿</string>
     <string name="tab_media">メディア</string>
+
+    <string name="sensitive_media">閲覧注意</string>
+    <string name="hidden_insensitive_media">非表示のメディア</string>
+    <string name="tap_to_show">タップして表示</string>
 </resources>

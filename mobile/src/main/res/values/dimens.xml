@@ -37,6 +37,9 @@
     <dimen name="button_elevation">2dp</dimen>
     <dimen name="image_button_small">40dp</dimen>
     <dimen name="image_inner_padding_small">8dp</dimen>
+
+    <dimen name="overlay_button_small">32dp</dimen>
+    <dimen name="button_radius">4dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
 
     <!-- user detail-->
