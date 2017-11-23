@@ -32,16 +32,16 @@
         android:orientation="vertical"
         android:transitionName="@string/transition_name_toot_dialog">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/toot_input_background"
-            android:orientation="vertical">
+            android:background="@drawable/toot_input_background">
 
             <EditText
                 android:id="@+id/spoiler_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:background="@android:color/transparent"
                 android:hint="@string/spoiler_hint"
                 android:inputType="text"
@@ -56,12 +56,14 @@
                 android:id="@+id/text_separator"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
+                android:layout_below="@id/spoiler_text"
                 android:background="@color/mid_grey" />
 
             <EditText
                 android:id="@+id/toot_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/text_separator"
                 android:background="@android:color/transparent"
                 android:hint="@string/toot_hint"
                 android:imeOptions="actionDone"
@@ -71,7 +73,20 @@
                 android:textColor="@color/text_primary_dark"
                 android:textColorHint="@color/text_secondary_dark" />
 
+            <TextView
+                android:id="@+id/text_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_margin="@dimen/spacing_micro"
+                android:layout_alignEnd="@id/toot_text"
+                android:layout_alignBottom="@id/toot_text"
+                android:padding="@dimen/spacing_micro"
+                android:text="500"
+                android:textColor="@color/text_secondary_dark" />
+
             <HorizontalScrollView
+                android:layout_below="@id/toot_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -82,7 +97,7 @@
                     android:orientation="horizontal" />
             </HorizontalScrollView>
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -121,30 +136,16 @@
                 android:text="@string/toot_content_warning"
                 android:textColor="@color/text_primary_dark" />
 
-            <TextView
+            <ImageView
                 android:id="@+id/nsfw"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/image_button"
                 android:layout_height="@dimen/image_button"
                 android:layout_toEndOf="@+id/content_warning"
+                android:alpha="0.8"
                 android:background="?selectableItemBackground"
-                android:gravity="center"
-                android:minWidth="@dimen/image_button"
-                android:padding="@dimen/padding_micro"
-                android:text="@string/toot_NSFW"
-                android:visibility="gone"
-                android:textColor="@color/text_primary_dark" />
-
-            <TextView
-                android:id="@+id/text_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="500"
-                android:padding="@dimen/spacing_micro"
-                android:textColor="@color/text_secondary_dark"
-                android:layout_alignBaseline="@+id/toot"
-                android:layout_alignBottom="@+id/toot"
-                android:layout_toStartOf="@+id/toot" />
+                android:padding="@dimen/image_inner_padding"
+                android:src="@drawable/ic_visibility"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/toot"

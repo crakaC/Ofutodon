@@ -87,27 +87,27 @@ class TootActivity : AppCompatActivity() {
     lateinit var attachmentButton: ImageView
     lateinit var visibilityButton: ImageView
     lateinit var cwButton: TextView
-    lateinit var nsfwButton: TextView
+    lateinit var nsfwButton: ImageView
     lateinit var textCount: TextView
 
-    var isPosting = false
+    private var isPosting = false
 
     // using for picking up attachmentUris by other app
-    var cameraUri: Uri? = null
-    var cameraFilePath: String? = null
+    private var cameraUri: Uri? = null
+    private var cameraFilePath: String? = null
 
     // keep attachmentUris
-    var uriAttachmentsList = ArrayList<Pair<Uri, Attachment>>(MAX_ATTACHMENTS_NUM)
+    private var uriAttachmentsList = ArrayList<Pair<Uri, Attachment>>(MAX_ATTACHMENTS_NUM)
 
-    var tootVisibility = defaultVisibility
+    private var tootVisibility = defaultVisibility
 
-    val defaultVisibility: Status.Visibility
+    private val defaultVisibility: Status.Visibility
         get() {
             return Status.Visibility.valueOf(
                     PrefsUtil.getString(TOOT_VISIBILITY, Status.Visibility.Public.toString())!!)
         }
 
-    var isContentWarningEnabled = false
+    private var isContentWarningEnabled = false
 
     fun getSpoilerText(): String? {
         if (!isContentWarningEnabled) {
@@ -116,9 +116,9 @@ class TootActivity : AppCompatActivity() {
         return spoilerText.text.toString()
     }
 
-    var isNsfw = false
+    private var isNsfw = false
 
-    var replyToStatus: Status? = null
+    private var replyToStatus: Status? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -323,23 +323,16 @@ class TootActivity : AppCompatActivity() {
         }
 
         if (data?.data != null) {
-            addThumbnail(data.data)
             uploadMedia(data.data)
         } else if (cameraUri != null) {
             addToGallery(cameraFilePath!!)
-            addThumbnail(cameraUri!!)
             uploadMedia(cameraUri!!)
             cameraUri = null
             cameraFilePath = null
         }
-
-        nsfwButton.visibility = View.VISIBLE
     }
 
     fun addThumbnail(uri: Uri) {
-        updateAttachmentButtonState()
-        updateTootButtonState()
-
         val v = ImageView(this)
         val edge = resources.getDimension(R.dimen.image_attachment).toInt()
         val p = LinearLayout.LayoutParams(edge, edge)
@@ -364,8 +357,8 @@ class TootActivity : AppCompatActivity() {
                                     }
                                     R.id.delete -> {
                                         imageAttachmentParent.removeView(v)
-                                        val removed = uriAttachmentsList.indexOfFirst { (u) -> u == uri }
-                                        uriAttachmentsList.removeAt(removed)
+                                        val removeindex = uriAttachmentsList.indexOfFirst { (u) -> u == uri }
+                                        uriAttachmentsList.removeAt(removeindex)
                                         if (uriAttachmentsList.isEmpty())
                                             nsfwButton.visibility = View.GONE
                                     }
@@ -376,8 +369,8 @@ class TootActivity : AppCompatActivity() {
                                 setForceShowIcon(true)
                                 show()
                             }
-                            updateAttachmentButtonState()
                         }
+                        nsfwButton.visibility = View.VISIBLE
                         return false
                     }
 
@@ -405,7 +398,7 @@ class TootActivity : AppCompatActivity() {
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(object : SimpleTarget<ByteArray>() {
-                    override fun onResourceReady(resource: ByteArray?, glideAnimation: GlideAnimation<in ByteArray>?) {
+                    override fun onResourceReady(resource: ByteArray, glideAnimation: GlideAnimation<in ByteArray>) {
                         val attachment = RequestBody.create(MediaType.parse("image/*"), resource)
                         val body = MultipartBody.Part.createFormData("file", "media_attachment", attachment)
                         MastodonUtil.api?.uploadMediaAttachment(body)?.enqueue(
@@ -413,13 +406,19 @@ class TootActivity : AppCompatActivity() {
                                     override fun onResponse(call: Call<Attachment>?, response: Response<Attachment>?) {
                                         response?.body()?.let {
                                             uriAttachmentsList.add(Pair(uri, it))
+                                            tootText.append(it.textUrl)
+                                            addThumbnail(uri)
                                         }
                                         dialog.dismiss()
+                                        updateAttachmentButtonState()
+                                        updateTootButtonState()
                                     }
 
                                     override fun onFailure(call: Call<Attachment>?, t: Throwable?) {
                                         Toast.makeText(this@TootActivity, "falied", Toast.LENGTH_SHORT).show()
                                         dialog.dismiss()
+                                        updateAttachmentButtonState()
+                                        updateTootButtonState()
                                     }
                                 }
                         )
@@ -430,6 +429,10 @@ class TootActivity : AppCompatActivity() {
     fun toggleContentWarning() {
         isContentWarningEnabled = !isContentWarningEnabled
         setContentWarning(isContentWarningEnabled)
+        if (isContentWarningEnabled){
+            isNsfw = true
+            setNotSafeForWorkEnabled(true)
+        }
     }
 
     fun setContentWarning(isEnabled: Boolean) {
@@ -453,9 +456,12 @@ class TootActivity : AppCompatActivity() {
 
     fun setNotSafeForWorkEnabled(isEnabled: Boolean) {
         if (isEnabled) {
-            nsfwButton.setTextColor(ContextCompat.getColor(this, R.color.colorAccent))
+            nsfwButton.setImageResource(R.drawable.ic_visibility_off)
+            nsfwButton.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent))
+
         } else {
-            nsfwButton.setTextColor(ContextCompat.getColor(this, R.color.text_primary_dark))
+            nsfwButton.setImageResource(R.drawable.ic_visibility)
+            nsfwButton.clearColorFilter()
         }
     }
 
@@ -468,9 +474,8 @@ class TootActivity : AppCompatActivity() {
     }
 
     private fun updateTootButtonState() {
-        val hasText = tootText.text.isNotEmpty() && (tootText.text.length <= MAX_TOOT_LENGTH)
-        val hasMedia = uriAttachmentsList.isNotEmpty()
-        tootButton.isEnabled = (hasText || hasMedia) && !isPosting
+        val validText = tootText.text.isNotEmpty() && (tootText.length() + spoilerText.length() <= MAX_TOOT_LENGTH)
+        tootButton.isEnabled = validText && !isPosting
     }
 
     private fun updateAttachmentButtonState() {
@@ -555,8 +560,8 @@ class TootActivity : AppCompatActivity() {
 
     private val textWatcher = object : TextWatcher {
         override fun afterTextChanged(p0: Editable?) {
-            updateTootButtonState()
             checkTextCount()
+            updateTootButtonState()
         }
 
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
