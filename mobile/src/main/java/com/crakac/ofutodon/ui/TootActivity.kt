@@ -444,10 +444,6 @@ class TootActivity : AppCompatActivity() {
     fun toggleContentWarning() {
         isContentWarningEnabled = !isContentWarningEnabled
         setContentWarning(isContentWarningEnabled)
-        if (isContentWarningEnabled) {
-            isNsfw = true
-            setNotSafeForWorkEnabled(true)
-        }
     }
 
     fun setContentWarning(isEnabled: Boolean) {
