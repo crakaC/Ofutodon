@@ -4,7 +4,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.3"
     defaultConfig {
         applicationId "com.crakac.ofutodon"
         minSdkVersion 21
@@ -51,7 +51,7 @@ static def getProps(String key) {
 dependencies {
     ext {
         support_library_version = '26.1.0'
-        firebase_version = '11.4.0'
+        firebase_version = '11.6.0'
         glide_version = '3.8.0'
         retrofit_version = '2.3.0'
         okhttp_version = '3.8.1'
