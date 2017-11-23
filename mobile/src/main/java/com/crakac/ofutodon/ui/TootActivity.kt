@@ -68,7 +68,7 @@ class TootActivity : AppCompatActivity() {
     val TAG = "TootActivity"
 
     val IMAGE_ATTACHMENT_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + File.separator
-
+    val URL_LENGTH = 24 // space(1char) + placeholder(23chars)
 
     companion object {
         private val REPLY_STATUS = "reply_to_status"
@@ -78,6 +78,7 @@ class TootActivity : AppCompatActivity() {
             intent.putExtra(REPLY_STATUS, Gson().toJson(status))
         }
     }
+
     lateinit var container: View
     lateinit var spoilerText: EditText
     lateinit var textSeparator: View
@@ -134,19 +135,19 @@ class TootActivity : AppCompatActivity() {
             toot()
         }
         attachmentButton = findViewById(R.id.add_photo)
-        attachmentButton.setOnClickListener{
+        attachmentButton.setOnClickListener {
             onClickAttachment()
         }
         visibilityButton = findViewById(R.id.toot_visibility)
-        visibilityButton.setOnClickListener{ v ->
+        visibilityButton.setOnClickListener { v ->
             onClickVisibility(v)
         }
         cwButton = findViewById(R.id.content_warning)
-        cwButton.setOnClickListener{
+        cwButton.setOnClickListener {
             toggleContentWarning()
         }
         nsfwButton = findViewById(R.id.nsfw)
-        nsfwButton.setOnClickListener{
+        nsfwButton.setOnClickListener {
             toggleNotSafeForWork()
         }
 
@@ -239,6 +240,14 @@ class TootActivity : AppCompatActivity() {
         isPosting = true
         tootButton.isEnabled = false
 
+        val sb = StringBuilder(tootText.text)
+        uriAttachmentsList.forEach { (_, attachment) ->
+            if (sb.isNotEmpty()) {
+                sb.append(" ")
+            }
+            sb.append(attachment.textUrl)
+        }
+
         MastodonUtil.api?.postStatus(
                 StatusBuilder(
                         replyTo = replyToStatus?.id,
@@ -246,7 +255,7 @@ class TootActivity : AppCompatActivity() {
                         spoilerText = getSpoilerText(),
                         mediaIds = uriAttachmentsList.map { (_, attachment) -> attachment.id },
                         isSensitive = isNsfw,
-                        text = tootText.text.toString()
+                        text = sb.toString()
                 ))?.enqueue(onTootFinished)
     }
 
@@ -384,6 +393,12 @@ class TootActivity : AppCompatActivity() {
     }
 
     private fun uploadMedia(uri: Uri) {
+        val type = contentResolver.getType(uri)
+        val compressFormat = if (type.contains(Regex("png", RegexOption.IGNORE_CASE))) {
+            Bitmap.CompressFormat.PNG
+        } else {
+            Bitmap.CompressFormat.JPEG
+        }
         val dialog = ProgressDialog(this)
         dialog.isIndeterminate = true
         dialog.setCancelable(false)
@@ -392,7 +407,7 @@ class TootActivity : AppCompatActivity() {
         Glide.with(applicationContext)
                 .load(uri)
                 .asBitmap()
-                .toBytes(Bitmap.CompressFormat.JPEG, 85)
+                .toBytes(compressFormat, 85)
                 .atMost()
                 .override(2048, 2048)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -406,8 +421,8 @@ class TootActivity : AppCompatActivity() {
                                     override fun onResponse(call: Call<Attachment>?, response: Response<Attachment>?) {
                                         response?.body()?.let {
                                             uriAttachmentsList.add(Pair(uri, it))
-                                            tootText.append(it.textUrl)
                                             addThumbnail(uri)
+                                            checkTextCount()
                                         }
                                         dialog.dismiss()
                                         updateAttachmentButtonState()
@@ -429,7 +444,7 @@ class TootActivity : AppCompatActivity() {
     fun toggleContentWarning() {
         isContentWarningEnabled = !isContentWarningEnabled
         setContentWarning(isContentWarningEnabled)
-        if (isContentWarningEnabled){
+        if (isContentWarningEnabled) {
             isNsfw = true
             setNotSafeForWorkEnabled(true)
         }
@@ -474,8 +489,9 @@ class TootActivity : AppCompatActivity() {
     }
 
     private fun updateTootButtonState() {
-        val validText = tootText.text.isNotEmpty() && (tootText.length() + spoilerText.length() <= MAX_TOOT_LENGTH)
-        tootButton.isEnabled = validText && !isPosting
+        val validText = tootText.text.isNotEmpty() && (wholeTextCount() <= MAX_TOOT_LENGTH)
+        val hasMedia = uriAttachmentsList.isNotEmpty()
+        tootButton.isEnabled = (validText || hasMedia) && !isPosting
     }
 
     private fun updateAttachmentButtonState() {
@@ -571,9 +587,12 @@ class TootActivity : AppCompatActivity() {
         }
     }
 
+    private fun wholeTextCount(): Int =
+            spoilerText.length() + tootText.length() + uriAttachmentsList.count() * URL_LENGTH
+
     private fun checkTextCount() {
-        val total = spoilerText.length() + tootText.length()
-        textCount.text = (MAX_TOOT_LENGTH - total).toString()
+        val total = wholeTextCount()
+        textCount.text = (MAX_TOOT_LENGTH - wholeTextCount()).toString()
         if (total > MAX_TOOT_LENGTH) {
             textCount.setTextColor(ContextCompat.getColor(this, R.color.text_error))
         } else {
