@@ -34,7 +34,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : LinearLayout(c
 
     init {
         View.inflate(context, R.layout.inline_preview, this)
-        arrayOf(R.id.image1, R.id.image2, R.id.image3, R.id.image4).forEachIndexed { i, id ->
+        arrayOf(R.id.image1, R.id.image2, R.id.image3, R.id.image4).forEachIndexed { _, id ->
             val preview = findViewById<ImageView>(id)
             preview.setOnClickListener{ v ->
                 onClickPreview(v)

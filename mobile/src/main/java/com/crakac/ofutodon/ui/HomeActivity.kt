@@ -107,7 +107,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onTabSelected(tab: TabLayout.Tab?) {}
         })
 
-        drawer.setOnApplyWindowInsetsListener { v, insets ->
+        drawer.setOnApplyWindowInsetsListener { _, insets ->
             // inset the toolbar down by the status bar height
             val lpToolbar = toolbar
                     .layoutParams as ViewGroup.MarginLayoutParams
