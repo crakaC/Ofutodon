@@ -32,6 +32,8 @@
     <dimen name="touch_raise">6dp</dimen>
 
     <!-- image button -->
+    <dimen name="status_button">36dp</dimen>
+    <dimen name="status_button_padding">8dp</dimen>
     <dimen name="image_button">48dp</dimen>
     <dimen name="image_inner_padding">12dp</dimen>
     <dimen name="button_elevation">2dp</dimen>

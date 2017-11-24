@@ -61,9 +61,15 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
 
         hideMediaButton.setOnClickListener{ _ -> mediaMask.visibility = View.VISIBLE}
         mediaMask.setOnClickListener { v -> v.visibility = View.GONE }
+    }
 
-        val padding = resources.getDimensionPixelSize(R.dimen.spacing_micro)
-        setPadding(0, padding, 0, padding)
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        val margin = resources.getDimensionPixelSize(R.dimen.spacing_micro)
+        val marginParam = layoutParams as MarginLayoutParams
+        marginParam.topMargin = margin
+        marginParam.bottomMargin = margin
+        layoutParams = marginParam
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
