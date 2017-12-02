@@ -25,7 +25,7 @@ class Apps : MastodonMethodTestBase(){
                     C.OAUTH_SCOPES
             ).execute()
             Assert.assertTrue(response.isSuccessful)
-            System.out.println(response.body().scope)
+            System.out.println(response.body()!!.scope)
         }
     }
 }

@@ -41,11 +41,14 @@ android {
     }
 }
 
-static def getProps(String key) {
+
+def getProps(String file) {
+    def propFile = rootProject.file(file)
     Properties props = new Properties()
-    props.load(new FileInputStream(new File(key)))
+    props.load(new FileInputStream(propFile))
     return props
 }
+
 
 
 dependencies {

@@ -85,7 +85,7 @@ class Status : MastodonMethodTestBase(){
         val reqFile = RequestBody.create(MediaType.parse("video/webm"), f)
         val body = MultipartBody.Part.createFormData("file", f.name, reqFile)
         val attachment = api.uploadMediaAttachment(body).execute().body()
-        val r = api.postStatus(StatusBuilder(text = "( ˘ω˘)ｽﾔｧ", mediaIds = listOf(attachment.id))).execute()
+        val r = api.postStatus(StatusBuilder(text = "( ˘ω˘)ｽﾔｧ", mediaIds = listOf(attachment!!.id))).execute()
         Assert.assertTrue(r.isSuccessful)
     }
 }

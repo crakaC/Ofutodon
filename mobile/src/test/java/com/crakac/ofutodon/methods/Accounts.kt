@@ -4,7 +4,6 @@ import com.crakac.ofutodon.BuildConfig
 import com.crakac.ofutodon.model.api.Link
 import com.crakac.ofutodon.model.api.Pageable
 import com.crakac.ofutodon.model.api.entity.AccountCredentials
-import com.crakac.ofutodon.model.api.entity.Status
 import org.junit.Assert
 import org.junit.Test
 
@@ -62,7 +61,7 @@ class Accounts : MastodonMethodTestBase(){
         run {
             val r = api.getStatuses(BuildConfig.DEBUG_ACCOUNT_ID).execute()
             Assert.assertTrue(r.isSuccessful)
-            val pageable = Pageable<Status>(r.body(), Link.parse(r.headers().get("link")))
+            val pageable = Pageable(r.body()!!, Link.parse(r.headers().get("link")))
             run {
                 val r = api.getStatuses(BuildConfig.DEBUG_ACCOUNT_ID, range = pageable.nextRange(10).q).execute()
                 Assert.assertTrue(r.isSuccessful)
@@ -76,7 +75,7 @@ class Accounts : MastodonMethodTestBase(){
         run{
             val r = api.getStatuses(BuildConfig.DEBUG_ACCOUNT_ID, true, true, rangeLong.q).execute()
             Assert.assertTrue(r.isSuccessful)
-            val statuses = r.body()
+            val statuses = r.body()!!
             statuses.forEach {
                 Assert.assertTrue(it.mediaAttachments != null)
             }
@@ -129,7 +128,7 @@ class Accounts : MastodonMethodTestBase(){
     fun searchAccounts(){
         val r = api.searchAccounts("test", 10).execute()
         Assert.assertTrue(r.isSuccessful)
-        val accounts = r.body()
+        val accounts = r.body()!!
         Assert.assertTrue(accounts.size <= 10)
     }
 
