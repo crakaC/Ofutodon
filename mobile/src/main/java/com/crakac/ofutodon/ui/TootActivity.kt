@@ -382,10 +382,7 @@ class TootActivity : AppCompatActivity() {
                         nsfwButton.visibility = View.VISIBLE
                         return false
                     }
-
-                    override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
-                        return false
-                    }
+                    override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean = false
                 }
         ).centerCrop().into(v)
 

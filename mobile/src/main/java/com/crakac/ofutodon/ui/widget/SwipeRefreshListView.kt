@@ -9,7 +9,10 @@ import android.view.View
 import com.crakac.ofutodon.R
 
 class SwipeRefreshListView : SwipeRefreshLayout {
-    val TAG: String = "SwipeRefreshListView"
+    companion object {
+        val TAG: String = "SwipeRefreshListView"
+        val VISIBLE_THRESHOLD = 5
+    }
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -39,7 +42,6 @@ class SwipeRefreshListView : SwipeRefreshLayout {
         fun onLoadMore()
     }
 
-    val VISIBLE_THRESHOLD = 5
     val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             // bail out if scrolling upward or already loading data
