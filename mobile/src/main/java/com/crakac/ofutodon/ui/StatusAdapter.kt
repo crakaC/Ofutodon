@@ -166,20 +166,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             sb.setSpan(accrAppearance, start, sb.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             name.text = sb
 
-            sb.clear()
-
-            sb.append(status.spannedContent)
-            sb.getSpans(0, sb.length, URLSpan::class.java).forEach { span ->
-                val start = sb.getSpanStart(span)
-                val end = sb.getSpanEnd(span)
-                val text = sb.subSequence(start, end)
-                Log.d("Spanned", "start:$start, end:$end, url: ${span.url}, text:$text")
-                sb.removeSpan(span)
-                val clickableSpan = LinkClickableSpan(text.toString(), span.url)
-                sb.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-
-            content.text = sb
+            content.text = status.spannedContent
 
             Glide.with(context)
                     .load(status.account.avatar)
