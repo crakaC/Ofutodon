@@ -1,30 +1,19 @@
 package com.crakac.ofutodon.model.api
 
 import android.net.Uri
-import com.crakac.ofutodon.BuildConfig
 import com.crakac.ofutodon.model.api.entity.AccessToken
 import com.crakac.ofutodon.model.api.entity.AppCredentials
 import com.crakac.ofutodon.util.PrefsUtil
-import com.google.gson.GsonBuilder
-import com.google.gson.LongSerializationPolicy
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MastodonUtil private constructor() {
     companion object {
-        private var instance: MastodonApi? = null
-        val api: MastodonApi?
-            get() {
-                return instance
-            }
+        private var cached: MastodonApi? = null
+        val api get() = cached
         val TAG: String = "MastodonUtil"
         fun api(domain: String, accessToken: String? = null): Mastodon {
-            instance = MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
-            return instance!!
+            cached = MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
+            return cached!!
         }
 
         fun createAuthenticationUri(domain: String, redirectUri: String): Uri {
@@ -85,83 +74,5 @@ class MastodonUtil private constructor() {
             val secret = getClientSecret(domain)!!
             return api(domain).fetchAccessToken(id, secret, redirectUri, code, C.AUTHORIZATION_CODE)
         }
-    }
-
-    class MastodonBuilder() {
-        companion object {
-            val dispatcher: Dispatcher = Dispatcher()
-        }
-
-        private var account: Account? = null
-        private var host: String = ""
-        private var token: String? = null
-
-        constructor(account: Account) : this() {
-            setAccount(account)
-        }
-
-        fun setHost(host: String): MastodonBuilder {
-            this.host = host
-            return this
-        }
-
-        fun setAccount(account: Account): MastodonBuilder {
-            this.account = account
-            this.host = account.host
-            return this
-        }
-
-        fun setAccessToken(accessToken: String?): MastodonBuilder {
-            this.token = accessToken
-            return this
-        }
-
-        fun build(): MastodonApi {
-
-            val okHttpClient = createMastodonHttpClient(token ?: account?.accessToken)
-            val retrofit = Retrofit.Builder()
-                    .baseUrl("https://$host")
-                    .client(okHttpClient)
-                    .addConverterFactory(
-                            GsonConverterFactory.create(
-                                    GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create()))
-                    .build()
-            return MastodonApi(retrofit.create(Mastodon::class.java), account)
-        }
-
-        private fun createMastodonHttpClient(bearerToken: String?): OkHttpClient {
-            val logger = HttpLoggingInterceptor()
-            logger.level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
-
-            val httpClientBuilder = OkHttpClient.Builder().addInterceptor(logger).dispatcher(dispatcher)
-            if (bearerToken != null) {
-                httpClientBuilder.addInterceptor {
-                    val org = it.request()
-                    val builder = org.newBuilder()
-                    builder.addHeader("Authorization", "Bearer $bearerToken")
-                    val newRequest = builder.build()
-                    it.proceed(newRequest)
-                }
-            }
-            return httpClientBuilder.build()
-        }
-    }
-
-    class MastodonApi(delegate: Mastodon, account: Account? = null) : Mastodon by delegate {
-        var currentId = 0L
-            private set
-
-        init {
-            currentId = account?.userId ?: 0L
-        }
-    }
-
-    class Account(
-            val host: String,
-            val userId: Long,
-            val userName: String,
-            val accessToken: String
-    ) {
-        val acct: String get() = "$host@$userName"
     }
 }

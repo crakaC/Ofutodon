@@ -40,7 +40,7 @@ class Account {
     @SerializedName("header_static")
     val headerStatic: String = ""
 
-    var _dn: String? = null
+    private var _dn: String? = null
     val dispNameWithEmoji: String
     get(){
         if(_dn == null ){

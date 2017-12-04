@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.*
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Mastodon
+import com.crakac.ofutodon.model.api.MastodonCallback
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.AccessToken
 import com.crakac.ofutodon.model.api.entity.Account
@@ -45,9 +46,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var mastodon: Mastodon? = null
 
     var oauthRedirectUri: String = ""
-        get() {
-            return "${getString(R.string.oauth_scheme)}://${getString(R.string.oauth_redirect_host)}"
-        }
+        get() = "${getString(R.string.oauth_scheme)}://${getString(R.string.oauth_redirect_host)}"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -254,21 +253,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun registerApplication() {
         MastodonUtil.registerApplication(instanceDomain, getString(R.string.app_name), oauthRedirectUri, "http://crakac.com")
-                .enqueue(object : Callback<AppCredentials> {
-                    override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
+                .enqueue(object : MastodonCallback<AppCredentials> {
+                    override fun onSuccess(result: AppCredentials) {
+                        MastodonUtil.saveAppCredential(instanceDomain, result)
+                        startAuthorize(instanceDomain)
                     }
 
-                    override fun onResponse(call: Call<AppCredentials>?, response: Response<AppCredentials>?) {
-                        if (response == null || !response.isSuccessful) {
-                            Snackbar.make(findViewById(R.id.fab), "Something wrong", Snackbar.LENGTH_SHORT).show()
-                            return;
-                            //TODO Retry
-                        }
-
-                        response.body()?.let { credential ->
-                            MastodonUtil.saveAppCredential(instanceDomain, credential)
-                        }
-                        startAuthorize(instanceDomain)
+                    override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
+                        Snackbar.make(findViewById(R.id.fab), "Something wrong", Snackbar.LENGTH_SHORT).show()
                     }
                 })
     }
