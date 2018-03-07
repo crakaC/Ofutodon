@@ -10,8 +10,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class FileUtil private constructor() {
-    val TAG: String = "FileUtil"
-
     companion object {
         val sdf: SimpleDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         fun createTemporaryImageUri(context: Context): Uri? {

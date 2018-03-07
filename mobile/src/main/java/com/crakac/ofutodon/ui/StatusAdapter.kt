@@ -5,10 +5,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.Spanned
 import android.text.style.TextAppearanceSpan
-import android.text.style.URLSpan
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,7 +13,10 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
-import com.crakac.ofutodon.ui.widget.*
+import com.crakac.ofutodon.ui.widget.ContentMovementMethod
+import com.crakac.ofutodon.ui.widget.InlineImagePreview
+import com.crakac.ofutodon.ui.widget.RefreshableAdapter
+import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
 
@@ -42,14 +42,14 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         return position >= itemCount - 1
     }
 
-    override fun onBindViewHolder(holder: RefreshableViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RefreshableViewHolder, position: Int) {
         val item = getItem(position)
         if (holder is StatusHolder) {
             holder.setData(context, item)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): StatusViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatusViewHolder {
         if (viewType == HolderType.Footer.rawValue) {
             return FooterHolder(View.inflate(context, R.layout.dummy_status, null))
         }
@@ -94,7 +94,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         return holder
     }
 
-    override fun onViewRecycled(holder: RefreshableViewHolder?) {
+    override fun onViewRecycled(holder: RefreshableViewHolder) {
         if (holder is StatusHolder) {
             holder.icon.setImageBitmap(null)
         }

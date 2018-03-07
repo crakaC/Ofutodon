@@ -142,8 +142,8 @@ class FabTransform : Transition {
         view.overlay.add(fabColor)
 
         // Add an icon overlay again to fake the appearance of the FAB
-        val fabIcon = ContextCompat.getDrawable(sceneRoot?.context, icon).mutate().apply {
-            setTint(ContextCompat.getColor(sceneRoot?.context, R.color.icon_tint))
+        val fabIcon = ContextCompat.getDrawable(sceneRoot!!.context, icon)!!.mutate().apply {
+            setTint(ContextCompat.getColor(sceneRoot.context, R.color.icon_tint))
         }
         val iconLeft = (dialogBounds.width() - fabIcon.intrinsicWidth) / 2
         val iconTop = (dialogBounds.height() - fabIcon.intrinsicHeight) / 2

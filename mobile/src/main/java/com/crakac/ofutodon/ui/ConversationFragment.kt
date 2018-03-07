@@ -31,11 +31,11 @@ class ConversationFragment(): MastodonApiFragment<Status, Context>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        statusId = arguments.getLong(STATUS_ID)
-        status = Gson().fromJson(arguments.getString(STATUS), Status::class.java)
+        statusId = arguments!!.getLong(STATUS_ID)
+        status = Gson().fromJson(arguments!!.getString(STATUS), Status::class.java)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter.addTop(status)
     }

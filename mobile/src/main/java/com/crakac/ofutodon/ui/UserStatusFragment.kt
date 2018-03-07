@@ -29,9 +29,9 @@ class UserStatusFragment : StatusFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        accountId = arguments.getLong(ACCOUNT_ID)
-        isOnlyMedia = arguments.getBoolean(ONLY_MEDIA)
-        titleName = arguments.getString(TITLE)
+        accountId = arguments?.getLong(ACCOUNT_ID) ?: 0
+        isOnlyMedia = arguments?.getBoolean(ONLY_MEDIA) ?: false
+        titleName = arguments?.getString(TITLE) ?: ""
     }
 
     override fun getTitle() = titleName

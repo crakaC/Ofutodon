@@ -50,7 +50,7 @@ abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), Sta
 
     override fun onReplyClicked(icon: ImageView, status: Status) {
         val intent = Intent(activity, TootActivity::class.java)
-        FabTransform.addExtras(intent, ContextCompat.getColor(activity, R.color.background_dark), R.drawable.ic_reply, icon.alpha)
+        FabTransform.addExtras(intent, ContextCompat.getColor(requireContext(), R.color.background_dark), R.drawable.ic_reply, icon.alpha)
         TootActivity.addReplyInfo(intent, status)
         val options = ActivityOptions.makeSceneTransitionAnimation(activity, icon, getString(R.string.transition_name_toot_dialog));
         startActivity(intent, options.toBundle())
@@ -104,7 +104,7 @@ abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), Sta
             MastodonUtil.api?.run {
                 reblogStatus(status.originalId)
             }?.enqueue(onResponse)
-            icon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
+            icon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.boosted))
         }
     }
 
@@ -146,7 +146,7 @@ abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), Sta
             MastodonUtil.api?.run {
                 favouriteStatus(status.originalId)
             }?.enqueue(onResponse)
-            icon.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
+            icon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.favourited))
         }
     }
 

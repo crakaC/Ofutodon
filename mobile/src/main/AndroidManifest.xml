@@ -61,6 +61,7 @@
             android:theme="@style/Ofuton.User" />
         <activity android:name=".ui.ConversationActivity"
             android:label="@string/conversation"/>
+        <service android:name=".service.TootService"/>
     </application>
 
 </manifest>

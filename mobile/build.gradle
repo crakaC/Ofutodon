@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.crakac.ofutodon"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -20,11 +20,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            applicationIdSuffix '.debug'
             def p = getProps("mobile/debug_token.properties")
             p.each { k, v ->
                 def val = v.toString()
                 if (val.startsWith("\"")) {
                     buildConfigField "String", k, v
+                } else if (val.endsWith('f')){
+                    buildConfigField "float", k, v
                 } else if (val.contains(".")) {
                     buildConfigField "double", k, v
                 } else if (val.endsWith("L")) {
@@ -53,8 +56,8 @@ def getProps(String file) {
 
 dependencies {
     ext {
-        support_library_version = '26.1.0'
-        firebase_version = '11.6.2'
+        support_library_version = '27.1.0'
+        firebase_version = '11.8.0'
         glide_version = '3.8.0'
         retrofit_version = '2.3.0'
         okhttp_version = '3.8.1'
@@ -70,6 +73,7 @@ dependencies {
     implementation "com.android.support:design:$support_library_version"
     implementation "com.android.support:palette-v7:$support_library_version"
     implementation "com.android.support:support-annotations:$support_library_version"
+    implementation "com.android.support:exifinterface:$support_library_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
@@ -82,13 +86,6 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     testImplementation 'junit:junit:4.12'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
-    implementation "android.arch.persistence.room:runtime:$archlib_version"
-    kapt "android.arch.persistence.room:compiler:$archlib_version"
-    testImplementation "android.arch.persistence.room:testing:$archlib_version"
-    implementation "android.arch.lifecycle:extensions:$archlib_version"
-    implementation "android.arch.lifecycle:common-java8:$archlib_version"
-    testImplementation "android.arch.core:core-testing:$archlib_version"
-
 }
 
 repositories {

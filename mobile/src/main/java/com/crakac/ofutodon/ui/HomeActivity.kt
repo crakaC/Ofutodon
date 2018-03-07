@@ -52,8 +52,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        drawer.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -128,11 +126,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             insets.consumeSystemWindowInsets()
         }
 
-
         fab.setOnClickListener { v ->
             onClickFab(v)
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        drawer.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
