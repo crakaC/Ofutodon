@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.ComponentName
-import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -17,7 +16,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.Palette
 import android.support.v7.view.menu.MenuBuilder
@@ -27,6 +25,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -42,8 +41,8 @@ import com.crakac.ofutodon.model.api.entity.Attachment
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.model.api.entity.StatusBuilder
 import com.crakac.ofutodon.transition.FabTransform
+import com.crakac.ofutodon.util.FileUtil
 import com.crakac.ofutodon.util.PrefsUtil
-import com.crakac.ofutodon.util.TextUtil
 import com.crakac.ofutodon.util.ViewUtil
 import com.google.gson.Gson
 import okhttp3.MediaType
@@ -95,7 +94,6 @@ class TootActivity : AppCompatActivity() {
 
     // using for picking up attachmentUris by other app
     private var cameraUri: Uri? = null
-    private var cameraFilePath: String? = null
 
     // keep attachmentUris
     private var uriAttachmentsList = ArrayList<Pair<Uri, Attachment>>(MAX_ATTACHMENTS_NUM)
@@ -173,7 +171,6 @@ class TootActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable("CameraUri", cameraUri)
-        outState.putString("CameraFilePath", cameraFilePath)
         outState.putParcelableArrayList("AttachmentUris", ArrayList(uriAttachmentsList.map { (uri) -> uri }))
         outState.putSerializable("Attachments", uriAttachmentsList.map { (_, attachment) -> attachment }.toTypedArray())
 
@@ -189,7 +186,6 @@ class TootActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         cameraUri = savedInstanceState.getParcelable("CameraUri")
-        cameraFilePath = savedInstanceState.getString("CameraFilePath")
         val savedAttachments = savedInstanceState.getSerializable("Attachments") as Array<Attachment>
         val savedUris = savedInstanceState.getParcelableArrayList<Uri>("AttachmentUris")
 
@@ -298,8 +294,7 @@ class TootActivity : AppCompatActivity() {
         }
 
         //take picture intent
-        cameraFilePath = IMAGE_ATTACHMENT_DIR + TextUtil.currentTimeString() + ".jpg"
-        cameraUri = FileProvider.getUriForFile(this, packageName + ".provider", File(cameraFilePath))
+        cameraUri = FileUtil.createTemporaryImageUri(this)
 
         val cameraIntents = ArrayList<Intent>()
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -334,10 +329,8 @@ class TootActivity : AppCompatActivity() {
         if (data?.data != null) {
             uploadMedia(data.data)
         } else if (cameraUri != null) {
-            addToGallery(cameraFilePath!!)
             uploadMedia(cameraUri!!)
             cameraUri = null
-            cameraFilePath = null
         }
     }
 
@@ -382,6 +375,7 @@ class TootActivity : AppCompatActivity() {
                         nsfwButton.visibility = View.VISIBLE
                         return false
                     }
+
                     override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean = false
                 }
         ).centerCrop().into(v)
@@ -390,7 +384,11 @@ class TootActivity : AppCompatActivity() {
     }
 
     private fun uploadMedia(uri: Uri) {
-        val type = contentResolver.getType(uri)
+        var type = contentResolver.getType(uri)
+        if (type == null) {
+            val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        }
         val compressFormat = if (type.contains(Regex("png", RegexOption.IGNORE_CASE))) {
             Bitmap.CompressFormat.PNG
         } else {
@@ -471,14 +469,6 @@ class TootActivity : AppCompatActivity() {
             nsfwButton.setImageResource(R.drawable.ic_visibility)
             nsfwButton.clearColorFilter()
         }
-    }
-
-    // コンテントプロバイダを使用し,ギャラリーに画像を保存.
-    fun addToGallery(file: String) {
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        values.put(MediaStore.Images.Media.DATA, file)
-        contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
     }
 
     private fun updateTootButtonState() {
