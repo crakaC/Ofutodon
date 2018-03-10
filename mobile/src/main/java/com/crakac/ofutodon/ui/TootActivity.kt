@@ -3,11 +3,13 @@ package com.crakac.ofutodon.ui
 import android.Manifest
 import android.app.Activity
 import android.content.ComponentName
+import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -23,7 +25,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
@@ -33,14 +38,8 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.service.TootService
 import com.crakac.ofutodon.transition.FabTransform
-import com.crakac.ofutodon.util.C
-import com.crakac.ofutodon.util.FileUtil
-import com.crakac.ofutodon.util.PrefsUtil
-import com.crakac.ofutodon.util.ViewUtil
+import com.crakac.ofutodon.util.*
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 import java.lang.Exception
 
@@ -48,6 +47,8 @@ import java.lang.Exception
 class TootActivity : AppCompatActivity() {
     val PERMISSION_REQUEST = 1234
     val REQUEST_ATTACHMENT = 1235
+
+    val LONG_EDGE = 2048 // 画像の最大サイズは2048x2048
 
     val TOOT_VISIBILITY = "toot_visibility"
 
@@ -85,6 +86,7 @@ class TootActivity : AppCompatActivity() {
 
     // keep attachmentUris
     private var attachmentUris = ArrayList<Uri>(MAX_ATTACHMENTS_NUM)
+    private var attachmentFiles = ArrayList<File>(MAX_ATTACHMENTS_NUM)
 
     private var tootVisibility = defaultVisibility
 
@@ -220,7 +222,7 @@ class TootActivity : AppCompatActivity() {
         replyToStatus?.let {
             intent.putExtra(C.REPLY_TO_ID, it.id)
         }
-        intent.putParcelableArrayListExtra(C.MEDIA_URIS, attachmentUris)
+        intent.putExtra(C.ATTACHMENTS, attachmentFiles)
         startService(intent)
 
         clearAttachments()
@@ -292,48 +294,57 @@ class TootActivity : AppCompatActivity() {
         val p = LinearLayout.LayoutParams(edge, edge)
         v.layoutParams = p
 
-        Glide.with(this).loadFromMediaStore(uri).listener(
-                object : RequestListener<Uri, GlideDrawable> {
-                    override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            val drawable = resource!!.current as GlideBitmapDrawable
-                            Palette.from(drawable.bitmap).generate { palette ->
-                                v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, getColor(R.color.mid_grey), true)
-                            }
-                        }
-                        v.setOnClickListener { _ ->
-                            val popup = PopupMenu(this@TootActivity, v)
-                            popup.inflate(R.menu.attachment_thumbnail)
-                            popup.setOnMenuItemClickListener { menu ->
-                                when (menu.itemId) {
-                                    R.id.preview -> {
-                                        preview(uri)
-                                    }
-                                    R.id.delete -> {
-                                        imageAttachmentParent.removeView(v)
-                                        attachmentUris.remove(uri)
-                                        if (attachmentUris.isEmpty())
-                                            nsfwButton.visibility = View.GONE
-                                    }
+        CreateTempImageFileTask(contentResolver, uri, LONG_EDGE, { f ->
+            addTempFile(f)
+            Glide.with(this).loadFromMediaStore(uri).listener(
+                    object : RequestListener<Uri, GlideDrawable> {
+                        override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                val drawable = resource!!.current as GlideBitmapDrawable
+                                Palette.from(drawable.bitmap).generate { palette ->
+                                    v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, getColor(R.color.mid_grey), true)
                                 }
-                                return@setOnMenuItemClickListener true
                             }
-                            MenuPopupHelper(this@TootActivity, popup.menu as MenuBuilder, v).apply {
-                                setForceShowIcon(true)
-                                show()
+                            v.setOnClickListener { _ ->
+                                val popup = PopupMenu(this@TootActivity, v)
+                                popup.inflate(R.menu.attachment_thumbnail)
+                                popup.setOnMenuItemClickListener { menu ->
+                                    when (menu.itemId) {
+                                        R.id.preview -> {
+                                            preview(uri)
+                                        }
+                                        R.id.delete -> {
+                                            val pos = attachmentUris.indexOf(uri)
+                                            attachmentUris.removeAt(pos)
+                                            attachmentFiles.removeAt(pos)
+                                            imageAttachmentParent.removeView(v)
+                                            if (attachmentUris.isEmpty())
+                                                nsfwButton.visibility = View.GONE
+                                        }
+                                    }
+                                    return@setOnMenuItemClickListener true
+                                }
+                                MenuPopupHelper(this@TootActivity, popup.menu as MenuBuilder, v).apply {
+                                    setForceShowIcon(true)
+                                    show()
+                                }
                             }
+                            nsfwButton.visibility = View.VISIBLE
+                            return false
                         }
-                        nsfwButton.visibility = View.VISIBLE
-                        return false
-                    }
 
-                    override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean = false
-                }
-        ).centerCrop().into(v)
-        imageAttachmentParent.addView(v)
-        checkTextCount()
-        updateAttachmentButtonState()
-        updateTootButtonState()
+                        override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean = false
+                    }
+            ).centerCrop().into(v)
+            imageAttachmentParent.addView(v)
+            checkTextCount()
+            updateAttachmentButtonState()
+            updateTootButtonState()
+        }).execute()
+    }
+
+    fun addTempFile(f: File) {
+        attachmentFiles.add(f)
     }
 
     fun toggleContentWarning() {
@@ -507,5 +518,15 @@ class TootActivity : AppCompatActivity() {
         val intent = Intent(this, AttachmentsPreviewActivity::class.java)
         AttachmentsPreviewActivity.setup(intent, attachmentUris, attachmentUris.indexOf(uri))
         startActivity(intent)
+    }
+
+    class CreateTempImageFileTask(val cr: ContentResolver, val uri: Uri, val longEdge: Int, val callback: (File) -> Unit) : AsyncTask<Void, Void, File>() {
+        override fun doInBackground(vararg params: Void): File {
+            return BitmapUtil.createResizedTempImageFile(cr, uri, longEdge)
+        }
+
+        override fun onPostExecute(result: File) {
+            callback(result)
+        }
     }
 }

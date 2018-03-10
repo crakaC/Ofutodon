@@ -8,7 +8,7 @@ object C {
     val TEXT = "text"
     val REPLY_TO_ID = "reply_to_id"
     val SPOILER_TEXT = "spoiler_text"
-    val MEDIA_URIS = "media_uris"
+    val ATTACHMENTS = "attachments"
     val VISIBILITY = "visibility"
     val IS_SENSITIVE = "is_sensitive"
 }
