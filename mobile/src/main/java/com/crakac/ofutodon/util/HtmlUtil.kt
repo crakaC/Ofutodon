@@ -31,17 +31,17 @@ object HtmlUtil {
 
     private fun shrinkLinks(spanned: Spanned, linkMask: Int = Linkify.WEB_URLS): Spanned {
         val builder = SpannableStringBuilder(spanned)
-        for (span in builder.getSpans(0, builder.length, URLSpan::class.java)){
+        for (span in builder.getSpans(0, builder.length, URLSpan::class.java)) {
             val start = builder.getSpanStart(span)
             val end = builder.getSpanEnd(span)
             val linkText = builder.subSequence(start, end)
-            val text = if (linkText.startsWith('#') || linkText.startsWith('@')){
+            val uri = Uri.parse(linkText.toString())
+            val text = if (linkText.startsWith('#') || linkText.startsWith('@') || uri.host == null) {
                 linkText
             } else {
-                val uri = Uri.parse(linkText.toString())
                 val host = IDN.toUnicode(uri.host)
                 val path = uri.path
-                val rawUrl =  host + path
+                val rawUrl = host + path
                 val rawLength = rawUrl.length
                 when {
                     path.length > MAX_PATH_LENGTH -> host + path.subSequence(0, MAX_PATH_LENGTH - 1) + "…"

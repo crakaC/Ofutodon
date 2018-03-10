@@ -25,7 +25,7 @@ class Status(id: Long = 0L) : Identifiable(id) {
     @SerializedName("reblog")
     var reblog: Status? = null
     @SerializedName("content")
-    val content: String = ""
+    val content: String? = ""
     @SerializedName("created_at")
     val createdAt: String = ""
     @SerializedName("reblogs_count")
@@ -56,7 +56,7 @@ class Status(id: Long = 0L) : Identifiable(id) {
     val spannedContent: Spanned?
         get() {
             if (_spannedContent == null) {
-                _spannedContent = HtmlUtil.parse(content)
+                _spannedContent = HtmlUtil.parse(content ?: "")
             }
             return _spannedContent
         }
