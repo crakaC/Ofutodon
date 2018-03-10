@@ -130,7 +130,7 @@ class TootActivity : AppCompatActivity() {
         visibilityButton.setOnClickListener { v ->
             onClickVisibility(v)
         }
-        cwButton = findViewById(R.id.content_warning)
+        cwButton = findViewById(R.id.spoiler_text)
         cwButton.setOnClickListener {
             toggleContentWarning()
         }
@@ -162,7 +162,6 @@ class TootActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putParcelable("CameraUri", cameraUri)
         outState.putParcelableArrayList("AttachmentUris", attachmentUris)
-
         outState.putString("tootText", tootText.text.toString())
         outState.putString("spoilerText", spoilerText.text.toString())
         outState.putBoolean("cw", isContentWarningEnabled)

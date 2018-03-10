@@ -79,4 +79,7 @@ class Status(id: Long = 0L) : Identifiable(id) {
         get() {
             return reblog?.isReblogged ?: isReblogged
         }
+
+    fun hasSpoileredText() = spoilerText.isNotEmpty()
+    var hasExpanded = false
 }

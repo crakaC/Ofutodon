@@ -56,7 +56,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         }
 
         hideMediaButton = findViewById(R.id.hide_image_button)
-        cwText = findViewById<TextView>(R.id.content_warning)
+        cwText = findViewById<TextView>(R.id.spoiler_text)
         mediaMask = findViewById(R.id.nsfw_mask)
 
         hideMediaButton.setOnClickListener{ _ -> mediaMask.visibility = View.VISIBLE}

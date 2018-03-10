@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DebugDon</string>
+    <string name="app_name">OfutodonDebug</string>
     <string name="file_provider_authority">com.crakac.ofutodon.debug.fileprovider</string>
 </resources>

@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.TextAppearanceSpan
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -70,6 +71,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         holder.boost.setOnClickListener { _ ->
             statusListener?.onBoostClicked(holder.boost, getItem(holder.adapterPosition))
         }
+
         holder.favorite.setOnClickListener { _ ->
             statusListener?.onFavoriteClicked(holder.favorite, getItem(holder.adapterPosition))
         }
@@ -91,6 +93,12 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
                 statusListener?.onClickAttachment(getItem(holder.adapterPosition), attachmentIndex)
             }
         })
+
+        holder.readMore.setOnClickListener { _ ->
+            val status = getItem(holder.adapterPosition)
+            status.hasExpanded = !status.hasExpanded
+            holder.toggleReadMore(context, status)
+        }
         return holder
     }
 
@@ -123,6 +131,8 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         val rebloggedMark: ImageView = v.findViewById(R.id.reblogged_icon)
         val name: TextView = v.findViewById(R.id.displayName)
         val content: TextView = v.findViewById(R.id.status)
+        val spoilerText: TextView = v.findViewById(R.id.spoiler_text)
+        val readMore: Button = v.findViewById(R.id.read_more)
         val icon: ImageView = v.findViewById(R.id.icon)
         val createdAt: TextView = v.findViewById(R.id.createdAt)
         val reply: ImageView = v.findViewById(R.id.reply)
@@ -218,7 +228,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             } else {
                 preview.visibility = View.GONE
             }
-
+            toggleReadMore(context, status)
             createdAtString = status.createdAt
         }
 
@@ -236,6 +246,24 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
                     .bitmapTransform(CropCircleTransformation(context))
                     .into(rebloggedByIcon)
             rebloggedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
+        }
+
+        fun toggleReadMore(context: Context, status: Status) {
+            if (status.hasSpoileredText()) {
+                spoilerText.visibility = View.VISIBLE
+                spoilerText.text = status.spoilerText
+                readMore.visibility = View.VISIBLE
+                if (status.hasExpanded){
+                    readMore.text = context.getString(R.string.hide)
+                    content.visibility = View.VISIBLE
+                } else{
+                    readMore.text = context.getString(R.string.read_more)
+                    content.visibility = View.GONE
+                }
+            } else {
+                spoilerText.visibility = View.GONE
+                readMore.visibility = View.GONE
+            }
         }
     }
 

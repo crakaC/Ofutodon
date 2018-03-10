@@ -170,5 +170,4 @@ abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), Sta
         AttachmentsPreviewActivity.setup(intent, status, attachmentIndex)
         startActivity(intent)
     }
-
 }

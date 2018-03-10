@@ -32,6 +32,8 @@
     <string name="boosted_by">%sさんがブーストしました</string>
     <string name="title_activity_user">ユーザー</string>
     <string name="conversation">会話</string>
+    <string name="read_more">もっと見る</string>
+    <string name="hide">隠す</string>
 
     <string name="tab_toots">投稿</string>
     <string name="tab_media">メディア</string>

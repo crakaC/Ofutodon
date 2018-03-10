@@ -93,7 +93,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/content_warning"
+            android:id="@+id/spoiler_text"
             style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
