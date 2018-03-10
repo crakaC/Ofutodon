@@ -261,6 +261,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
                     content.visibility = View.GONE
                 }
             } else {
+                content.visibility = View.VISIBLE
                 spoilerText.visibility = View.GONE
                 readMore.visibility = View.GONE
             }
