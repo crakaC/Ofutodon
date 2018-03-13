@@ -18,6 +18,7 @@ import com.crakac.ofutodon.ui.widget.ContentMovementMethod
 import com.crakac.ofutodon.ui.widget.InlineImagePreview
 import com.crakac.ofutodon.ui.widget.RefreshableAdapter
 import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
+import com.crakac.ofutodon.util.HtmlUtil
 import com.crakac.ofutodon.util.TextUtil
 import jp.wasabeef.glide.transformations.CropCircleTransformation
 
@@ -176,15 +177,16 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             sb.setSpan(accrAppearance, start, sb.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             name.text = sb
 
+            if(status.spannedContent == null) {
+                status.spannedContent = HtmlUtil.emojify(context.applicationContext, content, status)
+            }
             content.text = status.spannedContent
-
             Glide.with(context)
                     .load(status.account.avatar)
                     .centerCrop()
                     .crossFade()
                     .bitmapTransform(CropCircleTransformation(context))
                     .into(icon)
-
             createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
 
             if (status.isReblogged) {

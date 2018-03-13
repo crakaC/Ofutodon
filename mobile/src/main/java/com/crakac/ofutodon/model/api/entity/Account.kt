@@ -1,7 +1,7 @@
 package com.crakac.ofutodon.model.api.entity
 
+import android.text.Html
 import android.text.Spanned
-import com.crakac.ofutodon.util.HtmlUtil
 import com.emojione.Emojione
 import com.google.gson.annotations.SerializedName
 
@@ -50,5 +50,5 @@ class Account {
     }
 
     val noteWithEmoji: Spanned
-    get() = HtmlUtil.parse(note)
+    get() = Html.fromHtml(note)
 }

@@ -1,7 +1,6 @@
 package com.crakac.ofutodon.model.api.entity
 
 import android.text.Spanned
-import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.annotations.SerializedName
 
 class Status(id: Long = 0L) : Identifiable(id) {
@@ -25,7 +24,7 @@ class Status(id: Long = 0L) : Identifiable(id) {
     @SerializedName("reblog")
     var reblog: Status? = null
     @SerializedName("content")
-    val content: String? = ""
+    val content: String = ""
     @SerializedName("created_at")
     val createdAt: String = ""
     @SerializedName("reblogs_count")
@@ -50,16 +49,11 @@ class Status(id: Long = 0L) : Identifiable(id) {
     val tags: List<Tag> = emptyList()
     @SerializedName("application")
     val application: Application = Application()
+    @SerializedName("emojis")
+    val emojis: List<Emoji> = emptyList()
 
     @Transient
-    private var _spannedContent: Spanned? = null
-    val spannedContent: Spanned?
-        get() {
-            if (_spannedContent == null) {
-                _spannedContent = HtmlUtil.parse(content ?: "")
-            }
-            return _spannedContent
-        }
+    var spannedContent: Spanned? = null
 
     fun getVisibility(): Visibility {
         return Visibility.values().first { e -> e.value == visibility }

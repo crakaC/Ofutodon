@@ -1,14 +1,18 @@
 package com.crakac.ofutodon.util
 
+import android.content.Context
 import android.net.Uri
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.URLSpan
 import android.text.util.Linkify
+import android.widget.TextView
+import com.crakac.ofutodon.model.api.entity.Emoji
+import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.LinkClickableSpan
-import com.emojione.Emojione
 import java.net.IDN
+import java.util.regex.Pattern
 
 /**
  * Created by Kosuke on 2017/05/05.
@@ -16,9 +20,15 @@ import java.net.IDN
 object HtmlUtil {
     val MAX_PATH_LENGTH = 20
     val MAX_URL_LENGTH = 40
-    fun parse(src: String): Spanned {
-        val text = Emojione.shortnameToUnicode(src)
-        return shrinkLinks(trimWhiteSpace(Html.fromHtml(text)) as Spanned)
+
+    private fun replaceEmoji(text: String, emojis: List<Emoji>): String {
+        var replaced = text
+        for (emoji in emojis) {
+            val pattern = Pattern.compile(":(${emoji.shortCode}):")
+            val match = pattern.matcher(replaced)
+            replaced = match.replaceAll("<img src=\"${emoji.url}\"/>")
+        }
+        return replaced
     }
 
     private fun trimWhiteSpace(source: CharSequence): CharSequence {
@@ -27,6 +37,11 @@ object HtmlUtil {
             --i
         } while (i >= 0 && Character.isWhitespace(source[i]))
         return source.subSequence(0, i + 1)
+    }
+
+    fun emojify(context: Context, textView: TextView, status: Status): Spanned {
+        val html = replaceEmoji(status.content, status.emojis)
+        return shrinkLinks(trimWhiteSpace(Html.fromHtml(html)) as Spanned)//, GlideImageGetter(context, textView), null))
     }
 
     private fun shrinkLinks(spanned: Spanned, linkMask: Int = Linkify.WEB_URLS): Spanned {

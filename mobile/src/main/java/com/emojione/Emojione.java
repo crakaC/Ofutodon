@@ -7,9 +7,6 @@ import java.util.regex.Pattern;
 public abstract class Emojione {
     private static final HashMap<String, String> _shortNameToUnicode = new HashMap<>();
     private static final Pattern SHORTNAME_PATTERN = Pattern.compile(":([-+\\w]+):");
-
-    private static final String nicoru = new String(new int[]{0x1f604}, 0, 1);
-
     /**
      * Replace shortnames to unicode characters.
      */
@@ -17,11 +14,7 @@ public abstract class Emojione {
         Matcher matcher = SHORTNAME_PATTERN.matcher(input);
         while (matcher.find()) {
             String unicode;
-            if (matcher.group(1).startsWith("nicoru")) {
-                unicode = nicoru;
-            } else {
-                unicode = _shortNameToUnicode.get(matcher.group(1));
-            }
+            unicode = _shortNameToUnicode.get(matcher.group(1));
 
             if (unicode == null) {
                 continue;
