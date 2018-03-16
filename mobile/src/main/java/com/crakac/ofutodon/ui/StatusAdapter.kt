@@ -178,7 +178,7 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             name.text = sb
 
             if(status.spannedContent == null) {
-                status.spannedContent = HtmlUtil.emojify(context.applicationContext, content, status)
+                status.spannedContent = HtmlUtil.emojify(content, status)
             }
             content.text = status.spannedContent
             Glide.with(context)

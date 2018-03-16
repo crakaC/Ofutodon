@@ -1,18 +1,17 @@
 package com.crakac.ofutodon.util
 
-import android.content.Context
 import android.net.Uri
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.URLSpan
 import android.text.util.Linkify
-import android.widget.TextView
+import android.view.View
 import com.crakac.ofutodon.model.api.entity.Emoji
 import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.ui.EmojiSpan
 import com.crakac.ofutodon.ui.widget.LinkClickableSpan
 import java.net.IDN
-import java.util.regex.Pattern
 
 /**
  * Created by Kosuke on 2017/05/05.
@@ -21,14 +20,18 @@ object HtmlUtil {
     val MAX_PATH_LENGTH = 20
     val MAX_URL_LENGTH = 40
 
-    private fun replaceEmoji(text: String, emojis: List<Emoji>): String {
-        var replaced = text
+    private fun replaceEmoji(view: View, text: CharSequence, emojis: List<Emoji>): Spanned {
+        val sb = SpannableStringBuilder(text)
         for (emoji in emojis) {
-            val pattern = Pattern.compile(":(${emoji.shortCode}):")
-            val match = pattern.matcher(replaced)
-            replaced = match.replaceAll("<img src=\"${emoji.url}\"/>")
+            val shortCode = ":${emoji.shortCode}:"
+            while(sb.indexOf(shortCode) >= 0){
+                val start = sb.indexOf(shortCode)
+                val end = start + shortCode.length
+                sb.replace(start, end, emoji.shortCode)
+                sb.setSpan(EmojiSpan(view, emoji.staticUrl), start, end - 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
         }
-        return replaced
+        return sb
     }
 
     private fun trimWhiteSpace(source: CharSequence): CharSequence {
@@ -39,9 +42,8 @@ object HtmlUtil {
         return source.subSequence(0, i + 1)
     }
 
-    fun emojify(context: Context, textView: TextView, status: Status): Spanned {
-        val html = replaceEmoji(status.content, status.emojis)
-        return shrinkLinks(trimWhiteSpace(Html.fromHtml(html)) as Spanned)//, GlideImageGetter(context, textView), null))
+    fun emojify(view: View, status: Status): Spanned {
+        return shrinkLinks(replaceEmoji(view, trimWhiteSpace(Html.fromHtml(status.content)), status.emojis))
     }
 
     private fun shrinkLinks(spanned: Spanned, linkMask: Int = Linkify.WEB_URLS): Spanned {
