@@ -46,5 +46,5 @@
 
     <!-- user detail-->
     <dimen name="top_icon_final">32dp</dimen>
-    <dimen name="top_icon">120dp</dimen>
+    <dimen name="top_icon">80dp</dimen>
 </resources>

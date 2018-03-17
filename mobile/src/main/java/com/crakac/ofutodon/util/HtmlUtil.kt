@@ -46,6 +46,10 @@ object HtmlUtil {
         return shrinkLinks(replaceEmoji(view, trimWhiteSpace(Html.fromHtml(status.content)), status.emojis))
     }
 
+    fun fromHtml(text: String): Spanned{
+        return shrinkLinks(trimWhiteSpace(Html.fromHtml(text)) as Spanned)
+    }
+
     private fun shrinkLinks(spanned: Spanned, linkMask: Int = Linkify.WEB_URLS): Spanned {
         val builder = SpannableStringBuilder(spanned)
         for (span in builder.getSpans(0, builder.length, URLSpan::class.java)) {

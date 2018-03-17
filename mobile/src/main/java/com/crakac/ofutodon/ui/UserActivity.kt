@@ -8,15 +8,22 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
+import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Account
+import com.crakac.ofutodon.model.api.entity.Relationship
 import com.crakac.ofutodon.util.AnimUtils
+import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.Gson
 import jp.wasabeef.glide.transformations.CropCircleTransformation
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
@@ -32,9 +39,11 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     lateinit var pager: ViewPager
     lateinit var appBar: AppBarLayout
     lateinit var titleText: TextView
-    lateinit var titleContainer: LinearLayout
+    lateinit var titleContainer: RelativeLayout
     lateinit var userName: TextView
     lateinit var userDescription: TextView
+    lateinit var followedText: TextView
+    lateinit var followButton: Button
 
     lateinit var account: Account
 
@@ -59,7 +68,8 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         titleContainer = findViewById(R.id.title_container)
         userName = findViewById(R.id.user_name)
         userDescription = findViewById(R.id.user_description)
-
+        followButton = findViewById(R.id.follow_button)
+        followedText = findViewById(R.id.is_folowee)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -87,9 +97,28 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     private fun setupAccountInfo() {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
-        userDescription.text = account.noteWithEmoji
+        userDescription.text = HtmlUtil.fromHtml(account.note)
         Glide.with(this).load(account.headerStatic).placeholder(R.drawable.placeholder).centerCrop().crossFade().into(header)
         Glide.with(this).load(account.avatar).bitmapTransform(CropCircleTransformation(this)).crossFade().into(icon)
+        MastodonUtil.api?.getRelationships(account.id)?.enqueue(
+                object : Callback<List<Relationship>> {
+                    override fun onFailure(call: Call<List<Relationship>>?, t: Throwable?) {
+                    }
+
+                    override fun onResponse(call: Call<List<Relationship>>?, response: Response<List<Relationship>>?) {
+                        if (response == null || !response.isSuccessful) return
+                        val relationship = response.body()?.first()
+                        relationship ?: return
+                        followedText.visibility = if (relationship.followedBy) View.VISIBLE else View.INVISIBLE
+                        if (relationship.following) {
+                            followButton.text = getString(R.string.unfollow)
+                            followButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_person, 0)
+                        } else {
+                            followButton.text = getString(R.string.follow)
+                            followButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_person_outline, 0)
+                        }
+                    }
+                })
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout, offset: Int) {
