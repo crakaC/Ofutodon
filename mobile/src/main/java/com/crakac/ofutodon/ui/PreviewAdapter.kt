@@ -1,38 +1,37 @@
 package com.crakac.ofutodon.ui
 
+import android.graphics.drawable.Drawable
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.crakac.ofutodon.R
 import com.github.chrisbanes.photoview.PhotoView
-import java.lang.Exception
 
-abstract class PreviewAdapter: PagerAdapter() {
-    lateinit var photoView: PhotoView
+abstract class PreviewAdapter : PagerAdapter() {
 
-    lateinit var progress: ProgressBar
-
-    val dismissProgressOnReady = object : RequestListener<Any?, GlideDrawable> {
-        override fun onResourceReady(resource: GlideDrawable?, model: Any?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+    class PreviewLoadListener(val photoView: PhotoView, val progress: View): RequestListener<Drawable> {
+        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+            photoView.attacher.update()
             progress.visibility = View.GONE
             return false
         }
 
-        override fun onException(e: Exception?, model: Any?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
+        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
             return true
         }
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val v = View.inflate(container.context, R.layout.preview_item, null)
+        val photoView: PhotoView = v.findViewById(R.id.image)
+        val progress: ProgressBar = v.findViewById(R.id.progress)
         container.addView(v)
-        photoView = v.findViewById(R.id.image)
-        progress = v.findViewById(R.id.progress)
-        setupPreview(container, position)
+        setupPreview(photoView, progress, position)
         return v
     }
 
@@ -44,5 +43,5 @@ abstract class PreviewAdapter: PagerAdapter() {
         return view == `object`
     }
 
-    abstract fun setupPreview(container: ViewGroup, position: Int)
+    abstract fun setupPreview(photoView: PhotoView, progress: ProgressBar, position: Int)
 }

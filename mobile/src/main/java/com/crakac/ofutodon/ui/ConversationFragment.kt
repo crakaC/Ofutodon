@@ -2,12 +2,10 @@ package com.crakac.ofutodon.ui
 
 import android.os.Bundle
 import android.view.View
-import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Context
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.RefreshableAdapter
 import com.google.gson.Gson
-import retrofit2.Call
 
 class ConversationFragment(): MastodonApiFragment<Status, Context>() {
 
@@ -41,7 +39,7 @@ class ConversationFragment(): MastodonApiFragment<Status, Context>() {
     }
 
     override fun createAdapter(context: android.content.Context): RefreshableAdapter<Status> {
-        return StatusAdapter(context)
+        return StatusAdapter(context, false)
     }
 
     override fun onRefreshSuccess(response: Context) {
@@ -51,13 +49,5 @@ class ConversationFragment(): MastodonApiFragment<Status, Context>() {
 
     override fun onLoadMoreSuccess(response: Context) {
         adapter.addBottom(response.descendants)
-    }
-
-    override fun onRefreshRequest(): Call<Context>? {
-        return MastodonUtil.api?.getStatusContext(statusId)
-    }
-
-    override fun onLoadMoreRequest(): Call<Context>? {
-        return MastodonUtil.api?.getStatusContext(statusId)
     }
 }

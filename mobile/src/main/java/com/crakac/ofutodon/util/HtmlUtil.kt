@@ -5,7 +5,6 @@ import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.URLSpan
-import android.text.util.Linkify
 import android.view.View
 import com.crakac.ofutodon.model.api.entity.Emoji
 import com.crakac.ofutodon.model.api.entity.Status
@@ -50,7 +49,7 @@ object HtmlUtil {
         return shrinkLinks(trimWhiteSpace(Html.fromHtml(text)) as Spanned)
     }
 
-    private fun shrinkLinks(spanned: Spanned, linkMask: Int = Linkify.WEB_URLS): Spanned {
+    private fun shrinkLinks(spanned: Spanned): Spanned {
         val builder = SpannableStringBuilder(spanned)
         for (span in builder.getSpans(0, builder.length, URLSpan::class.java)) {
             val start = builder.getSpanStart(span)

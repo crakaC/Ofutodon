@@ -50,5 +50,5 @@ class Account {
     }
 
     val noteWithEmoji: Spanned
-    get() = Html.fromHtml(note)
+    get() = Html.fromHtml(Emojione.shortnameToUnicode(note))
 }

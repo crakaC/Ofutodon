@@ -8,7 +8,7 @@ import android.view.animation.AlphaAnimation
 import java.util.*
 
 
-class AnimUtils {
+class AnimUtils private constructor(){
 
     companion object {
         fun startAlphaAnimation(v: View, duration: Long, visibility: Int){

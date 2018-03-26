@@ -20,10 +20,9 @@ import com.crakac.ofutodon.ui.widget.RefreshableAdapter
 import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import com.crakac.ofutodon.util.HtmlUtil
 import com.crakac.ofutodon.util.TextUtil
-import jp.wasabeef.glide.transformations.CropCircleTransformation
 
 
-class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
+class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : RefreshableAdapter<Status>(context) {
     val TAG: String = "StatusAdapter"
     val dummy = Status(-1)
 
@@ -37,11 +36,15 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
     }
 
     override fun getItemCount(): Int {
-        return if (isEmpty) 0 else super.getItemCount() + 1 // for dummy item
+        return when {
+            isEmpty -> 0
+            showBottomLoading -> super.getItemCount() + 1
+            else -> super.getItemCount()
+        }
     }
 
     private fun isFooter(position: Int): Boolean {
-        return position >= itemCount - 1
+        return showBottomLoading && position >= itemCount - 1
     }
 
     override fun onBindViewHolder(holder: RefreshableViewHolder, position: Int) {
@@ -177,15 +180,12 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
             sb.setSpan(accrAppearance, start, sb.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             name.text = sb
 
-            if(status.spannedContent == null) {
+            if (status.spannedContent == null) {
                 status.spannedContent = HtmlUtil.emojify(content, status)
             }
             content.text = status.spannedContent
             Glide.with(context)
                     .load(status.account.avatar)
-                    .centerCrop()
-                    .crossFade()
-                    .bitmapTransform(CropCircleTransformation(context))
                     .into(icon)
             createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
 
@@ -243,9 +243,6 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
         private fun setupRebloggedStatus(context: Context, status: Status) {
             Glide.with(context)
                     .load(status.account.avatar)
-                    .fitCenter()
-                    .crossFade()
-                    .bitmapTransform(CropCircleTransformation(context))
                     .into(rebloggedByIcon)
             rebloggedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
         }
@@ -255,10 +252,10 @@ class StatusAdapter(context: Context) : RefreshableAdapter<Status>(context) {
                 spoilerText.visibility = View.VISIBLE
                 spoilerText.text = status.spoilerText
                 readMore.visibility = View.VISIBLE
-                if (status.hasExpanded){
+                if (status.hasExpanded) {
                     readMore.text = context.getString(R.string.hide)
                     content.visibility = View.VISIBLE
-                } else{
+                } else {
                     readMore.text = context.getString(R.string.read_more)
                     content.visibility = View.GONE
                 }

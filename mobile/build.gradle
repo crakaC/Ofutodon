@@ -26,7 +26,7 @@ android {
                 def val = v.toString()
                 if (val.startsWith("\"")) {
                     buildConfigField "String", k, v
-                } else if (val.endsWith('f')){
+                } else if (val.endsWith('f')) {
                     buildConfigField "float", k, v
                 } else if (val.contains(".")) {
                     buildConfigField "double", k, v
@@ -53,12 +53,11 @@ def getProps(String file) {
 }
 
 
-
 dependencies {
     ext {
         support_library_version = '27.1.0'
         firebase_version = '12.0.0'
-        glide_version = '3.8.0'
+        glide_version = '4.6.1'
         retrofit_version = '2.3.0'
         okhttp_version = '3.8.1'
         archlib_version = '1.0.0'
@@ -74,7 +73,10 @@ dependencies {
     implementation "com.android.support:palette-v7:$support_library_version"
     implementation "com.android.support:support-annotations:$support_library_version"
     implementation "com.android.support:exifinterface:$support_library_version"
-    implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation("com.github.bumptech.glide:glide:$glide_version") {
+        exclude group: "com.android.support"
+    }
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"

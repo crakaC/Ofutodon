@@ -1,6 +1,8 @@
 package com.crakac.ofutodon.ui.widget
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.graphics.Palette
 import android.util.AttributeSet
@@ -9,15 +11,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Attachment
+import com.crakac.ofutodon.util.GlideApp
 import com.crakac.ofutodon.util.ViewUtil
-import java.lang.Exception
 
 class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs) {
     private val TAG: String = "InlineImagePreview"
@@ -41,7 +42,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         View.inflate(context, R.layout.inline_preview, this)
         arrayOf(R.id.image1, R.id.image2, R.id.image3, R.id.image4).forEachIndexed { _, id ->
             val preview = findViewById<ImageView>(id)
-            preview.setOnClickListener{ v ->
+            preview.setOnClickListener { v ->
                 onClickPreview(v)
             }
             images.add(preview)
@@ -59,7 +60,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         cwText = findViewById<TextView>(R.id.spoiler_text)
         mediaMask = findViewById(R.id.nsfw_mask)
 
-        hideMediaButton.setOnClickListener{ _ -> mediaMask.visibility = View.VISIBLE}
+        hideMediaButton.setOnClickListener { _ -> mediaMask.visibility = View.VISIBLE }
         mediaMask.setOnClickListener { v -> v.visibility = View.GONE }
     }
 
@@ -78,7 +79,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
     }
 
     fun setMedia(attachments: List<Attachment>, isSensitive: Boolean) {
-        if(isSensitive){
+        if (isSensitive) {
             mediaMask.visibility = View.VISIBLE
             cwText.setText(R.string.sensitive_media)
         } else {
@@ -90,44 +91,44 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         images.forEach { e -> e.visibility = View.GONE }
         attachments.forEachIndexed { index, attachment ->
             val v = images[index]
-            Glide.with(context).load(attachment.previewUrl).listener(object : RequestListener<String, GlideDrawable> {
-                override fun onException(e: Exception?, model: String?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
-                    return false
-                }
-
-                override fun onResourceReady(resource: GlideDrawable?, model: String?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+            GlideApp.with(context).load(attachment.previewUrl).centerCrop().listener(object : RequestListener<Drawable> {
+                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        val drawable = resource!!.current as GlideBitmapDrawable
-                        Palette.from(drawable.bitmap).generate { palette ->
+                        val d = resource!!.current as BitmapDrawable
+                        Palette.from(d.bitmap).generate { palette ->
                             v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, context.getColor(R.color.mid_grey), true)
                         }
                     }
                     return false
                 }
+
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    return false
+                }
             }
-            ).centerCrop().crossFade().into(v)
+            ).into(v)
 
             v.visibility = View.VISIBLE
         }
         rightContainer.visibility = if (attachments.size >= 2) View.VISIBLE else View.GONE
         separators.forEach { e -> e.visibility = View.GONE }
-        for(i in 0..Math.min(attachments.size - 2, PREVIEW_MAX_NUM)){
+        for (i in 0..Math.min(attachments.size - 2, PREVIEW_MAX_NUM)) {
             separators[i].visibility = View.VISIBLE
         }
     }
 
-    fun onClickPreview(v: View){
+    fun onClickPreview(v: View) {
         listener?.let {
             val index = images.indexOf(v)
             it.onClick(index)
         }
     }
 
-    fun setOnPreviewClickListener(listener: OnClickPreviewListener){
+    fun setOnPreviewClickListener(listener: OnClickPreviewListener) {
         this.listener = listener
     }
 
-    interface OnClickPreviewListener{
-        fun onClick(attachmentIndex: Int){}
+    interface OnClickPreviewListener {
+        fun onClick(attachmentIndex: Int) {}
     }
 }

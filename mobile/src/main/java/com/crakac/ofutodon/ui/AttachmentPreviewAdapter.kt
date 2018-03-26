@@ -1,9 +1,10 @@
 package com.crakac.ofutodon.ui
 
 import android.util.Log
-import android.view.ViewGroup
-import com.bumptech.glide.Glide
+import android.widget.ProgressBar
 import com.crakac.ofutodon.model.api.entity.Attachment
+import com.crakac.ofutodon.util.GlideApp
+import com.github.chrisbanes.photoview.PhotoView
 
 class AttachmentPreviewAdapter(val attachments: List<Attachment>) : PreviewAdapter(){
     val TAG: String = "AttachmentPreview"
@@ -12,10 +13,10 @@ class AttachmentPreviewAdapter(val attachments: List<Attachment>) : PreviewAdapt
         return attachments.count()
     }
 
-    override fun setupPreview(container: ViewGroup, position: Int) {
+    override fun setupPreview(photoView: PhotoView, progress: ProgressBar, position: Int) {
         val attachment = attachments[position]
         val url = if (attachment.url.isNotEmpty()) attachment.url else attachment.remoteUrl
-        Glide.with(container.context).load(url).listener(dismissProgressOnReady).fitCenter().crossFade().into(photoView)
+        GlideApp.with(photoView.context).load(url).listener(PreviewLoadListener(photoView, progress)).into(photoView)
         Log.d(TAG, "load:$url")
     }
 }

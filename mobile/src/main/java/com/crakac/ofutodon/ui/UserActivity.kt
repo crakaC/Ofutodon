@@ -20,7 +20,6 @@ import com.crakac.ofutodon.model.api.entity.Relationship
 import com.crakac.ofutodon.util.AnimUtils
 import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.Gson
-import jp.wasabeef.glide.transformations.CropCircleTransformation
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -98,8 +97,8 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
         userDescription.text = HtmlUtil.fromHtml(account.note)
-        Glide.with(this).load(account.headerStatic).placeholder(R.drawable.placeholder).centerCrop().crossFade().into(header)
-        Glide.with(this).load(account.avatar).bitmapTransform(CropCircleTransformation(this)).crossFade().into(icon)
+        Glide.with(this).load(account.headerStatic).into(header)
+        Glide.with(this).load(account.avatar).into(icon)
         MastodonUtil.api?.getRelationships(account.id)?.enqueue(
                 object : Callback<List<Relationship>> {
                     override fun onFailure(call: Call<List<Relationship>>?, t: Throwable?) {

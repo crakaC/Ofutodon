@@ -1,8 +1,9 @@
 package com.crakac.ofutodon.ui
 
 import android.net.Uri
-import android.view.ViewGroup
-import com.bumptech.glide.Glide
+import android.widget.ProgressBar
+import com.crakac.ofutodon.util.GlideApp
+import com.github.chrisbanes.photoview.PhotoView
 
 class UploadedMediaPreviewAdapter(val attachments: ArrayList<Uri>): PreviewAdapter(){
     val TAG: String = "UploadedMediaPreviewAdapter"
@@ -11,8 +12,8 @@ class UploadedMediaPreviewAdapter(val attachments: ArrayList<Uri>): PreviewAdapt
         return attachments.count()
     }
 
-    override fun setupPreview(container: ViewGroup, position: Int) {
+    override fun setupPreview(photoView: PhotoView, progress: ProgressBar, position: Int) {
         val uri = attachments[position]
-        Glide.with(container.context).loadFromMediaStore(uri).listener(dismissProgressOnReady).fitCenter().crossFade().into(photoView)
+        GlideApp.with(photoView.context).load(uri).fitCenter().into(photoView)
     }
 }

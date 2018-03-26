@@ -1,11 +1,15 @@
 package com.crakac.ofutodon.ui
 
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.text.style.ReplacementSpan
 import android.view.View
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.animation.GlideAnimation
-import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 
 class EmojiSpan(val view: View, val url: String) : ReplacementSpan() {
     val SCALE_RATIO = 1.2f
@@ -19,12 +23,15 @@ class EmojiSpan(val view: View, val url: String) : ReplacementSpan() {
 
     init {
         mPaint.isFilterBitmap = true
-        Glide.with(view.context.applicationContext).load(url).asBitmap().into(object: SimpleTarget<Bitmap>(128, 128){
-            override fun onResourceReady(resource: Bitmap?, glideAnimation: GlideAnimation<in Bitmap>?) {
-                mBitmap = resource
+        Glide.with(view.context.applicationContext).load(url).listener(object: RequestListener<Drawable>{
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                mBitmap = (resource!! as BitmapDrawable).bitmap
                 view.invalidate()
+                return false
             }
-        })
+
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean =false
+        }).submit(128, 128)
     }
 
     override fun getSize(paint: Paint, text: CharSequence?, start: Int, end: Int, fm: Paint.FontMetricsInt?): Int {
