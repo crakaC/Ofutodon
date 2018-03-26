@@ -17,6 +17,7 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.model.api.entity.Relationship
+import com.crakac.ofutodon.ui.widget.ContentMovementMethod
 import com.crakac.ofutodon.util.AnimUtils
 import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.Gson
@@ -69,6 +70,8 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         userDescription = findViewById(R.id.user_description)
         followButton = findViewById(R.id.follow_button)
         followedText = findViewById(R.id.is_folowee)
+
+        userDescription.movementMethod = ContentMovementMethod.instance
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
