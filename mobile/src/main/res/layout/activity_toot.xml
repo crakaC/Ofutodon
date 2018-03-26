@@ -124,7 +124,7 @@
                 android:src="@drawable/ic_public" />
 
             <TextView
-                android:id="@+id/spoiler_text"
+                android:id="@+id/content_warning"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/image_button"
@@ -140,7 +140,7 @@
                 android:id="@+id/nsfw"
                 android:layout_width="@dimen/image_button"
                 android:layout_height="@dimen/image_button"
-                android:layout_toEndOf="@+id/spoiler_text"
+                android:layout_toEndOf="@+id/content_warning"
                 android:alpha="0.8"
                 android:background="?selectableItemBackground"
                 android:padding="@dimen/image_inner_padding"

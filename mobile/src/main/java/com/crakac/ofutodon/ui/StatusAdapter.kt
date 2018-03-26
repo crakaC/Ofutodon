@@ -100,8 +100,9 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
 
         holder.readMore.setOnClickListener { _ ->
             val status = getItem(holder.adapterPosition)
-            status.hasExpanded = !status.hasExpanded
-            holder.toggleReadMore(context, status)
+            val st = if(status.reblog != null) status.reblog!! else status
+            st.hasExpanded = !st.hasExpanded
+            holder.toggleReadMore(context, st)
         }
         return holder
     }
