@@ -131,14 +131,15 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
     class FooterHolder(v: View) : StatusViewHolder(v)
 
     class StatusHolder(v: View) : StatusViewHolder(v) {
-        val rebloggedBy: TextView = v.findViewById(R.id.reblogged_by_name)
-        val rebloggedByIcon: ImageView = v.findViewById(R.id.reblogged_by_icon)
-        val rebloggedMark: ImageView = v.findViewById(R.id.reblogged_icon)
+        val actionedBy: TextView = v.findViewById(R.id.actioned_text)
+        val actionedByIcon: ImageView = v.findViewById(R.id.actioned_by_icon)
+        val actionedIcon: ImageView = v.findViewById(R.id.actioned_icon)
         val name: TextView = v.findViewById(R.id.displayName)
         val content: TextView = v.findViewById(R.id.status)
         val spoilerText: TextView = v.findViewById(R.id.spoiler_text)
         val readMore: Button = v.findViewById(R.id.read_more)
         val icon: ImageView = v.findViewById(R.id.icon)
+        val originalIcon: ImageView = v.findViewById(R.id.original_user_icon)
         val createdAt: TextView = v.findViewById(R.id.createdAt)
         val reply: ImageView = v.findViewById(R.id.reply)
         val boost: ImageView = v.findViewById(R.id.boost)
@@ -236,16 +237,20 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
         }
 
         private fun enableReblogView(isEnabled: Boolean) {
-            for (v in arrayOf(rebloggedBy, rebloggedByIcon, rebloggedMark)) {
+            for (v in arrayOf(actionedBy, actionedByIcon, actionedIcon, originalIcon)) {
                 v.visibility = if (isEnabled) View.VISIBLE else View.GONE
             }
+            icon.visibility = if(isEnabled) View.INVISIBLE else View.VISIBLE
         }
 
         private fun setupRebloggedStatus(context: Context, status: Status) {
             Glide.with(context)
                     .load(status.account.avatar)
-                    .into(rebloggedByIcon)
-            rebloggedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
+                    .into(actionedByIcon)
+            Glide.with(context)
+                    .load(status.reblog!!.account.avatar)
+                    .into(originalIcon)
+            actionedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
         }
 
         fun toggleReadMore(context: Context, status: Status) {

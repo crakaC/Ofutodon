@@ -30,6 +30,7 @@
     <string name="visibility_followes">フォロワーだけに公開</string>
     <string name="visibility_direct">ダイレクト</string>
     <string name="boosted_by">%sさんがブーストしました</string>
+    <string name="favourited_by">%sさんがお気に入りしました</string>
     <string name="title_activity_user">ユーザー</string>
     <string name="conversation">会話</string>
     <string name="read_more">もっと見る</string>
@@ -45,4 +46,6 @@
     <string name="sensitive_media">閲覧注意</string>
     <string name="hidden_insensitive_media">非表示のメディア</string>
     <string name="tap_to_show">タップして表示</string>
+
+    <string name="dummy">xxxxxxxxxxxxx</string>
 </resources>
