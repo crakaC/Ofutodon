@@ -50,6 +50,23 @@
         android:layout_below="@id/actioned_icon" />
 
     <ImageView
+        android:id="@+id/original_user_icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignStart="@+id/icon"
+        android:layout_alignTop="@+id/icon"
+        android:layout_below="@+id/actioned_icon"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/actioned_by_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignBottom="@+id/icon"
+        android:layout_alignEnd="@+id/icon"
+        android:visibility="invisible" />
+
+    <ImageView
         android:id="@+id/icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -58,24 +75,6 @@
         android:layout_marginEnd="@dimen/spacing_mid_large"
         android:layout_marginStart="@dimen/spacing_micro"
         android:layout_marginTop="@dimen/spacing_micro" />
-
-    <ImageView
-        android:visibility="invisible"
-        android:id="@+id/original_user_icon"
-        android:layout_below="@+id/actioned_icon"
-        android:layout_alignStart="@+id/icon"
-        android:layout_alignTop="@+id/icon"
-        android:layout_width="36dp"
-        android:layout_height="36dp" />
-
-    <ImageView
-        android:visibility="invisible"
-        android:id="@+id/actioned_by_icon"
-        android:layout_alignBottom="@+id/icon"
-        android:layout_alignEnd="@+id/icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp" />
-
 
     <com.crakac.ofutodon.ui.widget.TouchTroughTextView
         android:id="@+id/spoiler_text"

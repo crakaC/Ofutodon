@@ -19,6 +19,7 @@ import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.model.api.entity.Relationship
 import com.crakac.ofutodon.ui.widget.ContentMovementMethod
 import com.crakac.ofutodon.util.AnimUtils
+import com.crakac.ofutodon.util.GlideApp
 import com.crakac.ofutodon.util.HtmlUtil
 import com.google.gson.Gson
 import retrofit2.Call
@@ -101,7 +102,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         userName.text = account.dispNameWithEmoji
         userDescription.text = HtmlUtil.fromHtml(account.note)
         Glide.with(this).load(account.headerStatic).into(header)
-        Glide.with(this).load(account.avatar).into(icon)
+        GlideApp.with(this).load(account.avatar).circleCrop().into(icon)
         MastodonUtil.api?.getRelationships(account.id)?.enqueue(
                 object : Callback<List<Relationship>> {
                     override fun onFailure(call: Call<List<Relationship>>?, t: Throwable?) {

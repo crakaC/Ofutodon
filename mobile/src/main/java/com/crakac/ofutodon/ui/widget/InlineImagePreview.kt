@@ -13,6 +13,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.crakac.ofutodon.R
@@ -40,7 +41,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
 
     init {
         View.inflate(context, R.layout.inline_preview, this)
-        arrayOf(R.id.image1, R.id.image2, R.id.image3, R.id.image4).forEachIndexed { _, id ->
+        arrayOf(R.id.image1, R.id.image2, R.id.image3, R.id.image4).forEach { id ->
             val preview = findViewById<ImageView>(id)
             preview.setOnClickListener { v ->
                 onClickPreview(v)
@@ -94,19 +95,20 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
             GlideApp.with(context).load(attachment.previewUrl).centerCrop().listener(object : RequestListener<Drawable> {
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        val d = resource!!.current as BitmapDrawable
-                        Palette.from(d.bitmap).generate { palette ->
+                        val bitmap = when (resource) {
+                            is GifDrawable -> resource.firstFrame
+                            is BitmapDrawable -> resource.bitmap
+                            else -> return false
+                        }
+                        Palette.from(bitmap).generate { palette ->
                             v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, context.getColor(R.color.mid_grey), true)
                         }
                     }
                     return false
                 }
 
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    return false
-                }
-            }
-            ).into(v)
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean = false
+            }).into(v)
 
             v.visibility = View.VISIBLE
         }
@@ -118,9 +120,9 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
     }
 
     fun onClickPreview(v: View) {
-        listener?.let {
+        listener?.run {
             val index = images.indexOf(v)
-            it.onClick(index)
+            onClick(index)
         }
     }
 

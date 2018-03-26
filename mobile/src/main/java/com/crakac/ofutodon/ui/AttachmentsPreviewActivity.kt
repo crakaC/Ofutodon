@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.view.View
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.google.gson.Gson
@@ -47,6 +48,11 @@ class AttachmentsPreviewActivity : Activity() {
                 setupWithTargetStatus()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 
     private fun setupWithTargetStatus() {

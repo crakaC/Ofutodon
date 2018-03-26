@@ -12,6 +12,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.ContentMovementMethod
@@ -131,6 +133,8 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
     class FooterHolder(v: View) : StatusViewHolder(v)
 
     class StatusHolder(v: View) : StatusViewHolder(v) {
+        val roundedCorners = RequestOptions().transform(RoundedCorners(8))
+
         val actionedBy: TextView = v.findViewById(R.id.actioned_text)
         val actionedByIcon: ImageView = v.findViewById(R.id.actioned_by_icon)
         val actionedIcon: ImageView = v.findViewById(R.id.actioned_icon)
@@ -188,6 +192,7 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
             content.text = status.spannedContent
             Glide.with(context)
                     .load(status.account.avatar)
+                    .apply(roundedCorners)
                     .into(icon)
             createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
 
@@ -240,15 +245,20 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
             for (v in arrayOf(actionedBy, actionedByIcon, actionedIcon, originalIcon)) {
                 v.visibility = if (isEnabled) View.VISIBLE else View.GONE
             }
-            icon.visibility = if(isEnabled) View.INVISIBLE else View.VISIBLE
+
+            if(isEnabled){
+                Glide.with(icon).clear(icon)
+            }
         }
 
         private fun setupRebloggedStatus(context: Context, status: Status) {
             Glide.with(context)
                     .load(status.account.avatar)
+                    .apply(roundedCorners)
                     .into(actionedByIcon)
             Glide.with(context)
                     .load(status.reblog!!.account.avatar)
+                    .apply(roundedCorners)
                     .into(originalIcon)
             actionedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
         }
