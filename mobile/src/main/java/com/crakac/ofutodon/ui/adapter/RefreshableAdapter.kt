@@ -3,40 +3,27 @@ package com.crakac.ofutodon.ui.adapter
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import com.crakac.ofutodon.model.api.entity.Identifiable
-import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import java.util.TreeSet
 import kotlin.collections.ArrayList
 
-abstract class RefreshableAdapter<T : Identifiable>(val context: Context) : RecyclerView.Adapter<RefreshableViewHolder>() {
+abstract class RefreshableAdapter<T : Identifiable>(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = ArrayList<T>()
     private val ids = TreeSet<Long>()
 
-    open fun getItem(position: Int): T {
-        return items[position]
-    }
+    open fun getItem(position: Int): T = items[position]
 
-    override fun getItemId(position: Int): Long {
-        return getItem(position).id
-    }
+    override fun getItemId(position: Int): Long = getItem(position).id
 
-    open fun getPosition(item: T): Int {
-        return items.indexOf(item)
-    }
+    open fun getPosition(item: T): Int = items.indexOf(item)
 
     /**
      * return -1 if not found
      */
-    open fun getPositionById(id: Long): Int {
-        return items.indexOfFirst { e -> e.id == id }
-    }
+    open fun getPositionById(id: Long): Int = items.indexOfFirst { e -> e.id == id }
 
-    fun getItemById(id: Long): T? {
-        return items.firstOrNull { e -> e.id == id }
-    }
+    fun getItemById(id: Long): T? = items.firstOrNull { e -> e.id == id }
 
-    fun contains(id: Long): Boolean {
-        return ids.contains(id)
-    }
+    fun contains(id: Long): Boolean = ids.contains(id)
 
     open fun addTop(item: T) {
         items.add(0, item)
@@ -83,12 +70,12 @@ abstract class RefreshableAdapter<T : Identifiable>(val context: Context) : Recy
     }
 
     val isEmpty: Boolean
-        get() {
-            return items.isEmpty()
-        }
+        get() = items.isEmpty()
 
 
-    override fun getItemCount(): Int {
-        return items.size
+    override fun getItemCount(): Int = items.size
+
+    interface Refreshable{
+        fun refresh()
     }
 }

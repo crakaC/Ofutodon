@@ -8,7 +8,7 @@ import com.crakac.ofutodon.ui.adapter.StatusAdapter
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.google.gson.Gson
 
-class ConversationFragment(): MastodonApiFragment<Status, Context>() {
+class ConversationFragment: MastodonApiFragment<Status, Context>() {
 
     companion object {
         val STATUS_ID = "status_id"

@@ -16,9 +16,8 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.Link
 import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Identifiable
-import com.crakac.ofutodon.ui.widget.FastScrollLinearLayoutManager
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
-import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
+import com.crakac.ofutodon.ui.widget.FastScrollLinearLayoutManager
 import com.crakac.ofutodon.ui.widget.SwipeRefreshListView
 import retrofit2.Call
 import retrofit2.Callback
@@ -169,7 +168,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         if (!isAdded) return
         for (i in 0 until recyclerView.childCount) {
             val child = recyclerView.getChildAt(i)
-            val holder = recyclerView.getChildViewHolder(child) as RefreshableViewHolder?
+            val holder = recyclerView.getChildViewHolder(child) as RefreshableAdapter.Refreshable?
             holder?.refresh()
         }
     }

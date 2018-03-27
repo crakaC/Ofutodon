@@ -3,6 +3,7 @@ package com.crakac.ofutodon.ui.adapter
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.PopupMenu
+import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.TextAppearanceSpan
@@ -18,7 +19,6 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.ContentMovementMethod
 import com.crakac.ofutodon.ui.widget.InlineImagePreview
-import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import com.crakac.ofutodon.util.HtmlUtil
 import com.crakac.ofutodon.util.TextUtil
 
@@ -48,18 +48,17 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
         return showBottomLoading && position >= itemCount - 1
     }
 
-    override fun onBindViewHolder(holder: RefreshableViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if(isFooter(position)) return
         val item = getItem(position)
-        if (holder is StatusHolder) {
-            holder.setData(context, item)
-        }
+        (holder as StatusViewHolder).setData(context, item)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatusViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == HolderType.Footer.rawValue) {
-            return FooterHolder(View.inflate(context, R.layout.dummy_status, null))
+            return FooterViewHolder(View.inflate(context, R.layout.dummy_status, null))
         }
-        val holder = StatusHolder(View.inflate(context, R.layout.status, null))
+        val holder = StatusViewHolder(View.inflate(context, R.layout.status, null))
         holder.itemView.setOnClickListener { _ ->
             val status = getItem(holder.adapterPosition)
             statusListener?.onItemClicked(status)
@@ -108,8 +107,8 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
         return holder
     }
 
-    override fun onViewRecycled(holder: RefreshableViewHolder) {
-        if (holder is StatusHolder) {
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is StatusViewHolder) {
             holder.icon.setImageBitmap(null)
         }
     }
@@ -127,11 +126,9 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
         Footer(4)
     }
 
-    open class StatusViewHolder(v: View) : RefreshableViewHolder(v)
+    class FooterViewHolder(v: View) : RecyclerView.ViewHolder(v)
 
-    class FooterHolder(v: View) : StatusViewHolder(v)
-
-    class StatusHolder(v: View) : StatusViewHolder(v) {
+    class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v), Refreshable {
         val roundedCorners = RequestOptions().transform(RoundedCorners(8))
 
         val actionedBy: TextView = v.findViewById(R.id.actioned_text)

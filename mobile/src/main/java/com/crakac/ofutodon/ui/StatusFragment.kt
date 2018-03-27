@@ -9,9 +9,8 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.transition.FabTransform
-import com.crakac.ofutodon.ui.adapter.StatusAdapter
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
-import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
+import com.crakac.ofutodon.ui.adapter.StatusAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -161,7 +160,7 @@ abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), Sta
         if (!isAdded) return
         for (i in 0 until recyclerView.childCount) {
             val child = recyclerView.getChildAt(i)
-            val holder = recyclerView.getChildViewHolder(child) as RefreshableViewHolder?
+            val holder = recyclerView.getChildViewHolder(child) as RefreshableAdapter.Refreshable?
             holder?.refresh()
         }
     }
