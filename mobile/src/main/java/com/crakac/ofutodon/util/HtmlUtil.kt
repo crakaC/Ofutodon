@@ -27,7 +27,7 @@ object HtmlUtil {
                 val start = sb.indexOf(shortCode)
                 val end = start + shortCode.length
                 sb.replace(start, end, emoji.shortCode)
-                sb.setSpan(EmojiSpan(view, emoji.staticUrl), start, end - 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                sb.setSpan(EmojiSpan(view, emoji), start, end - 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
         }
         return sb

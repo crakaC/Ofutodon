@@ -1,8 +1,7 @@
 package com.crakac.ofutodon.ui.widget
 
 import android.content.Context
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
 import android.os.Build
 import android.support.v7.graphics.Palette
 import android.util.AttributeSet
@@ -13,7 +12,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.crakac.ofutodon.R
@@ -92,14 +90,10 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         images.forEach { e -> e.visibility = View.GONE }
         attachments.forEachIndexed { index, attachment ->
             val v = images[index]
-            GlideApp.with(context).load(attachment.previewUrl).centerCrop().listener(object : RequestListener<Drawable> {
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+            GlideApp.with(context).asBitmap().load(attachment.previewUrl).centerCrop().listener(object : RequestListener<Bitmap> {
+                override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        val bitmap = when (resource) {
-                            is GifDrawable -> resource.firstFrame
-                            is BitmapDrawable -> resource.bitmap
-                            else -> return false
-                        }
+                        val bitmap = resource ?: return false
                         Palette.from(bitmap).generate { palette ->
                             v.foreground = ViewUtil.createRipple(palette, 0.25f, 0.5f, context.getColor(R.color.mid_grey), true)
                         }
@@ -107,7 +101,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
                     return false
                 }
 
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean = false
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean = false
             }).into(v)
 
             v.visibility = View.VISIBLE
