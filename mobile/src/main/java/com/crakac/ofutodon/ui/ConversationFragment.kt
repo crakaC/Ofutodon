@@ -2,24 +2,25 @@ package com.crakac.ofutodon.ui
 
 import android.os.Bundle
 import android.view.View
-import com.crakac.ofutodon.model.api.entity.Context
+import com.crakac.ofutodon.model.api.entity.ConversationContext
 import com.crakac.ofutodon.model.api.entity.Status
-import com.crakac.ofutodon.ui.adapter.StatusAdapter
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
+import com.crakac.ofutodon.ui.adapter.StatusAdapter
 import com.google.gson.Gson
 
-class ConversationFragment: MastodonApiFragment<Status, Context>() {
+class ConversationFragment: MastodonApiFragment<Status, ConversationContext>() {
 
     companion object {
         val STATUS_ID = "status_id"
         val STATUS = "status"
         fun newInstance(status: Status): ConversationFragment{
-            val f = ConversationFragment()
-            val args = Bundle()
-            args.putLong(STATUS_ID, status.id)
-            args.putString(STATUS, Gson().toJson(status))
-            f.arguments = args
-            return f
+            return ConversationFragment().apply {
+                arguments = Bundle().apply {
+                    putLong(STATUS_ID, status.id)
+                    putString(STATUS, Gson().toJson(status))
+
+                }
+            }
         }
     }
 
@@ -39,16 +40,15 @@ class ConversationFragment: MastodonApiFragment<Status, Context>() {
         adapter.addTop(status)
     }
 
-    override fun createAdapter(context: android.content.Context): RefreshableAdapter<Status> {
-        return StatusAdapter(context, false)
-    }
+    override fun createAdapter(context: android.content.Context): RefreshableAdapter<Status> =
+            StatusAdapter(context, false)
 
-    override fun onRefreshSuccess(response: Context) {
+    override fun onRefreshSuccess(response: ConversationContext) {
         adapter.addTop(response.ancestors)
         adapter.addBottom(response.descendants)
     }
 
-    override fun onLoadMoreSuccess(response: Context) {
+    override fun onLoadMoreSuccess(response: ConversationContext) {
         adapter.addBottom(response.descendants)
     }
 }

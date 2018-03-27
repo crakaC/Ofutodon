@@ -248,7 +248,7 @@ interface Mastodon {
     fun getStatusContext(
             @Path("id")
             id: Long
-    ): Call<Context>
+    ): Call<ConversationContext>
 
     @GET("/api/v1/statuses/{id}/card")
     fun getCard(

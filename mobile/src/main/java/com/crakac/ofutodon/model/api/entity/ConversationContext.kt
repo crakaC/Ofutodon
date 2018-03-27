@@ -2,8 +2,8 @@ package com.crakac.ofutodon.model.api.entity
 
 import com.google.gson.annotations.SerializedName
 
-class Context {
-    val TAG: String = "Context"
+class ConversationContext {
+    val TAG: String = "ConversationContext"
     @SerializedName("ancestors")
     val ancestors: List<Status> = emptyList()
     @SerializedName("descendants")

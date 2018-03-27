@@ -3,7 +3,6 @@ package com.crakac.ofutodon.ui
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
@@ -40,26 +39,21 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
     var isLoadingNext = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_status, container, false)
+        val view = inflater.inflate(R.layout.fragment_refreshable, container, false)
 
-        adapter = createAdapter(activity as FragmentActivity)
-
+        adapter = createAdapter(requireContext())
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
-
         recyclerView = swipeRefresh.recyclerView
         recyclerView.adapter = adapter
-
         layoutManager = FastScrollLinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        val divider = DividerItemDecoration(activity, layoutManager.orientation).apply {
+        val divider = DividerItemDecoration(requireContext(), layoutManager.orientation).apply {
             setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
         }
         recyclerView.addItemDecoration(divider)
-
         swipeRefresh.setOnRefreshListener(this)
         swipeRefresh.setOnLoadMoreListener(this)
-        swipeRefresh.isRefreshing = true
         onRefresh()
         return view
     }
