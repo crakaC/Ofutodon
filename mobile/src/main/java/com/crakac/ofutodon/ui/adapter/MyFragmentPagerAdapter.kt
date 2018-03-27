@@ -1,7 +1,8 @@
-package com.crakac.ofutodon.ui
+package com.crakac.ofutodon.ui.adapter
 
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import com.crakac.ofutodon.ui.StatusFragment
 
 /**
  * Created by Kosuke on 2017/04/26.

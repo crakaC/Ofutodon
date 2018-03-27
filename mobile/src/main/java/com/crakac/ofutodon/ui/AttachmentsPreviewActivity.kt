@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.View
 import com.crakac.ofutodon.R
+import com.crakac.ofutodon.ui.adapter.AttachmentPreviewAdapter
 import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.ui.adapter.UploadedMediaPreviewAdapter
 import com.google.gson.Gson
 
 class AttachmentsPreviewActivity : Activity() {

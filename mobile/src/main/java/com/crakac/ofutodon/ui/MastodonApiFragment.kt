@@ -17,7 +17,7 @@ import com.crakac.ofutodon.model.api.Link
 import com.crakac.ofutodon.model.api.Range
 import com.crakac.ofutodon.model.api.entity.Identifiable
 import com.crakac.ofutodon.ui.widget.FastScrollLinearLayoutManager
-import com.crakac.ofutodon.ui.widget.RefreshableAdapter
+import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import com.crakac.ofutodon.ui.widget.SwipeRefreshListView
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package com.crakac.ofutodon.ui
+package com.crakac.ofutodon.ui.adapter
 
 import android.graphics.drawable.Drawable
 import android.support.v4.view.PagerAdapter

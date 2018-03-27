@@ -1,8 +1,9 @@
-package com.crakac.ofutodon.ui.widget
+package com.crakac.ofutodon.ui.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import com.crakac.ofutodon.model.api.entity.Identifiable
+import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import java.util.TreeSet
 import kotlin.collections.ArrayList
 

@@ -1,4 +1,4 @@
-package com.crakac.ofutodon.ui
+package com.crakac.ofutodon.ui.adapter
 
 import android.net.Uri
 import android.widget.ProgressBar

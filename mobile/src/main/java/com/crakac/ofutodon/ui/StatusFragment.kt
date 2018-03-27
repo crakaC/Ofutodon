@@ -9,7 +9,8 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.transition.FabTransform
-import com.crakac.ofutodon.ui.widget.RefreshableAdapter
+import com.crakac.ofutodon.ui.adapter.StatusAdapter
+import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import retrofit2.Call
 import retrofit2.Callback

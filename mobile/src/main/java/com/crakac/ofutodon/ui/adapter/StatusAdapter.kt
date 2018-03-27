@@ -1,4 +1,4 @@
-package com.crakac.ofutodon.ui
+package com.crakac.ofutodon.ui.adapter
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
@@ -18,7 +18,6 @@ import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.ContentMovementMethod
 import com.crakac.ofutodon.ui.widget.InlineImagePreview
-import com.crakac.ofutodon.ui.widget.RefreshableAdapter
 import com.crakac.ofutodon.ui.widget.RefreshableViewHolder
 import com.crakac.ofutodon.util.HtmlUtil
 import com.crakac.ofutodon.util.TextUtil

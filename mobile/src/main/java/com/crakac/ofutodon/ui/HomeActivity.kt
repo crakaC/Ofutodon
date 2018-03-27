@@ -23,6 +23,7 @@ import com.crakac.ofutodon.model.api.entity.AccessToken
 import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.model.api.entity.AppCredentials
 import com.crakac.ofutodon.transition.FabTransform
+import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.PrefsUtil
 import retrofit2.Call
