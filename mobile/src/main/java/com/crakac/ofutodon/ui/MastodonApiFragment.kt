@@ -35,13 +35,14 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
     private var prevRange: Range = Range()
     val next: Map<String, String> get() = nextRange.q
     val prev: Map<String, String> get() = prevRange.q
-
+    open var isSwipeRefreshEnabled = true
+    open var isLoadMoreEnabled = true
     var isLoadingNext = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_refreshable, container, false)
 
-        adapter = createAdapter(requireContext())
+        adapter = createAdapter(requireContext(), isLoadMoreEnabled)
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
         recyclerView = swipeRefresh.recyclerView
         recyclerView.adapter = adapter
@@ -54,6 +55,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         recyclerView.addItemDecoration(divider)
         swipeRefresh.setOnRefreshListener(this)
         swipeRefresh.setOnLoadMoreListener(this)
+        swipeRefresh.isEnabled = isSwipeRefreshEnabled
         onRefresh()
         return view
     }
@@ -63,7 +65,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         refreshItem()
     }
 
-    abstract fun createAdapter(context: Context): RefreshableAdapter<AdapterClass>
+    abstract fun createAdapter(context: Context, enableRefresh: Boolean = true): RefreshableAdapter<AdapterClass>
 
     open fun onRefreshRequest(): Call<ResponseClass>? = null
 

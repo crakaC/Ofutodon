@@ -90,14 +90,14 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                val fragment = adapter?.instantiateItem(pager, position) as StatusFragment?
+                val fragment = adapter?.instantiateItem(pager, position) as TimelineFragment?
                 fragment?.updateRelativeTime()
             }
         })
         tabLayout.setupWithViewPager(pager)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab) {
-                val fragment = adapter?.instantiateItem(pager, tab.position) as StatusFragment?
+                val fragment = adapter?.instantiateItem(pager, tab.position) as TimelineFragment?
                 fragment?.scrollToTop()
             }
 

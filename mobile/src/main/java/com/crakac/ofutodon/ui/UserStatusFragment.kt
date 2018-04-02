@@ -6,7 +6,7 @@ import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.model.api.entity.Status
 import retrofit2.Call
 
-class UserStatusFragment : StatusFragment() {
+class UserStatusFragment : TimelineFragment() {
     companion object {
         val ACCOUNT_ID = "account_id"
         val ONLY_MEDIA = "only_media"

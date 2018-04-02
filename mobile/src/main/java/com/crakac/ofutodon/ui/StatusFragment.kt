@@ -18,22 +18,14 @@ import retrofit2.Response
 /**
  * Created by Kosuke on 2017/04/26.
  */
-abstract class StatusFragment : MastodonApiFragment<Status, List<Status>>(), StatusAdapter.OnClickStatusListener {
+abstract class StatusFragment<T> : MastodonApiFragment<Status, T>(), StatusAdapter.OnClickStatusListener {
 
-    abstract fun getTitle(): String
+    open fun getTitle(): String = "title"
 
-    override fun createAdapter(context: Context): RefreshableAdapter<Status> {
-        val adapter = StatusAdapter(context)
+    override fun createAdapter(context: Context, enableRefresh: Boolean): RefreshableAdapter<Status> {
+        val adapter = StatusAdapter(context, enableRefresh)
         adapter.statusListener = this
         return adapter
-    }
-
-    override fun onRefreshSuccess(response: List<Status>) {
-        insertQuietly(response)
-    }
-
-    override fun onLoadMoreSuccess(response: List<Status>) {
-        adapter.addBottom(response)
     }
 
     override fun onItemClicked(status: Status) {
