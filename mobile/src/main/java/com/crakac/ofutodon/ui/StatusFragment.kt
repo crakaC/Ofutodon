@@ -11,6 +11,7 @@ import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.ui.adapter.StatusAdapter
+import com.crakac.ofutodon.ui.widget.OnClickStatusListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,10 +19,7 @@ import retrofit2.Response
 /**
  * Created by Kosuke on 2017/04/26.
  */
-abstract class StatusFragment<T> : MastodonApiFragment<Status, T>(), StatusAdapter.OnClickStatusListener {
-
-    open fun getTitle(): String = "title"
-
+abstract class StatusFragment<T> : MastodonApiFragment<Status, T>(), OnClickStatusListener {
     override fun createAdapter(context: Context, enableRefresh: Boolean): RefreshableAdapter<Status> {
         val adapter = StatusAdapter(context, enableRefresh)
         adapter.statusListener = this
@@ -145,15 +143,6 @@ abstract class StatusFragment<T> : MastodonApiFragment<Status, T>(), StatusAdapt
     override fun onMenuClicked(status: Status, menuId: Int) {
         MastodonUtil.api?.run {
 
-        }
-    }
-
-    fun updateRelativeTime() {
-        if (!isAdded) return
-        for (i in 0 until recyclerView.childCount) {
-            val child = recyclerView.getChildAt(i)
-            val holder = recyclerView.getChildViewHolder(child) as RefreshableAdapter.Refreshable?
-            holder?.refresh()
         }
     }
 

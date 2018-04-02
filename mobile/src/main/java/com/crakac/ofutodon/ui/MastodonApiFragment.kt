@@ -2,7 +2,6 @@ package com.crakac.ofutodon.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
@@ -22,7 +21,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> : Fragment(),
+abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> : TitleFragment(),
         SwipeRefreshLayout.OnRefreshListener,
         SwipeRefreshListView.OnLoadMoreListener {
     open val TAG: String = "MastodonApiFragment"

@@ -79,25 +79,28 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //fragments
         if (adapter == null) {
             adapter = MyFragmentPagerAdapter(supportFragmentManager)
+            adapter!!.add(NotificationFragment())
             adapter!!.add(HomeTimelineFragment())
             adapter!!.add(LocalTimelineFragment())
         }
 
         pager.adapter = adapter
+        pager.currentItem = 1
+        pager.offscreenPageLimit = 10
         pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                val fragment = adapter?.instantiateItem(pager, position) as TimelineFragment?
-                fragment?.updateRelativeTime()
+                val fragment = adapter?.instantiateItem(pager, position) as MastodonApiFragment<*, *>?
+                fragment?.refreshItem()
             }
         })
         tabLayout.setupWithViewPager(pager)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab) {
-                val fragment = adapter?.instantiateItem(pager, tab.position) as TimelineFragment?
+                val fragment = adapter?.instantiateItem(pager, tab.position) as MastodonApiFragment<*, *>?
                 fragment?.scrollToTop()
             }
 

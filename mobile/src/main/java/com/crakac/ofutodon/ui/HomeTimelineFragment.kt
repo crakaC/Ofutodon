@@ -5,8 +5,6 @@ import com.crakac.ofutodon.model.api.entity.Status
 import retrofit2.Call
 
 class HomeTimelineFragment : TimelineFragment() {
-    override val TAG: String = "HomeTimelineFragment"
-
     override fun getTitle() = "ホーム"
 
     override fun onRefreshRequest(): Call<List<Status>>? {
