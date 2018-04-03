@@ -6,9 +6,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:paddingEnd="@dimen/list_item_padding"
-    android:paddingStart="@dimen/spacing_normal"
-    android:paddingTop="@dimen/spacing_normal">
+    android:padding="@dimen/spacing_normal">
 
     <ImageView
         android:id="@+id/actioned_icon"
@@ -34,7 +32,7 @@
         style="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/actioned_icon"
+        android:layout_below="@id/actioned_text"
         android:layout_toEndOf="@+id/icon"
         android:layout_toStartOf="@+id/createdAt"
         android:ellipsize="end"
@@ -47,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/displayName"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/actioned_icon" />
+        android:layout_below="@id/actioned_text" />
 
     <ImageView
         android:id="@+id/original_user_icon"
@@ -113,9 +111,11 @@
         android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/status_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/preview"
+        android:layout_marginBottom="-8dp"
         android:layout_toEndOf="@+id/icon"
         android:orientation="horizontal">
 

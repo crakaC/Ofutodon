@@ -41,7 +41,7 @@ class StatusAdapter(context: Context, val showBottomLoading: Boolean = true) : R
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(isFooter(position)) return
         val item = getItem(position)
-        (holder as StatusViewHolder).setData(context, item)
+        (holder as StatusViewHolder).setStatus(context, item)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

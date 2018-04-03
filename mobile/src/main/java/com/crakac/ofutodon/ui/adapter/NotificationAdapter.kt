@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Notification
+import com.crakac.ofutodon.ui.widget.OnClickStatusListener
 import com.crakac.ofutodon.ui.widget.StatusViewHolder
 
 class NotificationAdapter (context: Context) : RefreshableAdapter<Notification>(context) {
+
+    var statusListener: OnClickStatusListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return StatusViewHolder(View.inflate(context, R.layout.status, null))
@@ -17,7 +20,11 @@ class NotificationAdapter (context: Context) : RefreshableAdapter<Notification>(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         if(holder is StatusViewHolder){
-            holder.setData(context, item.status!!)
+            holder.setNotification(context, item)
+            holder.itemView.setOnClickListener { _ ->
+                val status = getItem(holder.adapterPosition).status!!
+                statusListener?.onItemClicked(status)
+            }
         }
     }
 }

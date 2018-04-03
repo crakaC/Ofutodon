@@ -14,6 +14,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.crakac.ofutodon.R
+import com.crakac.ofutodon.model.api.entity.Account
+import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.util.HtmlUtil
@@ -39,6 +41,7 @@ class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v), RefreshableAdapter
     val favorite: ImageView = v.findViewById(R.id.favorite)
     val more: ImageView = v.findViewById(R.id.more)
     val preview: InlineImagePreview = v.findViewById(R.id.preview)
+    val statusActions: View = v.findViewById(R.id.status_actions)
 
     private var createdAtString: String? = null
 
@@ -48,15 +51,31 @@ class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v), RefreshableAdapter
         content.movementMethod = ContentMovementMethod.instance
     }
 
-    fun setData(context: Context, status: Status) {
+    fun setStatus(context: Context, status: Status) {
         if (status.reblog != null) {
             val original = status.reblog!!
             setup(context, original)
-            enableReblogView(true)
-            setupRebloggedStatus(context, status)
+            enableActionedView(true)
+            setupIcons(context, status.reblog!!.account, status.account)
+            setRebloggedText(context, status.account)
         } else {
             setup(context, status)
-            enableReblogView(false)
+            enableActionedView(false)
+        }
+    }
+
+    fun setNotification(context: Context, notification: Notification) {
+        setup(context, notification.status!!)
+        enableActionedView(true)
+        statusActions.visibility = View.GONE
+        setupIcons(context, notification.status.account, notification.account!!)
+        when (notification.type) {
+            Notification.Type.Favourite.value -> {
+                setRebloggedText(context, notification.account)
+            }
+            Notification.Type.ReBlog.value -> {
+                setFavoritedText(context, notification.account)
+            }
         }
     }
 
@@ -128,26 +147,25 @@ class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v), RefreshableAdapter
         createdAtString = status.createdAt
     }
 
-    private fun enableReblogView(isEnabled: Boolean) {
+    private fun enableActionedView(isEnabled: Boolean) {
         for (v in arrayOf(actionedBy, actionedByIcon, actionedIcon, originalIcon)) {
             v.visibility = if (isEnabled) View.VISIBLE else View.GONE
         }
 
-        if(isEnabled){
+        if (isEnabled) {
             Glide.with(icon).clear(icon)
         }
     }
 
-    private fun setupRebloggedStatus(context: Context, status: Status) {
+    private fun setupIcons(context: Context, originalAccount: Account, actionedAccount: Account) {
         Glide.with(context)
-                .load(status.account.avatar)
+                .load(actionedAccount.avatar)
                 .apply(roundedCorners)
                 .into(actionedByIcon)
         Glide.with(context)
-                .load(status.reblog!!.account.avatar)
+                .load(originalAccount.avatar)
                 .apply(roundedCorners)
                 .into(originalIcon)
-        actionedBy.text = context.getString(R.string.boosted_by).format(status.account.dispNameWithEmoji)
     }
 
     fun toggleReadMore(context: Context, status: Status) {
@@ -167,5 +185,17 @@ class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v), RefreshableAdapter
             spoilerText.visibility = View.GONE
             readMore.visibility = View.GONE
         }
+    }
+
+    private fun setRebloggedText(context: Context, account: Account) {
+        actionedBy.text = context.getString(R.string.boosted_by).format(account.dispNameWithEmoji)
+        actionedIcon.setImageResource(R.drawable.ic_boost)
+        actionedIcon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
+    }
+
+    private fun setFavoritedText(context: Context, account: Account) {
+        actionedBy.text = context.getString(R.string.favourited_by).format(account.dispNameWithEmoji)
+        actionedIcon.setImageResource(R.drawable.ic_star)
+        actionedIcon.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
     }
 }
