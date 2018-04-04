@@ -1,6 +1,5 @@
 package com.crakac.ofutodon.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
@@ -41,7 +40,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_refreshable, container, false)
 
-        adapter = createAdapter(requireContext(), isLoadMoreEnabled)
+        adapter = createAdapter()
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
         recyclerView = swipeRefresh.recyclerView
         recyclerView.adapter = adapter
@@ -64,7 +63,7 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         refreshItem()
     }
 
-    abstract fun createAdapter(context: Context, enableRefresh: Boolean = true): RefreshableAdapter<AdapterClass>
+    abstract fun createAdapter(): RefreshableAdapter<AdapterClass>
 
     open fun onRefreshRequest(): Call<ResponseClass>? = null
 

@@ -120,7 +120,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         }
     }
 
-    fun setOnPreviewClickListener(listener: OnClickPreviewListener) {
+    fun setOnPreviewClickListener(listener: OnClickPreviewListener?) {
         this.listener = listener
     }
 
