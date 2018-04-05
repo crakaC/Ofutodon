@@ -10,7 +10,7 @@ import kotlin.collections.ArrayList
 abstract class RefreshableAdapter<T : Identifiable>(context: Activity) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val contextRef = WeakReference(context)
     val context get() = contextRef.get()
-    private val items = ArrayList<T>()
+    val items = ArrayList<T>()
     private val ids = TreeSet<Long>()
 
     open fun getItem(position: Int): T = items[position]

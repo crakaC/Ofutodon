@@ -7,11 +7,7 @@ import retrofit2.Call
 class HomeTimelineFragment : TimelineFragment() {
     override fun getTitle() = "ホーム"
 
-    override fun onRefreshRequest(): Call<List<Status>>? {
-        return MastodonUtil.api?.getHomeTimeline(prev)
-    }
+    override fun onRefreshRequest(): Call<List<Status>>? = MastodonUtil.api?.getHomeTimeline(prev)
 
-    override fun onLoadMoreRequest(): Call<List<Status>>? {
-        return MastodonUtil.api?.getHomeTimeline(next)
-    }
+    override fun onLoadMoreRequest(): Call<List<Status>>? = MastodonUtil.api?.getHomeTimeline(next)
 }

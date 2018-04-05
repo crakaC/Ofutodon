@@ -17,7 +17,7 @@ class Notification(id: Long = 0) : Identifiable(id) {
     @SerializedName("account")
     val account: Account? = null
     @SerializedName("status")
-    val status: Status? = null
+    var status: Status? = null
 
     fun getType() = Type.values().first { e -> e.value == type }
 }

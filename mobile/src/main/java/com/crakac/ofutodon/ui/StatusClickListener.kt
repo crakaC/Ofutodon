@@ -16,10 +16,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.ref.WeakReference
 
-class StatusClickListener(context: Activity) : OnClickStatusListener {
-    val contextRef = WeakReference(context)
-    val context get() = contextRef.get()
-    var adapter: StatusAdapter? = null
+open class StatusClickListener(context: Activity) : OnClickStatusListener{
+    private val contextRef = WeakReference(context)
+    private val context get() = contextRef.get()
 
     override fun onItemClicked(status: Status) {
         val intent = Intent(context, ConversationActivity::class.java)
@@ -46,33 +45,32 @@ class StatusClickListener(context: Activity) : OnClickStatusListener {
             override fun onResponse(call: Call<Status>?, response: Response<Status>?) {
                 if (response != null && response.isSuccessful) {
                     response.body()?.let {
-                        reblogSuccess(status.id, it)
+                        reblogSuccess(it)
                     }
                 } else {
-                    adapter?.update(status)
+                    updateStatus(status)
                 }
             }
 
             override fun onFailure(call: Call<Status>?, t: Throwable?) {
-                adapter?.update(status)
+                updateStatus(status)
             }
 
-            fun reblogSuccess(oldStatusId: Long, newStatus: Status) {
-                val oldStatus = adapter?.getItemById(oldStatusId) ?: return
+            fun reblogSuccess(newStatus: Status) {
                 val isReblogAction = newStatus.reblog != null
                 if (isReblogAction) {
-                    if (oldStatus.reblog != null) {
-                        oldStatus.reblog = newStatus.reblog
+                    if (status.reblog != null) {
+                        status.reblog = newStatus.reblog
                     } else {
-                        oldStatus.isReblogged = true
+                        status.isReblogged = true
                     }
-                    adapter?.update(oldStatus)
+                    updateStatus(status)
                 } else {
-                    oldStatus.isReblogged = false
-                    if (oldStatus.reblog != null) {
-                        oldStatus.reblog!!.isReblogged = false
+                    status.isReblogged = false
+                    if (status.reblog != null) {
+                        status.reblog!!.isReblogged = false
                     }
-                    adapter?.update(oldStatus)
+                    updateStatus(status)
                 }
             }
         }
@@ -92,27 +90,26 @@ class StatusClickListener(context: Activity) : OnClickStatusListener {
                 context?.let{
                     if (response != null && response.isSuccessful) {
                         response.body()?.let {
-                            favoriteSuccess(status.id, it)
+                            favoriteSuccess(it)
                         }
                     } else {
-                        adapter?.update(status)
+                        updateStatus(status)
                     }
                 }
             }
 
             override fun onFailure(call: Call<Status>?, t: Throwable?) {
                 context?.let{
-                    adapter?.update(status)
+                    updateStatus(status)
                 }
             }
 
-            fun favoriteSuccess(oldStatusId: Long, newStatus: Status) {
-                val oldStatus = adapter?.getItemById(oldStatusId) ?: return
-                if (oldStatus.reblog != null) {
-                    oldStatus.reblog = newStatus
-                    adapter?.update(oldStatus)
+            fun favoriteSuccess(newStatus: Status) {
+                if (status.reblog != null) {
+                    status.reblog = newStatus
+                    updateStatus(status)
                 } else {
-                    adapter?.update(newStatus)
+                    updateStatus(newStatus)
                 }
             }
         }
@@ -135,5 +132,9 @@ class StatusClickListener(context: Activity) : OnClickStatusListener {
         val intent = Intent(context, AttachmentsPreviewActivity::class.java)
         AttachmentsPreviewActivity.setup(intent, status, attachmentIndex)
         context?.startActivity(intent)
+    }
+
+    open fun updateStatus(status: Status) {
+        StatusAdapter.update(status)
     }
 }

@@ -38,6 +38,7 @@ class ConversationFragment : MastodonApiFragment<Status, ConversationContext>() 
 
     override fun createAdapter(): RefreshableAdapter<Status> {
         val adapter = StatusAdapter(requireActivity(), false)
+        StatusAdapter.register(adapter)
         adapter.statusListener = StatusClickListener(requireActivity())
         return adapter
     }
@@ -49,6 +50,7 @@ class ConversationFragment : MastodonApiFragment<Status, ConversationContext>() 
 
     override fun onDestroyView() {
         super.onDestroyView()
+        StatusAdapter.unregister(adapter as StatusAdapter)
         (adapter as StatusAdapter).statusListener = null
     }
 
@@ -62,6 +64,5 @@ class ConversationFragment : MastodonApiFragment<Status, ConversationContext>() 
     override fun onLoadMoreSuccess(response: ConversationContext) {
         adapter.addBottom(response.descendants)
     }
-
 
 }

@@ -2,7 +2,6 @@ package com.crakac.ofutodon.ui.widget
 
 import android.app.Activity
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -65,12 +64,14 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
             setup(status)
             enableActionedView(false)
         }
+        statusActions.visibility = View.VISIBLE
     }
 
     fun setNotification(notification: Notification) {
         setup(notification.status!!)
         enableActionedView(true)
-        setupIcons(notification.status.account, notification.account!!)
+        statusActions.visibility = View.GONE
+        setupIcons(notification.status!!.account, notification.account!!)
         when (notification.type) {
             Notification.Type.Favourite.value -> {
                 setRebloggedText(notification.account)
@@ -199,41 +200,5 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
         actionedBy.text = context?.getString(R.string.favourited_by)?.format(account.dispNameWithEmoji)
         actionedIcon.setImageResource(R.drawable.ic_star)
         actionedIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.favourited))
-    }
-
-    fun resetListener(status: Status, statusListener: OnClickStatusListener?) {
-        itemView.setOnClickListener { statusListener?.onItemClicked(status) }
-        icon.setOnClickListener { v ->
-            statusListener?.onIconClicked(v as ImageView, status)
-        }
-        reply.setOnClickListener { _ ->
-            statusListener?.onReplyClicked(reply, status)
-        }
-        boost.setOnClickListener { _ ->
-            statusListener?.onBoostClicked(boost, status)
-        }
-        favorite.setOnClickListener { _ ->
-            statusListener?.onFavoriteClicked(favorite, status)
-        }
-        more.setOnClickListener { _ ->
-            val popup = PopupMenu(context!!, more)
-            popup.inflate(R.menu.status_popup)
-            popup.setOnMenuItemClickListener { item ->
-                val menuItemId = item.itemId
-                statusListener?.onMenuClicked(status, menuItemId)
-                return@setOnMenuItemClickListener true
-            }
-            popup.show()
-        }
-        preview.setOnPreviewClickListener(object : InlineImagePreview.OnClickPreviewListener {
-            override fun onClick(attachmentIndex: Int) {
-                statusListener?.onClickAttachment(status, attachmentIndex)
-            }
-        })
-        readMore.setOnClickListener { _ ->
-            val st = if (status.reblog != null) status.reblog!! else status
-            st.hasExpanded = !st.hasExpanded
-            toggleReadMore(st)
-        }
     }
 }

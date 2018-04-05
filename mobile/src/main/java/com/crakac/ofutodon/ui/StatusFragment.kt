@@ -11,11 +11,13 @@ abstract class StatusFragment<T> : MastodonApiFragment<Status, T>() {
     override fun createAdapter(): RefreshableAdapter<Status> {
         val adapter = StatusAdapter(requireActivity())
         adapter.statusListener = StatusClickListener(requireActivity())
+        StatusAdapter.register(adapter)
         return adapter
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         (adapter as StatusAdapter).statusListener = null
+        StatusAdapter.unregister(adapter as StatusAdapter)
     }
 }
