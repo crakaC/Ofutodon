@@ -8,7 +8,7 @@ import android.text.style.URLSpan
 import android.view.View
 import com.crakac.ofutodon.model.api.entity.Emoji
 import com.crakac.ofutodon.model.api.entity.Status
-import com.crakac.ofutodon.ui.EmojiSpan
+import com.crakac.ofutodon.ui.widget.EmojiSpan
 import com.crakac.ofutodon.ui.widget.LinkClickableSpan
 import java.net.IDN
 
