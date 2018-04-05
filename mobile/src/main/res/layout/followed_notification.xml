@@ -14,7 +14,7 @@
         android:layout_height="20dp"
         android:layout_marginEnd="@dimen/spacing_micro"
         android:layout_toStartOf="@+id/followed_by"
-        android:src="@drawable/ic_person"
+        android:src="@drawable/ic_person_add"
         android:tint="@color/boosted" />
 
     <TextView
