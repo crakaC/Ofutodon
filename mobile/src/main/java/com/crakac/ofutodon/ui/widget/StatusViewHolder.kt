@@ -215,7 +215,7 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
         originalIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
         actionedByIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
         for(v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)){
-            v.alpha = 0.5f
+            v.alpha = 0.625f
         }
     }
 }
