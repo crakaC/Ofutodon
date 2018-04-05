@@ -1,6 +1,7 @@
 package com.crakac.ofutodon.ui.widget
 
 import android.app.Activity
+import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
@@ -65,6 +66,7 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
             enableActionedView(false)
         }
         statusActions.visibility = View.VISIBLE
+        clearFilter()
     }
 
     fun setNotification(notification: Notification) {
@@ -80,6 +82,7 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
                 setFavoritedText(notification.account)
             }
         }
+        setFilter()
     }
 
     override fun refresh() {
@@ -200,5 +203,19 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
         actionedBy.text = context?.getString(R.string.favourited_by)?.format(account.dispNameWithEmoji)
         actionedIcon.setImageResource(R.drawable.ic_star)
         actionedIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.favourited))
+    }
+
+    private fun clearFilter(){
+        for(v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)){
+            v.alpha = 1f
+        }
+    }
+
+    private fun setFilter(){
+        originalIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
+        actionedByIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
+        for(v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)){
+            v.alpha = 0.5f
+        }
     }
 }
