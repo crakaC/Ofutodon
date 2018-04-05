@@ -131,8 +131,10 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
         }
     }
 
+    fun findByStatus(status: Status): Notification? = items.find { item -> item.status != null && item.status!!.id == status.id }
+
     override fun onUpdate(status: Status){
-        val notification = items.find { item -> item.status != null && item.status!!.id == status.id } ?: return
+        val notification = findByStatus(status) ?: return
         notification.status = status
         update(notification)
     }
