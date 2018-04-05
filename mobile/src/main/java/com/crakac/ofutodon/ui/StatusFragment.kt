@@ -13,4 +13,9 @@ abstract class StatusFragment<T> : MastodonApiFragment<Status, T>() {
         adapter.statusListener = StatusClickListener(requireActivity())
         return adapter
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (adapter as StatusAdapter).statusListener = null
+    }
 }

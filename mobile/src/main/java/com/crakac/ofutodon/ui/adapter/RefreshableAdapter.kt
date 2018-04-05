@@ -79,6 +79,6 @@ abstract class RefreshableAdapter<T : Identifiable>(context: Activity) : Recycle
     override fun getItemCount(): Int = items.size
 
     interface Refreshable{
-        fun refresh()
+        fun refresh(){}
     }
 }

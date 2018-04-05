@@ -46,7 +46,7 @@ class StatusAdapter(context: Activity, val showBottomLoading: Boolean = true) : 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == HolderType.Footer.rawValue) {
-            return FooterViewHolder(View.inflate(context, R.layout.dummy_status, null))
+            return FooterViewHolder(View.inflate(context, R.layout.footer, null))
         }
         return StatusViewHolder(context!!, View.inflate(context, R.layout.status, null))
     }

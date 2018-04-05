@@ -162,8 +162,8 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         if (!isAdded) return
         for (i in 0 until recyclerView.childCount) {
             val child = recyclerView.getChildAt(i)
-            val holder = recyclerView.getChildViewHolder(child) as RefreshableAdapter.Refreshable?
-            holder?.refresh()
+            val holder = recyclerView.getChildViewHolder(child) as RefreshableAdapter.Refreshable
+            holder.refresh()
         }
     }
 }

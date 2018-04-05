@@ -47,6 +47,11 @@ class ConversationFragment : MastodonApiFragment<Status, ConversationContext>() 
         adapter.addTop(status)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (adapter as StatusAdapter).statusListener = null
+    }
+
     override fun onRefreshRequest(): Call<ConversationContext>? = MastodonUtil.api?.getStatusContext(statusId)
 
     override fun onRefreshSuccess(response: ConversationContext) {

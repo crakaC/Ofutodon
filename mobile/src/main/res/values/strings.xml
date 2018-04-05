@@ -31,6 +31,7 @@
     <string name="visibility_direct">ダイレクト</string>
     <string name="boosted_by">%sさんがブーストしました</string>
     <string name="favourited_by">%sさんがお気に入りしました</string>
+    <string name="followed_by">%sさんにフォローされました</string>
     <string name="title_activity_user">ユーザー</string>
     <string name="conversation">会話</string>
     <string name="read_more">もっと見る</string>
