@@ -43,6 +43,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     lateinit var titleText: TextView
     lateinit var titleContainer: RelativeLayout
     lateinit var userName: TextView
+    lateinit var userAcct: TextView
     lateinit var userDescription: TextView
     lateinit var followedText: TextView
     lateinit var followButton: Button
@@ -69,6 +70,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         titleText = findViewById(R.id.title_text)
         titleContainer = findViewById(R.id.title_container)
         userName = findViewById(R.id.user_name)
+        userAcct = findViewById(R.id.user_acct)
         userDescription = findViewById(R.id.user_description)
         followButton = findViewById(R.id.follow_button)
         followedText = findViewById(R.id.is_folowee)
@@ -101,6 +103,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     private fun setupAccountInfo() {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
+        userAcct.text = account.acct
         userDescription.text = HtmlUtil.fromHtml(account.note)
         Glide.with(this).load(account.headerStatic).into(header)
         GlideApp.with(this).load(account.avatar).circleCrop().into(icon)
@@ -111,15 +114,13 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
                     override fun onResponse(call: Call<List<Relationship>>?, response: Response<List<Relationship>>?) {
                         if (response == null || !response.isSuccessful) return
-                        val relationship = response.body()?.first()
-                        relationship ?: return
+                        val relationship = response.body()?.first() ?: return
+                        followButton.isEnabled = true
                         followedText.visibility = if (relationship.followedBy) View.VISIBLE else View.INVISIBLE
                         if (relationship.following) {
                             followButton.text = getString(R.string.unfollow)
-                            followButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_person, 0)
                         } else {
                             followButton.text = getString(R.string.follow)
-                            followButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_person_outline, 0)
                         }
                     }
                 })

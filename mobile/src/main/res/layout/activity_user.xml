@@ -77,15 +77,6 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:visibility="invisible" />
 
-                <Button
-                    android:id="@+id/follow_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginTop="48dp"
-                    android:text="@string/loading" />
-
                 <ImageView
                     android:id="@+id/icon"
                     android:layout_width="@dimen/top_icon"
@@ -103,10 +94,31 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
                 <TextView
-                    android:id="@+id/user_description"
+                    android:id="@+id/user_acct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/user_name"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+                <Button
+                    android:id="@+id/follow_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/user_acct"
+                    android:layout_centerHorizontal="true"
+                    android:theme="@style/FollowButton"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:enabled="false"
+                    android:text="@string/loading" />
+
+
+                <TextView
+                    android:id="@+id/user_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/follow_button"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/spacing_micro"
                     android:gravity="center"

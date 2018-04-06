@@ -2,9 +2,9 @@
 <resources>
     <color name="text_primary_dark">#de000000</color> <!-- 87% -->
     <color name="text_secondary_dark">#8a000000</color>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#144568</color>
+    <color name="colorPrimaryDark">#0a2233</color>
+    <color name="colorAccent">#2b90d9</color>
 
     <color name="text_error">#F4511E</color>
 
@@ -18,10 +18,10 @@
     <color name="background_light">#FEFEFE</color>
     <color name="background_lightish">#ffeeeeee</color> <!-- grey 200 -->
     <color name="background_dark">#ff333333</color>
-    <color name="background_super_dark">#ff292929</color>
+    <color name="background_mastodon">#ff282c37</color>
     <color name="background_ultra_dark">#ff101010</color>
     <color name="dark_overlay">#99101010</color>
-    <color name="notification_icon_mask">#80292929</color>
+    <color name="notification_icon_mask">#80282c37</color>
     <color name="scrim">#99323232</color>
 
     <color name="icon_tint">#FFF</color>

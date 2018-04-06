@@ -77,18 +77,18 @@
                 android:id="@+id/text_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/toot_text"
+                android:layout_alignEnd="@id/toot_text"
                 android:layout_gravity="end"
                 android:layout_margin="@dimen/spacing_micro"
-                android:layout_alignEnd="@id/toot_text"
-                android:layout_alignBottom="@id/toot_text"
                 android:padding="@dimen/spacing_micro"
                 android:text="500"
                 android:textColor="@color/text_secondary_dark" />
 
             <HorizontalScrollView
-                android:layout_below="@id/toot_text"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toot_text">
 
                 <LinearLayout
                     android:id="@+id/image_attachments_root"
@@ -153,7 +153,7 @@
                 android:layout_height="@dimen/image_button"
                 android:layout_alignParentEnd="true"
                 android:text="@string/toot_public"
-                android:textAppearance="@style/TextAppearance.DarkButton" />
+                android:theme="@style/AccentButton" />
 
         </RelativeLayout>
 
