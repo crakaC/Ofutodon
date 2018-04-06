@@ -65,14 +65,12 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
             setup(status)
             enableActionedView(false)
         }
-        statusActions.visibility = View.VISIBLE
         clearFilter()
     }
 
     fun setNotification(notification: Notification) {
         setup(notification.status!!)
         enableActionedView(true)
-        statusActions.visibility = View.GONE
         setupIcons(notification.status!!.account, notification.account!!)
         when (notification.type) {
             Notification.Type.Favourite.value -> {
