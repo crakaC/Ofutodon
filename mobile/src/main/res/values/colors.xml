@@ -22,6 +22,7 @@
     <color name="background_ultra_dark">#ff101010</color>
     <color name="dark_overlay">#99101010</color>
     <color name="notification_icon_mask">#80282c37</color>
+    <color name="header_mask">#A0282c37</color>
     <color name="scrim">#99323232</color>
 
     <color name="icon_tint">#FFF</color>

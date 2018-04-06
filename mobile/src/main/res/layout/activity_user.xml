@@ -32,13 +32,6 @@
                 android:src="@drawable/placeholder"
                 app:layout_collapseMode="parallax" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:src="@color/scrim" />
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -68,7 +61,7 @@
                     android:id="@+id/is_folowee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="48dp"
                     android:background="@drawable/followd_text_background"
@@ -108,11 +101,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/user_acct"
                     android:layout_centerHorizontal="true"
-                    android:theme="@style/FollowButton"
-                    style="@style/Widget.AppCompat.Button.Colored"
                     android:enabled="false"
                     android:text="@string/loading" />
-
 
                 <TextView
                     android:id="@+id/user_description"

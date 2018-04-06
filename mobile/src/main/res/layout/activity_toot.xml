@@ -154,8 +154,7 @@
                 android:layout_width="@dimen/button_large"
                 android:layout_height="@dimen/image_button"
                 android:layout_alignParentEnd="true"
-                android:text="@string/toot_public"
-                android:theme="@style/AccentButton" />
+                android:text="@string/toot_public" />
 
         </RelativeLayout>
 

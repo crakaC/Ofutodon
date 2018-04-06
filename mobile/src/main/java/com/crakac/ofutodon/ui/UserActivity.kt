@@ -1,9 +1,11 @@
 package com.crakac.ofutodon.ui
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.TabLayout
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -12,7 +14,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.bumptech.glide.Glide
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Account
@@ -75,6 +76,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         followButton = findViewById(R.id.follow_button)
         followedText = findViewById(R.id.is_folowee)
 
+        header.setColorFilter(ContextCompat.getColor(this, R.color.header_mask), PorterDuff.Mode.SRC_ATOP)
         userDescription.movementMethod = ContentMovementMethod.instance
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -105,7 +107,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         userName.text = account.dispNameWithEmoji
         userAcct.text = account.acct
         userDescription.text = HtmlUtil.fromHtml(account.note)
-        Glide.with(this).load(account.headerStatic).into(header)
+        GlideApp.with(this).load(account.headerStatic).placeholder(R.color.colorPrimaryDark).into(header)
         GlideApp.with(this).load(account.avatar).circleCrop().into(icon)
         MastodonUtil.api?.getRelationships(account.id)?.enqueue(
                 object : Callback<List<Relationship>> {

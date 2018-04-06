@@ -45,7 +45,7 @@
     <style name="Ofuton.Toot" parent="Ofuton.Translucent">
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:colorButtonNormal">@color/button_color</item>
-        <item name="android:colorControlHighlight">@color/ripple_dark</item>
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
         <item name="android:textAppearanceButton">@style/TextAppearance.DarkButton</item>
     </style>
 
@@ -59,22 +59,12 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="AccentButton" parent="Theme.AppCompat">
-        <item name="android:colorButtonNormal">@color/colorAccent</item>
-        <item name="android:colorControlHighlight">@color/ripple_light</item>
-    </style>
-
     <style name="StatusActionItem">
         <item name="android:layout_width">@dimen/status_button</item>
         <item name="android:layout_height">@dimen/status_button</item>
         <item name="android:padding">@dimen/status_button_padding</item>
         <item name="android:alpha">0.8</item>
         <item name="android:tint">@color/icon_tint</item>
-    </style>
-
-    <style name="FollowButton">
-        <item name="android:colorControlHighlight">@color/colorAccent</item>
-        <item name="android:colorButtonNormal">@android:color/white</item>
     </style>
 
 </resources>
