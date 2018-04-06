@@ -55,6 +55,9 @@ abstract class MastodonApiFragment<AdapterClass : Identifiable, ResponseClass> :
         swipeRefresh.setOnLoadMoreListener(this)
         swipeRefresh.isEnabled = isSwipeRefreshEnabled
         onRefresh()
+        if(isSwipeRefreshEnabled){
+            swipeRefresh.isRefreshing = true
+        }
         return view
     }
 
