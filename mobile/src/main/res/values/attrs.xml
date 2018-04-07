@@ -29,4 +29,8 @@
         <attr name="finalHeight" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="FollowButton">
+        <attr name="isFollowing" format="boolean"/>
+        <attr name="isLoading" format="boolean"/>
+    </declare-styleable>
 </resources>

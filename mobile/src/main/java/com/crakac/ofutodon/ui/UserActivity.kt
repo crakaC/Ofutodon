@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -20,6 +19,7 @@ import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.model.api.entity.Relationship
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
 import com.crakac.ofutodon.ui.widget.ContentMovementMethod
+import com.crakac.ofutodon.ui.widget.FollowButton
 import com.crakac.ofutodon.util.AnimUtils
 import com.crakac.ofutodon.util.GlideApp
 import com.crakac.ofutodon.util.HtmlUtil
@@ -47,7 +47,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     lateinit var userAcct: TextView
     lateinit var userDescription: TextView
     lateinit var followedText: TextView
-    lateinit var followButton: Button
+    lateinit var followButton: FollowButton
 
     lateinit var account: Account
 
@@ -109,6 +109,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         userDescription.text = HtmlUtil.fromHtml(account.note)
         GlideApp.with(this).load(account.headerStatic).placeholder(R.color.colorPrimaryDark).into(header)
         GlideApp.with(this).load(account.avatar).circleCrop().into(icon)
+        followButton.isLoading = true
         MastodonUtil.api?.getRelationships(account.id)?.enqueue(
                 object : Callback<List<Relationship>> {
                     override fun onFailure(call: Call<List<Relationship>>?, t: Throwable?) {
@@ -117,13 +118,10 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
                     override fun onResponse(call: Call<List<Relationship>>?, response: Response<List<Relationship>>?) {
                         if (response == null || !response.isSuccessful) return
                         val relationship = response.body()?.first() ?: return
+                        followButton.isLoading = false
                         followButton.isEnabled = true
+                        followButton.isFollowing = relationship.following
                         followedText.visibility = if (relationship.followedBy) View.VISIBLE else View.INVISIBLE
-                        if (relationship.following) {
-                            followButton.text = getString(R.string.unfollow)
-                        } else {
-                            followButton.text = getString(R.string.follow)
-                        }
                     }
                 })
     }

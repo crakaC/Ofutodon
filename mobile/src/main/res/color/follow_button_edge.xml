@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item app:isLoading="true"
+        android:color="@color/colorAccent"/>
+    <item app:isFollowing="false"
+        android:color="@color/colorAccent"/>
+    <item app:isFollowing="true"
+        android:color="@android:color/white"/>
+</selector>

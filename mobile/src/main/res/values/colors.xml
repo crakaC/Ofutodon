@@ -14,6 +14,7 @@
     <color name="divider_color">#C0000000</color>
 
     <color name="mid_grey">#40808080</color>
+    <color name="grey">#808080</color>
 
     <color name="background_light">#FEFEFE</color>
     <color name="background_lightish">#ffeeeeee</color> <!-- grey 200 -->
