@@ -76,6 +76,15 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         followButton = findViewById(R.id.follow_button)
         followedText = findViewById(R.id.is_folowee)
 
+        followButton.setOnClickListener { _ ->
+            if (followButton.isLoading) return@setOnClickListener
+            if (followButton.isFollowing) {
+                unFollow()
+            } else {
+                follow()
+            }
+        }
+
         header.setColorFilter(ContextCompat.getColor(this, R.color.header_mask), PorterDuff.Mode.SRC_ATOP)
         userDescription.movementMethod = ContentMovementMethod.instance
 
@@ -160,6 +169,24 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
                 isTheTitleVisible = false
             }
         }
+    }
 
+    private fun follow() {
+        MastodonUtil.api?.follow(account.id)?.enqueue(relationshipCallback)
+    }
+
+    private fun unFollow() {
+        MastodonUtil.api?.unfollow(account.id)?.enqueue(relationshipCallback)
+    }
+
+    private val relationshipCallback = object : Callback<Relationship> {
+        override fun onFailure(call: Call<Relationship>?, t: Throwable?) {
+        }
+
+        override fun onResponse(call: Call<Relationship>?, response: Response<Relationship>?) {
+            if (response == null || !response.isSuccessful) return
+            val relationship = response.body() ?: return
+            followButton.isFollowing = relationship.following
+        }
     }
 }
