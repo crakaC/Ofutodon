@@ -20,6 +20,7 @@
     <color name="background_lightish">#ffeeeeee</color> <!-- grey 200 -->
     <color name="background_dark">#ff333333</color>
     <color name="background_mastodon">#ff282c37</color>
+    <color name="background_mastodon_dark">#ff1a1c23</color>
     <color name="background_ultra_dark">#ff101010</color>
     <color name="dark_overlay">#B0101010</color>
     <color name="notification_icon_mask">#80282c37</color>
