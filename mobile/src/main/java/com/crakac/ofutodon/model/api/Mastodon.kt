@@ -332,11 +332,26 @@ interface Mastodon {
             pager: Map<String, String> = emptyMap()
     ): Call<List<Status>>
 
+    @GET("/api/v1/lists/{id}")
+    fun getList(
+            @Path("id")
+            listId: Long
+    ): Call<MastodonList>
+
     @GET("/api/v1/lists")
     fun getLists(): Call<List<MastodonList>>
 
+    @FormUrlEncoded
+    @PUT("/api/v1/lists/{id}")
+    fun updateListName(
+            @Path("id")
+            listId: Long,
+            @Field("title")
+            title: String
+    ): Call<MastodonList>
+
     @GET("/api/v1/lists/{id}/accounts")
-    fun getAcountsInList(
+    fun getAccountsInList(
             @Path("id")
             listId: Long
     ): Call<List<Account>>
@@ -345,28 +360,36 @@ interface Mastodon {
     fun getListsOfAccount(
             @Path("id")
             accountId: Long
-    )
+    ): Call<List<MastodonList>>
+
+    @FormUrlEncoded
+    @POST("/api/v1/lists")
+    fun createList(
+            @Field("title")
+            title: String
+    ): Call<MastodonList>
 
     @DELETE("/api/v1/lists/{id}")
     fun deleteList(
             @Path("id")
             listId: Long
-    ): Call<Any?>
+    ): Call<Unit>
 
+    @FormUrlEncoded
     @POST("/api/v1/lists/{id}/accounts")
     fun addAccountToList(
             @Path("id")
             listId: Long,
             @Field("account_ids")
             accountIds: List<Long>
-    )
+    ): Call<Unit>
 
-    @DELETE("/api/v1/lists/{id}/accounts")
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "/api/v1/lists/{id}/accounts", hasBody = true)
     fun removeAccountFromList(
             @Path("id")
             listId: Long,
             @Field("account_ids")
             accountIds: List<Long>
-    )
-
+    ): Call<Unit>
 }

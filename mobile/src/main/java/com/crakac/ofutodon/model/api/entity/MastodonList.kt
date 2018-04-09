@@ -6,5 +6,5 @@ class MastodonList {
     @SerializedName("id")
     val id: Long = 0L
     @SerializedName("title")
-    val acct: String = ""
+    val title: String = ""
 }
