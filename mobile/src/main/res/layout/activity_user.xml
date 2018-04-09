@@ -66,8 +66,8 @@
                     android:layout_marginTop="48dp"
                     android:background="@drawable/followd_text_background"
                     android:padding="@dimen/spacing_micro"
+                    android:textSize="12sp"
                     android:text="@string/you_are_followed"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:visibility="invisible" />
 
                 <ImageView
@@ -109,7 +109,8 @@
                     android:foreground="?selectableItemBackground"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="2dp"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp"
                     android:text="@string/loading" />
 
                 <TextView
