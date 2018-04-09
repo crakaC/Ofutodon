@@ -55,8 +55,8 @@ def getProps(String file) {
 
 dependencies {
     ext {
-        support_library_version = '27.1.0'
-        firebase_version = '12.0.0'
+        support_library_version = '27.1.1'
+        firebase_version = '12.0.1'
         glide_version = '4.6.1'
         retrofit_version = '2.4.0'
         okhttp_version = '3.10.0'
