@@ -64,7 +64,7 @@
         <item name="android:layout_height">@dimen/status_button</item>
         <item name="android:padding">@dimen/status_button_padding</item>
         <item name="android:alpha">0.8</item>
-        <item name="android:tint">@color/icon_tint</item>
+        <item name="android:tint">@color/mastodon_grey</item>
     </style>
 
 </resources>
