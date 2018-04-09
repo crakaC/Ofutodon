@@ -331,4 +331,42 @@ interface Mastodon {
             @QueryMap
             pager: Map<String, String> = emptyMap()
     ): Call<List<Status>>
+
+    @GET("/api/v1/lists")
+    fun getLists(): Call<List<MastodonList>>
+
+    @GET("/api/v1/lists/{id}/accounts")
+    fun getAcountsInList(
+            @Path("id")
+            listId: Long
+    ): Call<List<Account>>
+
+    @GET("/api/v1/accounts/{id}/lists\n")
+    fun getListsOfAccount(
+            @Path("id")
+            accountId: Long
+    )
+
+    @DELETE("/api/v1/lists/{id}")
+    fun deleteList(
+            @Path("id")
+            listId: Long
+    ): Call<Any?>
+
+    @POST("/api/v1/lists/{id}/accounts")
+    fun addAccountToList(
+            @Path("id")
+            listId: Long,
+            @Field("account_ids")
+            accountIds: List<Long>
+    )
+
+    @DELETE("/api/v1/lists/{id}/accounts")
+    fun removeAccountFromList(
+            @Path("id")
+            listId: Long,
+            @Field("account_ids")
+            accountIds: List<Long>
+    )
+
 }
