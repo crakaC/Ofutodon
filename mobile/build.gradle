@@ -56,7 +56,8 @@ dependencies {
         glide_version = '4.6.1'
         retrofit_version = '2.4.0'
         okhttp_version = '3.10.0'
-        archlib_version = '1.0.0'
+        room_version = '1.0.0'
+
     }
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -73,6 +74,12 @@ dependencies {
         exclude group: "com.android.support"
     }
     kapt "com.github.bumptech.glide:compiler:$glide_version"
+
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    testImplementation "android.arch.persistence.room:testing:$room_version"
+
     implementation "com.google.firebase:firebase-core:$firebase_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"

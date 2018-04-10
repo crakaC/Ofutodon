@@ -1,6 +1,7 @@
 package com.crakac.ofutodon
 
 import android.app.Application
+import com.crakac.ofutodon.db.AppDatabase
 import com.crakac.ofutodon.util.PrefsUtil
 
 /**
@@ -10,5 +11,6 @@ class OfutodonApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PrefsUtil.init(this)
+        AppDatabase.getInstance(this)
     }
 }
