@@ -7,6 +7,7 @@ import android.arch.persistence.room.PrimaryKey
 class User {
     @PrimaryKey(autoGenerate = true)
     var uid: Int = 0
+    var name: String = ""
     var domain: String = ""
     var token: String = ""
 }

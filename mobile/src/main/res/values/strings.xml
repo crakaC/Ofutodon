@@ -9,6 +9,9 @@
     <string name="oauth_redirect_host" translatable="false">com.crakac.ofutodon</string>
     <string name="oauth_scheme" translatable="false">oauth2redirect</string>
 
+    <string name="login">ログイン</string>
+    <string name="enter_domain">ログインするインスタンスを入力して下さい</string>
+
     <string name="transition_name_toot_dialog" translatable="false">toot_dialog</string>
     <string name="transition_name_user_icon" translatable="false">user_icon</string>
     <string name="toot_hint">今何してる？</string>

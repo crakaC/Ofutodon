@@ -4,7 +4,6 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -13,22 +12,10 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.*
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.Mastodon
-import com.crakac.ofutodon.model.api.MastodonCallback
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.AccessToken
-import com.crakac.ofutodon.model.api.entity.Account
-import com.crakac.ofutodon.model.api.entity.AppCredentials
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
-import com.crakac.ofutodon.util.C
-import com.crakac.ofutodon.util.PrefsUtil
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     val TAG: String = "HomeActivity"
@@ -42,12 +29,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val drawer by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
 
     var adapter: MyFragmentPagerAdapter? = null
-    var instanceDomain: String = "don.crakac.com"
-
-    var mastodon: Mastodon? = null
-
-    var oauthRedirectUri: String = ""
-        get() = "${getString(R.string.oauth_scheme)}://${getString(R.string.oauth_redirect_host)}"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,18 +45,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        if (MastodonUtil.hasAccessToken(instanceDomain)) {
-            val token = MastodonUtil.getAccessToken(instanceDomain)
-            mastodon = MastodonUtil.api(instanceDomain, token)
-        } else {
-            if (MastodonUtil.hasAppCredential(instanceDomain)) {
-                Snackbar.make(fab, "Already has App Credentials", Snackbar.LENGTH_SHORT).show()
-                startAuthorize(instanceDomain)
-            } else {
-                registerApplication()
-            }
-        }
-
         //fragments
         if (adapter == null) {
             adapter = MyFragmentPagerAdapter(supportFragmentManager)
@@ -89,10 +58,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         pager.currentItem = 1
         pager.offscreenPageLimit = 10
         pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-
             override fun onPageSelected(position: Int) {
                 val fragment = adapter?.instantiateItem(pager, position) as MastodonApiFragment<*, *>?
                 fragment?.refreshItem()
@@ -139,11 +106,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onStart() {
         super.onStart()
         drawer.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putString("instanceDomain", instanceDomain)
-        super.onSaveInstanceState(outState)
     }
 
     override fun onBackPressed() {
@@ -196,95 +158,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        if (intent == null || intent.data == null) return
-
-        if (intent.data.scheme != getString(R.string.oauth_scheme)) {
-            return
-        }
-        val code = intent.data.getQueryParameter("code")
-        val error = intent.data.getQueryParameter("error")
-
-        if (code != null) {
-            val domain = PrefsUtil.getString(C.OAUTH_TARGET_DOMAIN)
-            if (domain == null) {
-                Log.e(TAG, "target domain is null")
-                //TODO Show dialog
-                return
-            }
-            MastodonUtil.fetchAccessToken(domain, oauthRedirectUri, code).enqueue(fetchAccessTokenCallback)
-        }
-    }
-
-    val fetchAccessTokenCallback = object : Callback<AccessToken> {
-        override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>?) {
-            if (response == null || !response.isSuccessful) {
-                Log.w(TAG, "fetchOAuthToken is not successful")
-                return
-            }
-            val domain = call.request().url().host()
-            response.body()?.accessToken?.let { token ->
-                onFetchAccessTokenSuccess(domain, token)
-            }
-            PrefsUtil.remove(C.OAUTH_TARGET_DOMAIN)
-        }
-
-        override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
-            Log.w(TAG, "fetchOAuthTokenFailed")
-        }
-    }
-
-    fun onFetchAccessTokenSuccess(domain: String, accessToken: String) {
-        //save access token
-        MastodonUtil.saveAccessToken(domain, accessToken)
-
-        MastodonUtil.api(domain, accessToken)
-
-        //verify credentials
-        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
-            override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                if (response == null || !response.isSuccessful) {
-                    Log.w(TAG, "fetchCurrentAccount Failed")
-                    return
-                }
-                Snackbar.make(fab, "Login Success: $domain", Snackbar.LENGTH_SHORT).show()
-            }
-
-            override fun onFailure(call: Call<Account>?, t: Throwable?) {
-                Snackbar.make(fab, "Login Failed: $domain", Snackbar.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    fun registerApplication() {
-        MastodonUtil.registerApplication(instanceDomain, getString(R.string.app_name), oauthRedirectUri, "http://crakac.com")
-                .enqueue(object : MastodonCallback<AppCredentials> {
-                    override fun onSuccess(result: AppCredentials) {
-                        MastodonUtil.saveAppCredential(instanceDomain, result)
-                        startAuthorize(instanceDomain)
-                    }
-
-                    override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
-                        Snackbar.make(findViewById(R.id.fab), "Something wrong", Snackbar.LENGTH_SHORT).show()
-                    }
-                })
-    }
-
-    fun startAuthorize(domain: String) {
-        // Save target domain since keeping
-        PrefsUtil.putString(C.OAUTH_TARGET_DOMAIN, domain)
-        val uri = MastodonUtil.createAuthenticationUri(domain, oauthRedirectUri)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivity(intent)
-    }
 
     private fun onClickFab(fab: View) {
         val tootIntent = Intent(this, TootActivity::class.java)
         FabTransform.addExtras(tootIntent, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_message)
         val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_toot_dialog));
         startActivity(tootIntent, options.toBundle())
-   }
+    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_N) {

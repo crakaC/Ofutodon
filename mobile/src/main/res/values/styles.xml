@@ -25,6 +25,12 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Ofuton.DomainSelect">
+        <item name="android:colorButtonNormal">@color/button_color</item>
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
+        <item name="android:textAppearanceButton">@style/TextAppearance.DarkButton</item>
+    </style>
+
     <style name="Ofuton.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
