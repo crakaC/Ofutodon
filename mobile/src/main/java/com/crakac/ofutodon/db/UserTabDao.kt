@@ -6,13 +6,13 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 
 @Dao
-interface UserTabPrefsDao {
-    @Query(value = "SELECT * FROM user_tab_prefs WHERE userId = :userId")
-    fun getUserTabPrefs(userId: Long): List<UserTabPrefs>
+interface UserTabDao {
+    @Query(value = "SELECT * FROM user_tab WHERE userId = :userId")
+    fun getUserTabs(userId: Long): List<UserTab>
 
-    @Query(value = "DELETE FROM user_tab_prefs WHERE userId = :userId")
+    @Query(value = "DELETE FROM user_tab WHERE userId = :userId")
     fun delete(userId: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(prefs: List<UserTabPrefs>)
+    fun insertAll(prefs: List<UserTab>)
 }

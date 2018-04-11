@@ -77,7 +77,6 @@ dependencies {
 
     implementation "android.arch.persistence.room:runtime:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
     testImplementation "android.arch.persistence.room:testing:$room_version"
 
     implementation "com.google.firebase:firebase-core:$firebase_version"

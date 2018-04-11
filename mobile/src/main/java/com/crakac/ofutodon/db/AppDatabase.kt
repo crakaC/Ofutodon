@@ -5,7 +5,7 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 
-@Database(entities = [User::class, UserTabPrefs::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, UserTab::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
         val DATABASE_NAME = "ofutodon_db"
@@ -27,5 +27,5 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun userDao(): UserDao
-    abstract fun tabPrefsDao(): UserTabPrefsDao
+    abstract fun tabPrefsDao(): UserTabDao
 }
