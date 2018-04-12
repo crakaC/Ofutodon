@@ -161,7 +161,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun onClickFab(fab: View) {
         val tootIntent = Intent(this, TootActivity::class.java)
-        FabTransform.addExtras(tootIntent, ContextCompat.getColor(this, R.color.colorAccent), R.drawable.ic_message)
+        FabTransform.addExtras(tootIntent, ContextCompat.getColor(this, R.color.colorAccent), android.R.color.white, R.drawable.ic_edit)
         val options = ActivityOptions.makeSceneTransitionAnimation(this, fab, getString(R.string.transition_name_toot_dialog));
         startActivity(tootIntent, options.toBundle())
     }
