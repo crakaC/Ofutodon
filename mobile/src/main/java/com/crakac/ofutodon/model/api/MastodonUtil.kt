@@ -1,8 +1,6 @@
 package com.crakac.ofutodon.model.api
 
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import com.crakac.ofutodon.db.AppDatabase
 import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.model.api.entity.AccessToken
@@ -19,8 +17,6 @@ class MastodonUtil private constructor() {
             cached = MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
             return cached!!
         }
-
-        val mHandler = Handler(Looper.getMainLooper())
 
         fun createAuthenticationUri(domain: String, redirectUri: String): Uri {
             return Uri.Builder()
@@ -46,26 +42,26 @@ class MastodonUtil private constructor() {
             return clientId != null && clientSecret != null
         }
 
-        fun hasAccessToken(domain: String, callBack: (String) -> Unit){
-            Thread{
-                val users = AppDatabase.instance!!.userDao().getAll()
-                mHandler.post {
+        fun hasAccessToken(domain: String, callBack: (String) -> Unit) {
+            AppDatabase.execute {
+                val users = AppDatabase.instance.userDao().getAll()
+                AppDatabase.uiThread {
                     if (users.isEmpty()) {
                         callBack("")
                     } else {
                         callBack(users.first().token)
                     }
                 }
-            }.start()
+            }
         }
 
-        fun existsAccount(callBack: (hasAccount: Boolean, account: User?) -> Unit){
-            Thread{
-                val users = AppDatabase.instance!!.userDao().getAll()
-                mHandler.post{
+        fun existsAccount(callBack: (hasAccount: Boolean, account: User?) -> Unit) {
+            AppDatabase.execute {
+                val users = AppDatabase.instance.userDao().getAll()
+                AppDatabase.uiThread {
                     callBack(users.isNotEmpty(), users.firstOrNull())
                 }
-            }.start()
+            }
         }
 
         fun getAccessToken(domain: String): String? {

@@ -3,7 +3,6 @@ package com.crakac.ofutodon.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -47,7 +46,7 @@ class DomainSelectActivity : AppCompatActivity() {
         }
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         domainEditText.setOnKeyListener { v, keyCode, event ->
-            if(event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 inputManager.hideSoftInputFromWindow(domainEditText.windowToken, InputMethodManager.RESULT_UNCHANGED_SHOWN)
                 return@setOnKeyListener true
             }
@@ -60,7 +59,7 @@ class DomainSelectActivity : AppCompatActivity() {
 
         MastodonUtil.existsAccount { existsAccount, account ->
             // 既にアカウントが存在している状態で初期画面を開いたらHomeActivityに自動的に遷移する
-            if(existsAccount && intent.action != ACTION_ADD_ACCOUNT){
+            if (existsAccount && intent.action != ACTION_ADD_ACCOUNT) {
                 MastodonUtil.api(account!!.domain, account.token)
                 startHomeActivity()
             }
@@ -130,13 +129,12 @@ class DomainSelectActivity : AppCompatActivity() {
                     this.domain = domain
                     this.token = accessToken
                 }
-                val handler = Handler()
-                Thread({
-                    AppDatabase.getInstance(this@DomainSelectActivity).userDao().insert(user)
-                    handler.post{
+                AppDatabase.execute {
+                    AppDatabase.instance.userDao().insert(user)
+                    AppDatabase.uiThread {
                         startHomeActivity()
                     }
-                }).start()
+                }
             }
 
             override fun onFailure(call: Call<Account>?, t: Throwable?) {
@@ -168,7 +166,7 @@ class DomainSelectActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun startHomeActivity(){
+    fun startHomeActivity() {
         val intent = Intent(this, HomeActivity::class.java).apply { flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP) }
         startActivity(intent)
         finish()

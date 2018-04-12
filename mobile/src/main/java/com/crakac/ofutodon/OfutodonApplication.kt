@@ -11,6 +11,6 @@ class OfutodonApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PrefsUtil.init(this)
-        AppDatabase.getInstance(this)
+        AppDatabase.init(this)
     }
 }
