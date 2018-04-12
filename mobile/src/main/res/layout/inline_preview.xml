@@ -81,7 +81,7 @@
         android:background="@drawable/overlay_button"
         android:padding="@dimen/spacing_micro"
         android:src="@drawable/ic_visibility"
-        android:tint="@color/icon_tint" />
+        android:tint="@android:color/white" />
 
     <LinearLayout
         android:id="@+id/nsfw_mask"

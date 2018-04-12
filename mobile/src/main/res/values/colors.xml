@@ -27,7 +27,6 @@
     <color name="header_mask">#A0282c37</color>
     <color name="scrim">#99323232</color>
 
-    <color name="icon_tint">#FFF</color>
     <color name="mastodon_grey">#9baec8</color>
 
     <color name="boosted">#1e88e5</color>
