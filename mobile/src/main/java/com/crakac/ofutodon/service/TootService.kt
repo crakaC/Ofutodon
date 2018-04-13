@@ -60,7 +60,7 @@ class TootService : IntentService("TootService") {
             if (attachment != null) {
                 attachments.add(attachment)
                 sb.append(" ")
-                sb.append(attachment.url)
+                sb.append(attachment.textUrl)
             }
         }
 
