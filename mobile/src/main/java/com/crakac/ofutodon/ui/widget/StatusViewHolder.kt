@@ -74,10 +74,10 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
         setupIcons(notification.status!!.account, notification.account!!)
         when (notification.type) {
             Notification.Type.Favourite.value -> {
-                setRebloggedText(notification.account)
+                setFavoritedText(notification.account)
             }
             Notification.Type.ReBlog.value -> {
-                setFavoritedText(notification.account)
+                setRebloggedText(notification.account)
             }
         }
         setFilter()
