@@ -55,18 +55,19 @@ object HtmlUtil {
             val start = builder.getSpanStart(span)
             val end = builder.getSpanEnd(span)
             val linkText = builder.subSequence(start, end)
-            val uri = Uri.parse(linkText.toString())
+            val rawUrl = linkText.toString()
+            val uri = Uri.parse(rawUrl)
             val text = if (linkText.startsWith('#') || linkText.startsWith('@') || uri.host == null) {
                 linkText
             } else {
                 val host = IDN.toUnicode(uri.host)
-                val path = uri.path
-                val rawUrl = host + path
-                val rawLength = rawUrl.length
+                val path = rawUrl.substring(rawUrl.indexOf('/', uri.scheme.length + 3)) // ://の3文字分飛ばす
+                val urlWithoutScheme = host + path
+                val rawLength = urlWithoutScheme.length
                 when {
                     path.length > MAX_PATH_LENGTH -> host + path.subSequence(0, MAX_PATH_LENGTH - 1) + "…"
-                    rawLength > MAX_URL_LENGTH -> rawUrl.substring(0, MAX_URL_LENGTH - 1) + "…"
-                    else -> rawUrl
+                    rawLength > MAX_URL_LENGTH -> urlWithoutScheme.substring(0, MAX_URL_LENGTH - 1) + "…"
+                    else -> urlWithoutScheme
                 }
             }
             builder.replace(start, end, text)
