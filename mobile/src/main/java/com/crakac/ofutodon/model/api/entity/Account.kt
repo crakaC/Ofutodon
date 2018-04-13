@@ -18,7 +18,7 @@ class Account {
     @SerializedName("display_name")
     val displayName: String = ""
     @SerializedName("locked")
-    val locked: String = ""
+    val locked: Boolean = false
     @SerializedName("created_at")
     val createdAt: String = ""
     @SerializedName("followers_count")

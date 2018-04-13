@@ -453,7 +453,8 @@ class TootActivity : AppCompatActivity() {
                 visibilityButton.setImageResource(R.drawable.ic_lock)
 
                 tootButton.compoundDrawablePadding = 0
-                val d = getDrawable(R.drawable.ic_lock_white).mutate()
+                val d = getDrawable(R.drawable.ic_lock).mutate()
+                d.setTint(ContextCompat.getColor(this, android.R.color.white))
                 tootButton.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null)
             }
             Status.Visibility.Direct -> {
@@ -461,7 +462,8 @@ class TootActivity : AppCompatActivity() {
                 visibilityButton.setImageResource(R.drawable.ic_private_message)
 
                 tootButton.compoundDrawablePadding = 0
-                val d = getDrawable(R.drawable.ic_lock_white).mutate()
+                val d = getDrawable(R.drawable.ic_lock).mutate()
+                d.setTint(ContextCompat.getColor(this, android.R.color.white))
                 tootButton.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null)
             }
         }

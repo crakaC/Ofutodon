@@ -49,6 +49,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     lateinit var userDescription: TextView
     lateinit var followedText: TextView
     lateinit var followButton: FollowButton
+    lateinit var lockIcon: ImageView
 
     lateinit var account: Account
 
@@ -76,6 +77,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         userDescription = findViewById(R.id.user_description)
         followButton = findViewById(R.id.follow_button)
         followedText = findViewById(R.id.is_folowee)
+        lockIcon = findViewById(R.id.locked_icon)
 
         followButton.setOnClickListener { _ ->
             if (followButton.isLoading) return@setOnClickListener
@@ -117,6 +119,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
         userAcct.text = "@${account.acct}"
+        lockIcon.visibility = if(account.locked) View.VISIBLE else View.GONE
         userDescription.text = HtmlUtil.fromHtml(account.note)
         GlideApp.with(this).load(account.headerStatic).placeholder(R.color.colorPrimaryDark).into(header)
         GlideApp.with(this).load(account.avatar).circleCrop().into(icon)

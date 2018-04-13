@@ -66,8 +66,8 @@
                     android:layout_marginTop="48dp"
                     android:background="@drawable/followd_text_background"
                     android:padding="@dimen/spacing_micro"
-                    android:textSize="12sp"
                     android:text="@string/you_are_followed"
+                    android:textSize="12sp"
                     android:visibility="invisible" />
 
                 <ImageView
@@ -79,7 +79,7 @@
 
                 <TextView
                     android:id="@+id/user_name"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/icon"
                     android:layout_centerHorizontal="true"
@@ -88,21 +88,30 @@
 
                 <TextView
                     android:id="@+id/user_acct"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/user_name"
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
-                    android:textStyle="bold"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/locked_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignBottom="@+id/user_acct"
+                    android:layout_toEndOf="@id/user_acct"
+                    android:src="@drawable/ic_lock"
+                    android:tint="@android:color/white" />
 
                 <com.crakac.ofutodon.ui.widget.FollowButton
-                    android:layout_marginTop="@dimen/spacing_micro"
                     android:id="@+id/follow_button"
                     android:layout_width="120dp"
                     android:layout_height="40dp"
                     android:layout_below="@+id/user_acct"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/spacing_micro"
                     android:background="@drawable/follow_button"
                     android:clickable="true"
                     android:enabled="false"
@@ -110,8 +119,8 @@
                     android:foreground="?selectableItemBackground"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingStart="2dp"
                     android:paddingEnd="2dp"
+                    android:paddingStart="2dp"
                     android:text="@string/loading" />
 
                 <TextView
