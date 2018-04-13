@@ -3,7 +3,7 @@ package com.crakac.ofutodon.db
 import android.arch.persistence.room.*
 
 @Entity(tableName = "user_tab",
-        foreignKeys = [ForeignKey(entity = User::class, parentColumns = ["uid"], childColumns = ["userId"], onDelete = ForeignKey.CASCADE)],
+        foreignKeys = [ForeignKey(entity = User::class, parentColumns = ["id"], childColumns = ["userId"], onDelete = ForeignKey.CASCADE)],
         indices = [Index(value = ["userId"])]
 )
 @TypeConverters(TabTypeConverter::class)

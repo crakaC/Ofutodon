@@ -126,6 +126,7 @@ class DomainSelectActivity : AppCompatActivity() {
                 val account = response.body()!!
                 val user = User().apply {
                     this.name = account.username
+                    this.userId = account.id
                     this.domain = domain
                     this.token = accessToken
                 }
