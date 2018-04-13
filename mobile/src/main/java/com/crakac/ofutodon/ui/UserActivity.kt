@@ -1,5 +1,6 @@
 package com.crakac.ofutodon.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -111,10 +112,11 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         AnimUtils.startAlphaAnimation(titleText, 0, View.INVISIBLE)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupAccountInfo() {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
-        userAcct.text = account.acct
+        userAcct.text = "@${account.acct}"
         userDescription.text = HtmlUtil.fromHtml(account.note)
         GlideApp.with(this).load(account.headerStatic).placeholder(R.color.colorPrimaryDark).into(header)
         GlideApp.with(this).load(account.avatar).circleCrop().into(icon)

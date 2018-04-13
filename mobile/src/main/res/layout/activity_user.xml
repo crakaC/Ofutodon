@@ -93,6 +93,7 @@
                     android:layout_below="@+id/user_name"
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
+                    android:textStyle="bold"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
                 <com.crakac.ofutodon.ui.widget.FollowButton
