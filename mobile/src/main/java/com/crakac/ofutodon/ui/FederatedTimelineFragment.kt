@@ -7,8 +7,8 @@ import retrofit2.Call
 class FederatedTimelineFragment: TimelineFragment() {
     override fun getTitle() = "連合"
     override fun onRefreshRequest(): Call<List<Status>>? =
-            MastodonUtil.api?.getPublicTimeline(prev, isLocal = false)
+            MastodonUtil.api?.getPublicTimeline(prev)
 
     override fun onLoadMoreRequest(): Call<List<Status>>? =
-            MastodonUtil.api?.getPublicTimeline(next, isLocal = false)
+            MastodonUtil.api?.getPublicTimeline(next)
 }
