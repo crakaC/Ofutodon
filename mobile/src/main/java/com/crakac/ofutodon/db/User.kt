@@ -8,6 +8,7 @@ class User {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
     var userId: Long = 0
+    var avator: String = ""
     var name: String = ""
     var domain: String = ""
     var token: String = ""

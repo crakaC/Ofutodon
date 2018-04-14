@@ -13,9 +13,19 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.*
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.Toast
 import com.crakac.ofutodon.R
+import com.crakac.ofutodon.model.api.MastodonUtil
+import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
+import com.crakac.ofutodon.ui.adapter.UserAccountAdapter
+import com.crakac.ofutodon.util.GlideApp
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     val TAG: String = "HomeActivity"
@@ -27,6 +37,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val fab by lazy { findViewById<View>(R.id.fab) }
 
     private val drawer by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
+    private val drawerList by lazy { findViewById<ListView>(R.id.drawer_list) }
 
     var adapter: MyFragmentPagerAdapter? = null
 
@@ -101,6 +112,28 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener { v ->
             onClickFab(v)
         }
+
+        val userAdapter = UserAccountAdapter(this).apply {
+            onClickUserListener = { user ->
+                Toast.makeText(this@HomeActivity, user.name, Toast.LENGTH_SHORT).show()
+//                switchAccount(user)
+            }
+        }
+        drawerList.adapter = userAdapter
+        drawerList.addHeaderView(View.inflate(this, R.layout.list_item_user_header, null).apply {
+            val header = findViewById<ImageView>(R.id.header)
+            val avatar = findViewById<ImageView>(R.id.avatar_icon)
+            MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
+                override fun onFailure(call: Call<Account>?, t: Throwable?) {
+                }
+                override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
+                    if(response == null || !response.isSuccessful) return
+                    val account = response.body() ?: return
+                    GlideApp.with(applicationContext).load(account.avatar).into(avatar)
+                    GlideApp.with(applicationContext).load(account.headerStatic).into(header)
+                }
+            })
+        })
     }
 
     override fun onStart() {

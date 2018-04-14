@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Ofutodon</string>
+    <string name="website">"https://crakac.com/ofutodon"</string>
     <string name="file_provider_authority">com.crakac.ofutodon.fileprovider</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -52,6 +53,8 @@
     <string name="sensitive_media">閲覧注意</string>
     <string name="hidden_insensitive_media">非表示のメディア</string>
     <string name="tap_to_show">タップして表示</string>
+
+    <string name="full_user_name">%s@%s</string>
 
     <string name="dummy">xxxxxxxxxxxxx</string>
 </resources>
