@@ -61,7 +61,8 @@ object HtmlUtil {
                 linkText
             } else {
                 val host = IDN.toUnicode(uri.host)
-                val path = rawUrl.substring(rawUrl.indexOf('/', uri.scheme.length + 3)) // ://の3文字分飛ばす
+                val pathIndex = rawUrl.indexOf('/', uri.scheme.length + 3)// ://の3文字分飛ばす
+                val path = if (pathIndex >= 0) rawUrl.substring(pathIndex) else ""
                 val urlWithoutScheme = host + path
                 val rawLength = urlWithoutScheme.length
                 when {
