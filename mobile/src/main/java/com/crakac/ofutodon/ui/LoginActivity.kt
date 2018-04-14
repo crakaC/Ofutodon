@@ -24,9 +24,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DomainSelectActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     companion object {
-        val TAG = "DomainSelectActivity"
+        val TAG = "LoginActivity"
         val ACTION_ADD_ACCOUNT = "add_account"
     }
 
@@ -39,7 +39,7 @@ class DomainSelectActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_domain_select)
+        setContentView(R.layout.activity_login)
         domainEditText = findViewById(R.id.domain)
         savedInstanceState?.let {
             domainEditText.setText(it.getString("instanceDomain"))
@@ -127,6 +127,7 @@ class DomainSelectActivity : AppCompatActivity() {
                 val user = User().apply {
                     this.name = account.username
                     this.userId = account.id
+                    this.avator = account.avatarStatic
                     this.domain = domain
                     this.token = accessToken
                 }
@@ -145,7 +146,7 @@ class DomainSelectActivity : AppCompatActivity() {
 
     private fun registerApplication() {
         loginButton.isEnabled = false
-        MastodonUtil.registerApplication(instanceDomain, getString(R.string.app_name), oauthRedirectUri, "http://crakac.com")
+        MastodonUtil.registerApplication(instanceDomain, getString(R.string.app_name), oauthRedirectUri, getString(R.string.website))
                 .enqueue(object : MastodonCallback<AppCredentials> {
                     override fun onSuccess(result: AppCredentials) {
                         MastodonUtil.saveAppCredential(instanceDomain, result)
