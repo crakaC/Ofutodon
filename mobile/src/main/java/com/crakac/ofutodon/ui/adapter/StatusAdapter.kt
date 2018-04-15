@@ -120,5 +120,5 @@ class StatusAdapter(context: Activity, val showBottomLoading: Boolean = true) : 
         update(status)
     }
 
-    class FooterViewHolder(v: View) : RecyclerView.ViewHolder(v)
+    class FooterViewHolder(v: View) : RecyclerView.ViewHolder(v), Refreshable
 }
