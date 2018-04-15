@@ -14,7 +14,7 @@ import com.crakac.ofutodon.db.AppDatabase
 import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.util.GlideApp
 
-class UserAccountAdapter(val context: Context) : BaseAdapter() {
+class UserAccountAdapter(val context: Context, callback: (UserAccountAdapter) -> Unit) : BaseAdapter() {
     private val users = ArrayList<User>()
     private val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -23,6 +23,7 @@ class UserAccountAdapter(val context: Context) : BaseAdapter() {
             users.addAll(AppDatabase.instance.userDao().getAll())
             AppDatabase.uiThread {
                 notifyDataSetChanged()
+                callback(this)
             }
         }
     }
@@ -34,7 +35,7 @@ class UserAccountAdapter(val context: Context) : BaseAdapter() {
         val user = getItem(position)
         userName.text = context.getString(R.string.full_user_name).format(user.name, user.domain)
         GlideApp.with(v.context).load(user.avator).apply(RequestOptions().transform(RoundedCorners(4))).into(icon)
-        v.setOnClickListener{
+        v.setOnClickListener {
             onClickUserListener?.invoke(user)
         }
         return v

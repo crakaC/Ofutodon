@@ -6,20 +6,23 @@
     android:padding="@dimen/padding_micro">
 
     <ImageView
-        android:id="@+id/avatar_icon"
+        android:id="@+id/icon"
+        android:padding="@dimen/spacing_micro"
         android:layout_width="@dimen/avator_icon_mid"
         android:layout_height="@dimen/avator_icon_mid"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/spacing_micro" />
+        android:layout_marginStart="@dimen/spacing_micro"
+        android:src="@drawable/ic_person_add"
+        android:tint="@color/mastodon_grey" />
 
     <TextView
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/spacing_normal"
-        android:layout_toEndOf="@+id/avatar_icon"
+        android:layout_toEndOf="@+id/icon"
+        android:text="@string/add_account"
         android:textStyle="bold" />
 
 </RelativeLayout>

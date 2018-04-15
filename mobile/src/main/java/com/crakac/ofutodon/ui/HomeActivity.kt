@@ -2,6 +2,7 @@ package com.crakac.ofutodon.ui
 
 import android.app.ActivityOptions
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar
 import android.view.*
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
@@ -113,27 +115,38 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             onClickFab(v)
         }
 
-        val userAdapter = UserAccountAdapter(this).apply {
-            onClickUserListener = { user ->
-                Toast.makeText(this@HomeActivity, user.name, Toast.LENGTH_SHORT).show()
-//                switchAccount(user)
-            }
-        }
-        drawerList.adapter = userAdapter
-        drawerList.addHeaderView(View.inflate(this, R.layout.list_item_user_header, null).apply {
-            val header = findViewById<ImageView>(R.id.header)
-            val avatar = findViewById<ImageView>(R.id.avatar_icon)
-            MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
-                override fun onFailure(call: Call<Account>?, t: Throwable?) {
-                }
-                override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                    if(response == null || !response.isSuccessful) return
-                    val account = response.body() ?: return
-                    GlideApp.with(applicationContext).load(account.avatar).into(avatar)
-                    GlideApp.with(applicationContext).load(account.headerStatic).into(header)
-                }
-            })
+        val userAdapter = UserAccountAdapter(this, { adapter ->
+            drawerList.adapter = adapter
         })
+        userAdapter.onClickUserListener = { user ->
+            Toast.makeText(this@HomeActivity, user.name, Toast.LENGTH_SHORT).show()
+//                switchAccount(user)
+        }
+
+        val header = findViewById<ImageView>(R.id.header)
+        header.setColorFilter(ContextCompat.getColor(this@HomeActivity, R.color.header_mask), PorterDuff.Mode.SRC_ATOP)
+        val avatar = findViewById<ImageView>(R.id.avatar_icon)
+        val userName = findViewById<TextView>(R.id.user_name)
+        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
+            override fun onFailure(call: Call<Account>?, t: Throwable?) {
+            }
+
+            override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
+                if (response == null || !response.isSuccessful) return
+                val account = response.body() ?: return
+                GlideApp.with(applicationContext).load(account.avatar).into(avatar)
+                GlideApp.with(applicationContext).load(account.headerStatic).centerCrop().into(header)
+                userName.text = account.displayName
+            }
+        })
+        drawerList.addFooterView(View.inflate(this, R.layout.list_item_add_user, null).apply {
+            setOnClickListener {
+                val intent = Intent(this@HomeActivity, LoginActivity::class.java)
+                intent.action = LoginActivity.ACTION_ADD_ACCOUNT
+                startActivity(intent)
+            }
+        })
+
     }
 
     override fun onStart() {
