@@ -15,4 +15,7 @@ interface UserDao {
 
     @Insert
     fun insert(user: User)
+
+    @Query("SELECT * FROM user WHERE id = :id")
+    fun getCurrentUser(id: Int): User
 }

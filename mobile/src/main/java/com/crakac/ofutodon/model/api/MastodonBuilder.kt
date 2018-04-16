@@ -1,6 +1,7 @@
 package com.crakac.ofutodon.model.api
 
 import com.crakac.ofutodon.BuildConfig
+import com.crakac.ofutodon.db.User
 import com.google.gson.GsonBuilder
 import com.google.gson.LongSerializationPolicy
 import okhttp3.Dispatcher
@@ -14,22 +15,17 @@ class MastodonBuilder() {
         val dispatcher: Dispatcher = Dispatcher()
     }
 
-    private var account: UserAccount? = null
+    private var userAccount: User? = null
     private var host: String = ""
     private var token: String? = null
 
-    constructor(account: UserAccount) : this() {
-        setUserAccount(account)
+    constructor(user: User) : this() {
+        userAccount = user
+        host = user.domain
     }
 
     fun setHost(host: String): MastodonBuilder {
         this.host = host
-        return this
-    }
-
-    fun setUserAccount(account: UserAccount): MastodonBuilder {
-        this.account = account
-        this.host = account.host
         return this
     }
 
@@ -39,8 +35,7 @@ class MastodonBuilder() {
     }
 
     fun build(): MastodonApi {
-
-        val okHttpClient = createMastodonHttpClient(token ?: account?.accessToken)
+        val okHttpClient = createMastodonHttpClient(token ?: userAccount?.token)
         val retrofit = Retrofit.Builder()
                 .baseUrl("https://$host")
                 .client(okHttpClient)
@@ -48,7 +43,7 @@ class MastodonBuilder() {
                         GsonConverterFactory.create(
                                 GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create()))
                 .build()
-        return MastodonApi(retrofit.create(Mastodon::class.java), account)
+        return MastodonApi(retrofit.create(MastodonService::class.java), userAccount)
     }
 
     private fun createMastodonHttpClient(bearerToken: String?): OkHttpClient {

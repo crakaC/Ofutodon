@@ -57,10 +57,10 @@ class LoginActivity : AppCompatActivity() {
             registerApplication()
         }
 
-        MastodonUtil.existsAccount { existsAccount, account ->
+        MastodonUtil.existsAccount { account ->
             // 既にアカウントが存在している状態で初期画面を開いたらHomeActivityに自動的に遷移する
-            if (existsAccount && intent.action != ACTION_ADD_ACCOUNT) {
-                MastodonUtil.api(account!!.domain, account.token)
+            if (account != null && intent.action != ACTION_ADD_ACCOUNT) {
+                MastodonUtil.api(account)
                 startHomeActivity()
             }
         }
@@ -73,7 +73,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        loginButton.isEnabled = true
         if (intent == null || intent.data == null) return
 
         if (intent.data.scheme != getString(R.string.oauth_scheme)) {
@@ -90,13 +89,11 @@ class LoginActivity : AppCompatActivity() {
                 return
             }
             MastodonUtil.fetchAccessToken(domain, oauthRedirectUri, code).enqueue(fetchAccessTokenCallback)
-            loginButton.isEnabled = false
         }
     }
 
     private val fetchAccessTokenCallback = object : Callback<AccessToken> {
         override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>?) {
-            loginButton.isEnabled = true
             if (response == null || !response.isSuccessful) {
                 Log.w(TAG, "fetchOAuthToken is not successful")
                 return
@@ -109,8 +106,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
-            Log.w(TAG, "fetchOAuthTokenFailed")
-            loginButton.isEnabled = true
         }
     }
 
@@ -133,6 +128,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 AppDatabase.execute {
                     AppDatabase.instance.userDao().insert(user)
+                    PrefsUtil.putInt(C.CURRENT_USER_ID, user.id)
                     AppDatabase.uiThread {
                         startHomeActivity()
                     }
@@ -145,7 +141,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun registerApplication() {
-        loginButton.isEnabled = false
         MastodonUtil.registerApplication(instanceDomain, getString(R.string.app_name), oauthRedirectUri, getString(R.string.website))
                 .enqueue(object : MastodonCallback<AppCredentials> {
                     override fun onSuccess(result: AppCredentials) {
@@ -155,7 +150,6 @@ class LoginActivity : AppCompatActivity() {
 
                     override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
                         Snackbar.make(domainEditText.rootView, "Something wrong", Snackbar.LENGTH_SHORT).show()
-                        loginButton.isEnabled = true
                     }
                 })
     }

@@ -26,8 +26,16 @@ class PrefsUtil {
             return prefs?.getString(key, default)
         }
 
+        fun putInt(k: String, v: Int){
+            prefs?.edit()?.putInt(k, v)?.apply()
+        }
+
         fun putLong(k: String, v: Long){
             prefs?.edit()?.putLong(k, v)?.apply()
+        }
+
+        fun getInt(k: String, v: Int): Int{
+            return prefs?.getInt(k, v) ?: v
         }
 
         fun putString(k: String, v: String){

@@ -1,10 +1,12 @@
 package com.crakac.ofutodon.model.api
 
-class MastodonApi(delegate: Mastodon, account: UserAccount? = null) : Mastodon by delegate {
+import com.crakac.ofutodon.db.User
+
+class MastodonApi(delegate: MastodonService, userAccount: User? = null) : MastodonService by delegate {
     var currentId = 0L
         private set
 
     init {
-        currentId = account?.id ?: 0L
+        currentId = userAccount?.userId ?: 0L
     }
 }

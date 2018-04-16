@@ -11,4 +11,5 @@ object C {
     val ATTACHMENTS = "attachments"
     val VISIBILITY = "visibility"
     val IS_SENSITIVE = "is_sensitive"
+    val CURRENT_USER_ID: String = "current_user_id"
 }

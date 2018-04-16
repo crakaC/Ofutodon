@@ -17,14 +17,17 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
 import com.crakac.ofutodon.R
+import com.crakac.ofutodon.db.AppDatabase
+import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
 import com.crakac.ofutodon.ui.adapter.UserAccountAdapter
+import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.GlideApp
+import com.crakac.ofutodon.util.PrefsUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -119,8 +122,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawerList.adapter = adapter
         })
         userAdapter.onClickUserListener = { user ->
-            Toast.makeText(this@HomeActivity, user.name, Toast.LENGTH_SHORT).show()
-//                switchAccount(user)
+            switchAccount(user)
         }
 
         val header = findViewById<ImageView>(R.id.header)
@@ -218,5 +220,17 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    fun switchAccount(user: User){
+        PrefsUtil.putInt(C.CURRENT_USER_ID, user.id)
+        AppDatabase.execute {
+            val user = AppDatabase.instance.userDao().getCurrentUser(user.id)
+            MastodonUtil.api(user)
+            AppDatabase.uiThread {
+                startActivity(Intent(this@HomeActivity, HomeActivity::class.java))
+                finish()
+            }
+        }
     }
 }

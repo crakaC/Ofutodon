@@ -13,8 +13,13 @@ class MastodonUtil private constructor() {
         private var cached: MastodonApi? = null
         val api get() = cached
         val TAG: String = "MastodonUtil"
-        fun api(domain: String, accessToken: String? = null): Mastodon {
+        fun api(domain: String, accessToken: String? = null): MastodonApi {
             cached = MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
+            return cached!!
+        }
+
+        fun api(user: User): MastodonApi{
+            cached = MastodonBuilder(user).build()
             return cached!!
         }
 
@@ -55,11 +60,11 @@ class MastodonUtil private constructor() {
             }
         }
 
-        fun existsAccount(callBack: (hasAccount: Boolean, account: User?) -> Unit) {
+        fun existsAccount(callBack: (account: User?) -> Unit) {
             AppDatabase.execute {
-                val users = AppDatabase.instance.userDao().getAll()
+                val user = AppDatabase.instance.userDao().getCurrentUser(PrefsUtil.getInt(com.crakac.ofutodon.util.C.CURRENT_USER_ID, 0))
                 AppDatabase.uiThread {
-                    callBack(users.isNotEmpty(), users.firstOrNull())
+                    callBack(user)
                 }
             }
         }

@@ -8,7 +8,7 @@ import retrofit2.http.*
 /**
  * Created by Kosuke on 2017/04/27.
  */
-interface Mastodon {
+interface MastodonService {
 
     @GET("/api/v1/accounts/{id}")
     fun getAccount(
