@@ -27,9 +27,9 @@
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:theme="@style/Ofuton.DomainSelect"
-            android:windowSoftInputMode="adjustPan"
+            android:windowSoftInputMode="adjustResize"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +51,6 @@
         <activity
             android:name=".ui.HomeActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
             android:theme="@style/Ofuton.Home"
             android:windowSoftInputMode="adjustPan">
         </activity>

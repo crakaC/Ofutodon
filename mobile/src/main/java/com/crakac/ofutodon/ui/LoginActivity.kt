@@ -169,8 +169,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun startHomeActivity() {
-        val intent = Intent(this, HomeActivity::class.java).apply { flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP) }
-        startActivity(intent)
+        startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
 }
