@@ -10,13 +10,9 @@ import android.preference.PreferenceManager
 class PrefsUtil {
     val TAG: String = "PrefsUtil"
     companion object{
-        private var context: Context? = null
         private var prefs: SharedPreferences? = null
-        fun init(ctx: Context){
-            if(context == null){
-                context = ctx.applicationContext
-            }
-            prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
+        fun init(context: Context){
+            prefs = PreferenceManager.getDefaultSharedPreferences(context)
         }
 
         fun getLong(key: String, default: Long = 0L): Long{

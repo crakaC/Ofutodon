@@ -112,23 +112,19 @@ class LoginActivity : AppCompatActivity() {
     private fun onFetchAccessTokenSuccess(domain: String, accessToken: String) {
         MastodonUtil.api(domain, accessToken)
         //verify credentials
-        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
-            override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                if (response == null || !response.isSuccessful) {
-                    Log.w(TAG, "fetchCurrentAccount Failed")
-                    return
-                }
-                val account = response.body()!!
+        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : MastodonCallback<Account> {
+            override fun onSuccess(result: Account) {
                 val user = User().apply {
-                    this.name = account.username
-                    this.userId = account.id
-                    this.avator = account.avatarStatic
+                    this.name = result.username
+                    this.userId = result.id
+                    this.avator = result.avatarStatic
                     this.domain = domain
                     this.token = accessToken
                 }
                 AppDatabase.execute {
                     AppDatabase.instance.userDao().insert(user)
-                    PrefsUtil.putInt(C.CURRENT_USER_ID, user.id)
+                    val newUser = AppDatabase.instance.userDao().select(user.userId, user.domain)
+                    PrefsUtil.putInt(C.CURRENT_USER_ID, newUser.id)
                     AppDatabase.uiThread {
                         startHomeActivity()
                     }
@@ -163,7 +159,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun startHomeActivity() {
-        startActivity(Intent(this, HomeActivity::class.java))
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.action = HomeActivity.ACTION_RELOAD
+        startActivity(intent)
         finish()
     }
 }

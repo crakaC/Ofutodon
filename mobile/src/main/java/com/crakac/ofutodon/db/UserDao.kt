@@ -18,4 +18,7 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE id = :id")
     fun getCurrentUser(id: Int): User
+
+    @Query("SELECT * FROM user WHERE userId = :userId AND domain = :domain")
+    fun select(userId: Long, domain: String): User
 }

@@ -33,6 +33,9 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    companion object {
+        val ACTION_RELOAD = "action_reload"
+    }
     val TAG: String = "HomeActivity"
 
     private val tabLayout by lazy { findViewById<TabLayout>(R.id.tab) }
@@ -220,6 +223,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        if(intent?.action == ACTION_RELOAD){
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
+        }
     }
 
     fun switchAccount(user: User){
