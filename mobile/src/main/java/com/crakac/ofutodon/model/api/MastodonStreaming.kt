@@ -2,6 +2,7 @@ package com.crakac.ofutodon.model.api
 
 import android.os.Handler
 import android.util.Log
+import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.model.api.entity.Notification
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.model.api.entity.StreamingContent
@@ -12,14 +13,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 /**
  * Created by Kosuke on 2017/05/04.
  */
-class MastodonStreaming(val domain:String) : WebSocketListener() {
+class MastodonStreaming(val user: User) : WebSocketListener() {
     val TAG = "MastodonStreaming"
     val handler = Handler()
     val gson = Gson()
     var callBack: StreamingCallback? = null
 
-    private var mIsConnected = false
-    val isConnected: Boolean get() = mIsConnected
+    var isConnected = false
+    private set
 
     private var ws: WebSocket? = null
 
@@ -30,14 +31,9 @@ class MastodonStreaming(val domain:String) : WebSocketListener() {
     }
 
     fun connect() {
-        val token = MastodonUtil.getAccessToken(domain)
-        if (token == null) {
-            Log.w(TAG, "Invalid access token")
-            return
-        }
-
+        val token = user.token
         val request = Request.Builder()
-                .url("wss://$domain/api/v1/streaming/?stream=public:local")
+                .url("wss://${user.domain}/api/v1/streaming/?stream=public:local")
                 .build()
 
         val logger = HttpLoggingInterceptor()
@@ -85,18 +81,18 @@ class MastodonStreaming(val domain:String) : WebSocketListener() {
                 }
             }
             else -> {
-                System.out.println("unknown event")
+                Log.d(TAG, "unknown event")
             }
         }
     }
 
     override fun onOpen(webSocket: WebSocket?, response: Response?) {
-        mIsConnected = true
+        isConnected = true
         Log.d(TAG, "open connection")
     }
 
     override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
-        mIsConnected = false
+        isConnected = false
         Log.d(TAG, "closing")
     }
 }

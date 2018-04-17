@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
             registerApplication()
         }
 
-        MastodonUtil.existsAccount { account ->
+        MastodonUtil.existsCurrentAccount { account ->
             // 既にアカウントが存在している状態で初期画面を開いたらHomeActivityに自動的に遷移する
             if (account != null && intent.action != ACTION_ADD_ACCOUNT) {
                 MastodonUtil.api(account)

@@ -60,7 +60,7 @@ class MastodonUtil private constructor() {
             }
         }
 
-        fun existsAccount(callBack: (account: User?) -> Unit) {
+        fun existsCurrentAccount(callBack: (account: User?) -> Unit) {
             AppDatabase.execute {
                 val user = AppDatabase.instance.userDao().getCurrentUser(PrefsUtil.getInt(com.crakac.ofutodon.util.C.CURRENT_USER_ID, 0))
                 AppDatabase.uiThread {

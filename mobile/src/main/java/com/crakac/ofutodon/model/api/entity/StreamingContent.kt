@@ -3,7 +3,7 @@ package com.crakac.ofutodon.model.api.entity
 import com.google.gson.annotations.SerializedName
 
 class StreamingContent {
-    enum class Event(val value: String){
+    enum class Event(val value: String) {
         Update("update"),
         Notification("notification"),
         Delete("delete"),
@@ -17,12 +17,5 @@ class StreamingContent {
     val payload: String? = null
 
     val eventType: Event
-    get() {
-        val type = enumValues<Event>().filter { it.value == event }
-        if(type.isNotEmpty()){
-            return type.first()
-        } else {
-            return Event.Unknown
-        }
-    }
+        get() = Event.values().firstOrNull { it.value == event } ?: Event.Unknown
 }
