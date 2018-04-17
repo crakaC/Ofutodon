@@ -118,7 +118,7 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
         val context get() = contextRef.get()
         val roundedCorners = RequestOptions().transform(RoundedCorners(8))
         val followedBy: TextView = v.findViewById(R.id.followed_by)
-        val name: TextView = v.findViewById(R.id.displayName)
+        val name: TextView = v.findViewById(R.id.display_name)
         val icon: ImageView = v.findViewById(R.id.icon)
         val userId: TextView = v.findViewById(R.id.user_id_with_domain)
 

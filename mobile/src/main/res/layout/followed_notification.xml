@@ -28,7 +28,7 @@
         android:text="@string/dummy" />
 
     <TextView
-        android:id="@+id/displayName"
+        android:id="@+id/display_name"
         style="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
         style="@style/Base.TextAppearance.AppCompat.Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/displayName"
+        android:layout_below="@+id/display_name"
         android:layout_marginTop="@dimen/spacing_micro"
         android:layout_toEndOf="@+id/icon" />
 

@@ -16,7 +16,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.ref.WeakReference
 
-open class StatusClickListener(context: Activity) : OnClickStatusListener{
+open class StatusClickListener(context: Activity) : OnClickStatusListener {
     private val contextRef = WeakReference(context)
     private val context get() = contextRef.get()
 
@@ -34,7 +34,8 @@ open class StatusClickListener(context: Activity) : OnClickStatusListener{
 
     override fun onReplyClicked(icon: ImageView, status: Status) {
         val intent = Intent(context, TootActivity::class.java)
-        FabTransform.addExtras(intent, ContextCompat.getColor(context!!, R.color.background_mastodon), R.color.mastodon_grey,  R.drawable.ic_reply, icon.alpha)
+        val iconId = if (status.inReplyToId > 0) R.drawable.ic_reply_all else R.drawable.ic_reply
+        FabTransform.addExtras(intent, ContextCompat.getColor(context!!, R.color.background_mastodon), R.color.mastodon_grey, iconId, icon.alpha)
         TootActivity.addReplyInfo(intent, status)
         val options = ActivityOptions.makeSceneTransitionAnimation(context!!, icon, context?.getString(R.string.transition_name_toot_dialog));
         context?.startActivity(intent, options.toBundle())
@@ -87,7 +88,7 @@ open class StatusClickListener(context: Activity) : OnClickStatusListener{
     override fun onFavoriteClicked(icon: ImageView, status: Status) {
         val onResponse = object : Callback<Status> {
             override fun onResponse(call: Call<Status>?, response: Response<Status>?) {
-                context?.let{
+                context?.let {
                     if (response != null && response.isSuccessful) {
                         response.body()?.let {
                             favoriteSuccess(it)
@@ -99,7 +100,7 @@ open class StatusClickListener(context: Activity) : OnClickStatusListener{
             }
 
             override fun onFailure(call: Call<Status>?, t: Throwable?) {
-                context?.let{
+                context?.let {
                     updateStatus(status)
                 }
             }

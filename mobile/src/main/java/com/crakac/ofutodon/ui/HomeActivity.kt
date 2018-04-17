@@ -20,6 +20,7 @@ import android.widget.TextView
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.db.AppDatabase
 import com.crakac.ofutodon.db.User
+import com.crakac.ofutodon.model.api.MastodonCallback
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Account
 import com.crakac.ofutodon.transition.FabTransform
@@ -28,9 +29,6 @@ import com.crakac.ofutodon.ui.adapter.UserAccountAdapter
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.GlideApp
 import com.crakac.ofutodon.util.PrefsUtil
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     companion object {
@@ -133,16 +131,22 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         header.setColorFilter(ContextCompat.getColor(this@HomeActivity, R.color.header_mask), PorterDuff.Mode.SRC_ATOP)
         val avatar = findViewById<ImageView>(R.id.avatar_icon)
         val userName = findViewById<TextView>(R.id.user_name)
-        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : Callback<Account> {
-            override fun onFailure(call: Call<Account>?, t: Throwable?) {
-            }
-
-            override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                if (response == null || !response.isSuccessful) return
-                val account = response.body() ?: return
-                GlideApp.with(applicationContext).load(account.avatar).into(avatar)
-                GlideApp.with(applicationContext).load(account.headerStatic).centerCrop().into(header)
-                userName.text = account.displayName
+        val displayName = findViewById<TextView>(R.id.display_name)
+        val userAccount = MastodonUtil.api?.userAccount
+        displayName.text = userAccount?.getDisplayNameWithEmoji()
+        userName.text = getString(R.string.full_user_name).format(userAccount?.name, userAccount?.domain)
+        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : MastodonCallback<Account> {
+            override fun onSuccess(result: Account) {
+                GlideApp.with(applicationContext).load(result.avatar).into(avatar)
+                GlideApp.with(applicationContext).load(result.headerStatic).centerCrop().into(header)
+                userName.text = getString(R.string.full_user_name).format(result.username, userAccount?.domain)
+                displayName.text = result.dispNameWithEmoji
+                userAccount?.let{
+                    it.displayName = result.displayName
+                    AppDatabase.execute {
+                        AppDatabase.instance.userDao().update(it)
+                    }
+                }
             }
         })
         drawerList.addFooterView(View.inflate(this, R.layout.list_item_add_user, null).apply {

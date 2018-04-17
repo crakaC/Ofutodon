@@ -30,7 +30,7 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
     val actionedBy: TextView = v.findViewById(R.id.actioned_text)
     val actionedByIcon: ImageView = v.findViewById(R.id.actioned_by_icon)
     val actionedIcon: ImageView = v.findViewById(R.id.actioned_icon)
-    val name: TextView = v.findViewById(R.id.displayName)
+    val name: TextView = v.findViewById(R.id.display_name)
     val content: TextView = v.findViewById(R.id.status)
     val spoilerText: TextView = v.findViewById(R.id.spoiler_text)
     val readMore: Button = v.findViewById(R.id.read_more)
@@ -105,6 +105,12 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
                 .apply(roundedCorners)
                 .into(icon)
         createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
+
+        if (status.inReplyToId > 0){
+            reply.setImageResource(R.drawable.ic_reply_all)
+        } else {
+            reply.setImageResource(R.drawable.ic_reply)
+        }
 
         if (status.isReblogged) {
             boost.setColorFilter(ContextCompat.getColor(context!!, R.color.boosted))

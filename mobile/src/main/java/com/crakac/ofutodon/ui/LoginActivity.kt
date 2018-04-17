@@ -102,12 +102,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onFetchAccessTokenSuccess(domain: String, accessToken: String) {
-        MastodonUtil.api(domain, accessToken)
         //verify credentials
-        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : MastodonCallback<Account> {
+        MastodonUtil.api(domain, accessToken).getCurrentAccount().enqueue(object : MastodonCallback<Account> {
             override fun onSuccess(result: Account) {
                 val user = User().apply {
                     this.name = result.username
+                    this.displayName = result.displayName
                     this.userId = result.id
                     this.avator = result.avatarStatic
                     this.domain = domain
@@ -118,6 +118,7 @@ class LoginActivity : AppCompatActivity() {
                     val newUser = AppDatabase.instance.userDao().select(user.userId, user.domain)
                     PrefsUtil.putInt(C.CURRENT_USER_ID, newUser.id)
                     AppDatabase.uiThread {
+                        MastodonUtil.initialize(newUser)
                         startHomeActivity()
                     }
                 }
