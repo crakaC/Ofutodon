@@ -33,10 +33,11 @@ open class StatusClickListener(context: Activity) : OnClickStatusListener {
     }
 
     override fun onReplyClicked(icon: ImageView, status: Status) {
+        val st = status.reblog ?: status
         val intent = Intent(context, TootActivity::class.java)
-        val iconId = if (status.inReplyToId > 0) R.drawable.ic_reply_all else R.drawable.ic_reply
+        val iconId = if (st.inReplyToId > 0) R.drawable.ic_reply_all else R.drawable.ic_reply
         FabTransform.addExtras(intent, ContextCompat.getColor(context!!, R.color.background_mastodon), R.color.mastodon_grey, iconId, icon.alpha)
-        TootActivity.addReplyInfo(intent, status)
+        TootActivity.addReplyInfo(intent, st)
         val options = ActivityOptions.makeSceneTransitionAnimation(context!!, icon, context?.getString(R.string.transition_name_toot_dialog));
         context?.startActivity(intent, options.toBundle())
     }
