@@ -54,6 +54,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_home)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.title = MastodonUtil.api?.userAccount?.domain
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
@@ -151,7 +152,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
         })
-
     }
 
     override fun onStart() {
