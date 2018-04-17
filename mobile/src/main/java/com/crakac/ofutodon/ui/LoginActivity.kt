@@ -43,7 +43,8 @@ class LoginActivity : AppCompatActivity() {
             domainEditText.setText(it.getString("instanceDomain"))
         }
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        domainEditText.setOnKeyListener { v, keyCode, event ->
+        domainEditText.setOnKeyListener {
+            _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 inputManager.hideSoftInputFromWindow(domainEditText.windowToken, InputMethodManager.RESULT_UNCHANGED_SHOWN)
                 return@setOnKeyListener true
@@ -83,6 +84,11 @@ class LoginActivity : AppCompatActivity() {
         val code = intent.data.getQueryParameter("code")
         val error = intent.data.getQueryParameter("error")
 
+        if (error != null){
+            //TODO do something
+            return
+        }
+
         if (code != null) {
             val domain = PrefsUtil.getString(C.OAUTH_TARGET_DOMAIN)
             if (domain == null) {
@@ -105,14 +111,12 @@ class LoginActivity : AppCompatActivity() {
         //verify credentials
         MastodonUtil.api(domain, accessToken).getCurrentAccount().enqueue(object : MastodonCallback<Account> {
             override fun onSuccess(result: Account) {
-                val user = User().apply {
-                    this.name = result.username
-                    this.displayName = result.displayName
-                    this.userId = result.id
-                    this.avator = result.avatarStatic
-                    this.domain = domain
-                    this.token = accessToken
-                }
+                val user = User(name = result.username,
+                        displayName = result.displayName,
+                        userId = result.id,
+                        avator = result.avatarStatic,
+                        domain = domain,
+                        token = accessToken)
                 AppDatabase.execute {
                     AppDatabase.instance.userDao().insert(user)
                     val newUser = AppDatabase.instance.userDao().select(user.userId, user.domain)

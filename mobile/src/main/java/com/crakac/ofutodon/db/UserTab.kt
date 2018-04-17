@@ -7,12 +7,12 @@ import android.arch.persistence.room.*
         indices = [Index(value = ["userId"])]
 )
 @TypeConverters(TabTypeConverter::class)
-class UserTab {
+data class UserTab(
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
-    var userId: Long = 0
+    var id: Int = 0,
+    var userId: Long = 0,
     @TypeConverters(TabTypeConverter::class)
-    var type: TabType = TabType.HOME
-    var listId: Long = 0
+    var type: TabType = TabType.HOME,
+    var listId: Long = 0,
     var order: Int = 0
-}
+)

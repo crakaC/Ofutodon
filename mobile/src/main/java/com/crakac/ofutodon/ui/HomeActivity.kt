@@ -220,8 +220,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun switchAccount(user: User){
         PrefsUtil.putInt(C.CURRENT_USER_ID, user.id)
         AppDatabase.execute {
-            val user = AppDatabase.instance.userDao().getCurrentUser(user.id)
-            MastodonUtil.initialize(user)
+            val u = AppDatabase.instance.userDao().getUser(user.id)
+            MastodonUtil.initialize(u)
             AppDatabase.uiThread {
                 startActivity(Intent(this@HomeActivity, HomeActivity::class.java))
                 finish()
