@@ -21,8 +21,6 @@ import com.crakac.ofutodon.model.api.entity.AppCredentials
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.PrefsUtil
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
     companion object {
@@ -54,13 +52,17 @@ class LoginActivity : AppCompatActivity() {
         }
         loginButton = findViewById(R.id.login)
         loginButton.setOnClickListener {
-            registerApplication()
+            if (MastodonUtil.hasAppCredential(instanceDomain)) {
+                startAuthorize(instanceDomain)
+            } else {
+                registerApplication()
+            }
         }
 
         MastodonUtil.existsCurrentAccount { account ->
             // 既にアカウントが存在している状態で初期画面を開いたらHomeActivityに自動的に遷移する
             if (account != null && intent.action != ACTION_ADD_ACCOUNT) {
-                MastodonUtil.api(account)
+                MastodonUtil.initialize(account)
                 startHomeActivity()
             }
         }
@@ -92,20 +94,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private val fetchAccessTokenCallback = object : Callback<AccessToken> {
-        override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>?) {
-            if (response == null || !response.isSuccessful) {
-                Log.w(TAG, "fetchOAuthToken is not successful")
-                return
-            }
-            val domain = call.request().url().host()
-            response.body()?.accessToken?.let { token ->
-                onFetchAccessTokenSuccess(domain, token)
-            }
+    private val fetchAccessTokenCallback = object : MastodonCallback<AccessToken> {
+        override fun onSuccess(result: AccessToken) {
+            onFetchAccessTokenSuccess(instanceDomain, result.accessToken)
             PrefsUtil.remove(C.OAUTH_TARGET_DOMAIN)
-        }
-
-        override fun onFailure(call: Call<AccessToken>?, t: Throwable?) {
         }
     }
 
@@ -130,24 +122,20 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
-
-            override fun onFailure(call: Call<Account>?, t: Throwable?) {
-            }
         })
     }
 
     private fun registerApplication() {
-        MastodonUtil.registerApplication(instanceDomain, getString(R.string.app_name), oauthRedirectUri, getString(R.string.website))
-                .enqueue(object : MastodonCallback<AppCredentials> {
-                    override fun onSuccess(result: AppCredentials) {
-                        MastodonUtil.saveAppCredential(instanceDomain, result)
-                        startAuthorize(instanceDomain)
-                    }
+        MastodonUtil.registerApplication(instanceDomain, getString(R.string.app_name), oauthRedirectUri, getString(R.string.website)).enqueue(object : MastodonCallback<AppCredentials> {
+            override fun onSuccess(result: AppCredentials) {
+                MastodonUtil.saveAppCredential(instanceDomain, result)
+                startAuthorize(instanceDomain)
+            }
 
-                    override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
-                        Snackbar.make(domainEditText.rootView, "Something wrong", Snackbar.LENGTH_SHORT).show()
-                    }
-                })
+            override fun onFailure(call: Call<AppCredentials>?, t: Throwable?) {
+                Snackbar.make(domainEditText.rootView, "Something wrong", Snackbar.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun startAuthorize(domain: String) {

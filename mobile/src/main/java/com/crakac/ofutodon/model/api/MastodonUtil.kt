@@ -13,14 +13,11 @@ class MastodonUtil private constructor() {
         private var cached: MastodonApi? = null
         val api get() = cached
         val TAG: String = "MastodonUtil"
-        fun api(domain: String, accessToken: String? = null): MastodonApi {
-            cached = MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
-            return cached!!
-        }
+        fun api(domain: String, accessToken: String? = null): MastodonApi =
+                MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
 
-        fun api(user: User): MastodonApi{
+        fun initialize(user: User){
             cached = MastodonBuilder(user).build()
-            return cached!!
         }
 
         fun createAuthenticationUri(domain: String, redirectUri: String): Uri {
@@ -47,19 +44,6 @@ class MastodonUtil private constructor() {
             return clientId != null && clientSecret != null
         }
 
-        fun hasAccessToken(domain: String, callBack: (String) -> Unit) {
-            AppDatabase.execute {
-                val users = AppDatabase.instance.userDao().getAll()
-                AppDatabase.uiThread {
-                    if (users.isEmpty()) {
-                        callBack("")
-                    } else {
-                        callBack(users.first().token)
-                    }
-                }
-            }
-        }
-
         fun existsCurrentAccount(callBack: (account: User?) -> Unit) {
             AppDatabase.execute {
                 val user = AppDatabase.instance.userDao().getCurrentUser(PrefsUtil.getInt(com.crakac.ofutodon.util.C.CURRENT_USER_ID, 0))
@@ -67,10 +51,6 @@ class MastodonUtil private constructor() {
                     callBack(user)
                 }
             }
-        }
-
-        fun getAccessToken(domain: String): String? {
-            return PrefsUtil.getString("$domain.${C.ACCESS_TOKEN}")
         }
 
         fun getClientId(domain: String): String? {

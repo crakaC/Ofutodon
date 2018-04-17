@@ -217,7 +217,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         PrefsUtil.putInt(C.CURRENT_USER_ID, user.id)
         AppDatabase.execute {
             val user = AppDatabase.instance.userDao().getCurrentUser(user.id)
-            MastodonUtil.api(user)
+            MastodonUtil.initialize(user)
             AppDatabase.uiThread {
                 startActivity(Intent(this@HomeActivity, HomeActivity::class.java))
                 finish()
