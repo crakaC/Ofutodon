@@ -15,6 +15,8 @@
 
     <string name="transition_name_toot_dialog" translatable="false">toot_dialog</string>
     <string name="transition_name_user_icon" translatable="false">user_icon</string>
+    <string name="syar">( ˘ω˘)ｽﾔｧ</string>
+    <string name="sya">( ˘ω˘)</string>
     <string name="toot_hint">今何してる？</string>
     <string name="choose_image_or_take_picture">操作を選択</string>
     <string name="spoiler_hint">Content warning</string>
