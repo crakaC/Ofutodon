@@ -84,14 +84,15 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val notification = getItem(position)
         val type = getItemViewType(position)
-        when {
-            type == NotificationType.Mention.value -> {
+        when(type) {
+            NotificationType.Mention.value -> {
                 (holder as StatusViewHolder).setStatus(notification.status!!)
             }
-            holder is StatusViewHolder -> {
-                holder.setNotification(notification)
+            NotificationType.Favourite.value, NotificationType.Reblog.value  -> {
+                (holder as StatusViewHolder).setNotification(notification)
             }
-            holder is FollowedNotificationViewHolder -> holder.setNotification(notification)
+            NotificationType.Follow.value ->
+                (holder as FollowedNotificationViewHolder).setNotification(notification)
         }
     }
 
@@ -131,7 +132,7 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
         }
     }
 
-    fun findByStatus(status: Status): Notification? = items.find { item -> item.status != null && item.status!!.id == status.id }
+    private fun findByStatus(status: Status): Notification? = items.find { item -> item.status != null && item.status!!.id == status.id }
 
     override fun onUpdate(status: Status){
         val notification = findByStatus(status) ?: return

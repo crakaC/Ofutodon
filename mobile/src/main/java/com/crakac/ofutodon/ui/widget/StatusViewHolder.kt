@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.TextAppearanceSpan
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -69,6 +70,13 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
     }
 
     fun setNotification(notification: Notification) {
+        if (notification.status == null) {
+            itemView.visibility = View.GONE
+            Log.d("Notification", "account:${notification.account?.displayName}, notificationId:${notification.id}")
+            return
+        } else {
+            itemView.visibility = View.VISIBLE
+        }
         setup(notification.status!!)
         enableActionedView(true)
         setupIcons(notification.status!!.account, notification.account!!)
@@ -106,7 +114,7 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
                 .into(icon)
         createdAt.text = TextUtil.parseCreatedAt(status.createdAt)
 
-        if (status.inReplyToId > 0){
+        if (status.inReplyToId > 0) {
             reply.setImageResource(R.drawable.ic_reply_all)
         } else {
             reply.setImageResource(R.drawable.ic_reply)
@@ -209,16 +217,16 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
         actionedIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.favourited))
     }
 
-    private fun clearFilter(){
-        for(v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)){
+    private fun clearFilter() {
+        for (v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)) {
             v.alpha = 1f
         }
     }
 
-    private fun setFilter(){
+    private fun setFilter() {
         originalIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
         actionedByIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
-        for(v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)){
+        for (v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)) {
             v.alpha = 0.625f
         }
     }
