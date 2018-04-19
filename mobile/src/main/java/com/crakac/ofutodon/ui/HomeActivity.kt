@@ -2,7 +2,6 @@ package com.crakac.ofutodon.ui
 
 import android.app.ActivityOptions
 import android.content.Intent
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
@@ -128,7 +127,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         val header = findViewById<ImageView>(R.id.header)
-        header.setColorFilter(ContextCompat.getColor(this@HomeActivity, R.color.header_mask), PorterDuff.Mode.SRC_ATOP)
         val avatar = findViewById<ImageView>(R.id.avatar_icon)
         val userName = findViewById<TextView>(R.id.user_name)
         val displayName = findViewById<TextView>(R.id.display_name)

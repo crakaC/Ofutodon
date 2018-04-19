@@ -9,6 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/navbar_header_graident"/>
+
     <ImageView
         android:id="@+id/avatar_icon"
         android:layout_width="64dp"
