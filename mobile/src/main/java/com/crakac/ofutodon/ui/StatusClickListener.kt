@@ -22,7 +22,7 @@ open class StatusClickListener(context: Activity) : OnClickStatusListener {
 
     override fun onItemClicked(status: Status) {
         val intent = Intent(context, ConversationActivity::class.java)
-        ConversationActivity.setStatus(intent, status)
+        ConversationActivity.setStatus(intent, status.reblog ?: status)
         context?.startActivity(intent)
     }
 
