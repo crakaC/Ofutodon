@@ -52,18 +52,18 @@ def getProps(String file) {
 dependencies {
     ext {
         support_library_version = '27.1.1'
-        firebase_version = '12.0.1'
-        glide_version = '4.6.1'
+        firebase_version = '15.0.2'
+        glide_version = '4.7.1'
         retrofit_version = '2.4.0'
         okhttp_version = '3.10.0'
-        room_version = '1.0.0'
+        room_version = '1.1.0'
 
     }
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$support_library_version"
     implementation "com.android.support:support-v4:$support_library_version"
     implementation "com.android.support:design:$support_library_version"
@@ -84,7 +84,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     testImplementation "com.squareup.retrofit2:retrofit-mock:$retrofit_version"
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     testImplementation 'junit:junit:4.12'
