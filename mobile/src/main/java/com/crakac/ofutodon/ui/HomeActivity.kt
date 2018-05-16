@@ -31,7 +31,7 @@ import com.crakac.ofutodon.util.PrefsUtil
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     companion object {
-        val ACTION_RELOAD = "action_reload"
+        const val ACTION_RELOAD = "action_reload"
     }
     val TAG: String = "HomeActivity"
 
@@ -68,7 +68,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             adapter!!.add(NotificationFragment())
             adapter!!.add(HomeTimelineFragment())
             adapter!!.add(LocalTimelineFragment())
-            adapter!!.add(FederatedTimelineFragment())
         }
 
         pager.adapter = adapter

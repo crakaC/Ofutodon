@@ -4,6 +4,7 @@ import android.text.Html
 import android.text.Spanned
 import com.emojione.Emojione
 import com.google.gson.annotations.SerializedName
+import java.net.IDN
 
 /**
  * Created by Kosuke on 2017/04/27.
@@ -39,6 +40,8 @@ class Account {
     val header: String = ""
     @SerializedName("header_static")
     val headerStatic: String = ""
+    @SerializedName("emojis")
+    val emojis: List<Emoji> = emptyList()
 
     private var _dn: String? = null
     val dispNameWithEmoji: String
@@ -51,4 +54,14 @@ class Account {
 
     val noteWithEmoji: Spanned
     get() = Html.fromHtml(Emojione.shortnameToUnicode(note))
+
+    val unicodeAcct: String
+    get() {
+        val splitted = acct.split("@")
+        return if (splitted.size == 1) {
+            acct
+        } else {
+            splitted[0] + "@" + IDN.toUnicode(splitted[1])
+        }
+    }
 }

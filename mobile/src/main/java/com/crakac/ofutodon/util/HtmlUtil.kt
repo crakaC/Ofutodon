@@ -45,6 +45,10 @@ object HtmlUtil {
         return shrinkLinks(replaceEmoji(view, trimWhiteSpace(Html.fromHtml(status.content)), status.emojis))
     }
 
+    fun emojify(view: View, content: String, emojis: List<Emoji>): Spanned{
+        return replaceEmoji(view, content, emojis)
+    }
+
     fun fromHtml(text: String): Spanned{
         return shrinkLinks(trimWhiteSpace(Html.fromHtml(text)) as Spanned)
     }

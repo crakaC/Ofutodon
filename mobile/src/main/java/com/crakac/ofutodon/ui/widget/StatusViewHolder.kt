@@ -97,10 +97,10 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
 
     private fun setup(status: Status) {
         val sb = SpannableStringBuilder()
-        sb.append(status.account.dispNameWithEmoji)
+        sb.append(HtmlUtil.emojify(name, status.account.dispNameWithEmoji, status.account.emojis))
 
         val start = sb.length
-        sb.append(" @${status.account.acct}")
+        sb.append(" @${status.account.unicodeAcct}")
         sb.setSpan(accrAppearance, start, sb.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         name.text = sb
 

@@ -19,6 +19,7 @@ import com.crakac.ofutodon.ui.widget.InlineImagePreview
 import com.crakac.ofutodon.ui.widget.OnClickStatusListener
 import com.crakac.ofutodon.ui.widget.StatusViewHolder
 import com.crakac.ofutodon.util.GlideApp
+import com.crakac.ofutodon.util.HtmlUtil
 import java.lang.ref.WeakReference
 
 class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(context), StatusChangeListener {
@@ -125,10 +126,11 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
 
         fun setNotification(notification: Notification) {
             val account = notification.account!!
-            followedBy.text = context?.getString(R.string.followed_by)?.format(account.displayName)
-            name.text = account.dispNameWithEmoji
+            val nameWithEmoij = HtmlUtil.emojify(followedBy, context!!.getString(R.string.followed_by).format(account.displayName), account.emojis)
+            followedBy.text = nameWithEmoij
+            name.text = nameWithEmoij
             GlideApp.with(context!!).load(account.avatar).apply(roundedCorners).into(icon)
-            userId.text = account.acct
+            userId.text = account.unicodeAcct
         }
     }
 
