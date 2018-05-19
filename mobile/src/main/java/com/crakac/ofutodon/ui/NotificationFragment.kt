@@ -24,11 +24,22 @@ class NotificationFragment: MastodonApiFragment<Notification, List<Notification>
         StatusAdapter.unregister(adapter as StatusChangeListener)
     }
     override fun onRefreshSuccess(response: List<Notification>) {
-        insertQuietly(response)
+        insertQuietly(filterEmptyNotification(response))
     }
 
     override fun onLoadMoreSuccess(response: List<Notification>) {
-        adapter.addBottom(response)
+        adapter.addBottom(filterEmptyNotification(response))
+    }
+
+    private fun filterEmptyNotification(notifications: List<Notification>) : List<Notification>{
+        return notifications.filter {
+            when (it.getType()) {
+                Notification.Type.Favourite, Notification.Type.Mention, Notification.Type.ReBlog ->
+                    return@filter it.status != null
+                else ->
+                    return@filter true
+            }
+        }
     }
 
     override fun onRefreshRequest(): Call<List<Notification>>? {

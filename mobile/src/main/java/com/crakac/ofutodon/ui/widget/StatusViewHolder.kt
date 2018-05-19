@@ -70,13 +70,6 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
     }
 
     fun setNotification(notification: Notification) {
-        if (notification.status == null) {
-            itemView.visibility = View.GONE
-            Log.d("Notification", "account:${notification.account?.displayName}, notificationId:${notification.id}")
-            return
-        } else {
-            itemView.visibility = View.VISIBLE
-        }
         setup(notification.status!!)
         enableActionedView(true)
         setupIcons(notification.status!!.account, notification.account!!)
