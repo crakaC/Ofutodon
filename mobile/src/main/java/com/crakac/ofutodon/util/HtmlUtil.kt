@@ -7,9 +7,11 @@ import android.text.Spanned
 import android.text.style.URLSpan
 import android.view.View
 import com.crakac.ofutodon.model.api.entity.Emoji
+import com.crakac.ofutodon.model.api.entity.Mention
 import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.widget.EmojiSpan
 import com.crakac.ofutodon.ui.widget.LinkClickableSpan
+import com.crakac.ofutodon.ui.widget.MensionClickableSpan
 import java.net.IDN
 
 /**
@@ -23,7 +25,7 @@ object HtmlUtil {
         val sb = SpannableStringBuilder(text)
         for (emoji in emojis) {
             val shortCode = ":${emoji.shortCode}:"
-            while(sb.indexOf(shortCode) >= 0){
+            while (sb.indexOf(shortCode) >= 0) {
                 val start = sb.indexOf(shortCode)
                 val end = start + shortCode.length
                 sb.replace(start, end, emoji.shortCode)
@@ -42,18 +44,18 @@ object HtmlUtil {
     }
 
     fun emojify(view: View, status: Status): Spanned {
-        return shrinkLinks(replaceEmoji(view, trimWhiteSpace(Html.fromHtml(status.content)), status.emojis))
+        return shrinkLinks(replaceEmoji(view, trimWhiteSpace(Html.fromHtml(status.content)), status.emojis), status.mentions)
     }
 
-    fun emojify(view: View, content: String, emojis: List<Emoji>): Spanned{
+    fun emojify(view: View, content: String, emojis: List<Emoji>): Spanned {
         return replaceEmoji(view, content, emojis)
     }
 
-    fun fromHtml(text: String): Spanned{
+    fun fromHtml(text: String): Spanned {
         return shrinkLinks(trimWhiteSpace(Html.fromHtml(text)) as Spanned)
     }
 
-    private fun shrinkLinks(spanned: Spanned): Spanned {
+    private fun shrinkLinks(spanned: Spanned, mentions: List<Mention>? = null): Spanned {
         val builder = SpannableStringBuilder(spanned)
         for (span in builder.getSpans(0, builder.length, URLSpan::class.java)) {
             val start = builder.getSpanStart(span)
@@ -78,7 +80,16 @@ object HtmlUtil {
             builder.replace(start, end, text)
             builder.removeSpan(span)
 
-            val clickableSpan = LinkClickableSpan(text.toString(), span.url)
+            val clickableSpan = if (linkText.startsWith('@')) {
+                val mention = mentions?.first { e -> e.url == span.url }
+                if (mention == null) {
+                    LinkClickableSpan(text.toString(), span.url)
+                } else {
+                    MensionClickableSpan(linkText.toString(), span.url, mention.id)
+                }
+            } else {
+                LinkClickableSpan(text.toString(), span.url)
+            }
 
             builder.setSpan(clickableSpan, start, start + text.length, builder.getSpanFlags(span))
         }

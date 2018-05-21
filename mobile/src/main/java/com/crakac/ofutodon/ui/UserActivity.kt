@@ -53,9 +53,16 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     lateinit var account: Account
 
     companion object {
-        val TARGET_ACCOUNT = "account"
+        const val TARGET_ACCOUNT = "account"
+        const val ACCOUNT_ID = "account_id"
+        const val ACTION_WITHOUT_ACCOUNT_INFO = "action_without_account_info"
         fun setUserInfo(intent: Intent, account: Account) {
             intent.putExtra(TARGET_ACCOUNT, Gson().toJson(account))
+        }
+
+        fun setAccountId(intent: Intent, id: Long) {
+            intent.action = UserActivity.ACTION_WITHOUT_ACCOUNT_INFO
+            intent.putExtra(UserActivity.ACCOUNT_ID, id)
         }
     }
 
@@ -99,16 +106,20 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
         appBar.addOnOffsetChangedListener(this)
 
-        account = Gson().fromJson(intent.getStringExtra(TARGET_ACCOUNT), Account::class.java)
-        setupAccountInfo()
+        if (intent.action == ACTION_WITHOUT_ACCOUNT_INFO) {
+            MastodonUtil.api?.getAccount(intent.getLongExtra(ACCOUNT_ID, 0))?.enqueue(object : Callback<Account> {
+                override fun onFailure(call: Call<Account>?, t: Throwable?) {
+                }
 
-        val adapter = MyFragmentPagerAdapter(supportFragmentManager)
-        adapter.add(UserStatusFragment.newInstance(account, getString(R.string.tab_toots)))
-        adapter.add(UserStatusFragment.newInstance(account, getString(R.string.tab_media), onlyMedia = true))
-        pager.adapter = adapter
-
-        val tab = findViewById<TabLayout>(R.id.tab)
-        tab.setupWithViewPager(pager)
+                override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
+                    account = response!!.body()!!
+                    setupAccountInfo()
+                }
+            })
+        } else {
+            account = Gson().fromJson(intent.getStringExtra(TARGET_ACCOUNT), Account::class.java)
+            setupAccountInfo()
+        }
 
         AnimUtils.startAlphaAnimation(titleText, 0, View.INVISIBLE)
     }
@@ -117,7 +128,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         titleText.text = account.dispNameWithEmoji
         userName.text = account.dispNameWithEmoji
         userAcct.text = "@${account.unicodeAcct}"
-        lockIcon.visibility = if(account.locked) View.VISIBLE else View.GONE
+        lockIcon.visibility = if (account.locked) View.VISIBLE else View.GONE
         userDescription.text = HtmlUtil.fromHtml(account.note)
         GlideApp.with(this).load(account.headerStatic).placeholder(R.color.colorPrimaryDark).into(header)
         GlideApp.with(this).load(account.avatar).circleCrop().into(icon)
@@ -136,6 +147,14 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
                         followedText.visibility = if (relationship.followedBy) View.VISIBLE else View.INVISIBLE
                     }
                 })
+        val adapter = MyFragmentPagerAdapter(supportFragmentManager)
+        adapter.add(UserStatusFragment.newInstance(account, getString(R.string.tab_toots)))
+        adapter.add(UserStatusFragment.newInstance(account, getString(R.string.tab_media), onlyMedia = true))
+        pager.adapter = adapter
+
+        val tab = findViewById<TabLayout>(R.id.tab)
+        tab.setupWithViewPager(pager)
+
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout, offset: Int) {
