@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.MastodonUtil
 import com.crakac.ofutodon.model.api.entity.Account
@@ -112,7 +113,12 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
                 }
 
                 override fun onResponse(call: Call<Account>?, response: Response<Account>?) {
-                    account = response!!.body()!!
+                    if(response == null || !response.isSuccessful){
+                        Toast.makeText(this@UserActivity, R.string.something_wrong, Toast.LENGTH_SHORT).show()
+                        finish()
+                        return
+                    }
+                    account = response.body()!!
                     setupAccountInfo()
                 }
             })
@@ -154,7 +160,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
 
         val tab = findViewById<TabLayout>(R.id.tab)
         tab.setupWithViewPager(pager)
-
+        tab.getTabAt(0)!!.text = getString(R.string.tab_toots) + "\n%,d".format(account.statusesCount)
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout, offset: Int) {
@@ -176,7 +182,6 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
                 isTheTitleContainerVisible = true
             }
         }
-
     }
 
     private fun handleToolbarTitleVisibility(percentage: Float) {

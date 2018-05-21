@@ -59,6 +59,7 @@
     <string name="full_user_name">%s@%s</string>
     <string name="add_account">アカウントを追加</string>
 
+    <string name="something_wrong">なにかがおかしいよ</string>
 
     <string name="dummy">xxxxxxxxxxxxx</string>
 </resources>
