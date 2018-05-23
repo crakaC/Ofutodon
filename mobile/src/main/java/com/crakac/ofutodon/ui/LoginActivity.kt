@@ -77,14 +77,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         progress = findViewById(R.id.progress)
-
-        MastodonUtil.existsCurrentAccount { account ->
-            // 既にアカウントが存在している状態で初期画面を開いたらHomeActivityに自動的に遷移する
-            if (account != null && intent.action != ACTION_ADD_ACCOUNT) {
-                MastodonUtil.initialize(account)
-                startHomeActivity()
-            }
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
