@@ -73,7 +73,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val height = MeasureSpec.makeMeasureSpec((MeasureSpec.getSize(widthMeasureSpec) * 9 / 16f + 0.5f).toInt(), MeasureSpec.EXACTLY)
+        val height = MeasureSpec.makeMeasureSpec((MeasureSpec.getSize(widthMeasureSpec) * 9f / 16f + 0.5f).toInt(), MeasureSpec.EXACTLY)
         super.onMeasure(widthMeasureSpec, height)
     }
 
@@ -89,7 +89,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         medias = attachments
         images.forEach { e -> e.visibility = View.GONE }
         attachments.forEachIndexed { index, attachment ->
-            val v = images[index]
+            val v = getImageView(index, attachments.count())
             GlideApp.with(context).asBitmap().load(attachment.previewUrl).centerCrop().listener(object : RequestListener<Bitmap> {
                 override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -126,5 +126,13 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
 
     interface OnClickPreviewListener {
         fun onClick(attachmentIndex: Int) {}
+    }
+
+    private fun getImageView(index: Int, numOfAttachment: Int) : ImageView{
+        return if(numOfAttachment == 3 && index == 2){
+            images[3]
+        } else  {
+            images[index]
+        }
     }
 }
