@@ -51,16 +51,12 @@ class TootService : IntentService("TootService") {
         val replyToId = intent.getLongExtra(C.REPLY_TO_ID, -1)
         val visibility = intent.getStringExtra(C.VISIBILITY)
         val isSensitive = intent.getBooleanExtra(C.IS_SENSITIVE, false)
-        val sb = StringBuilder(text)
         val attachmentFiles = intent.getSerializableExtra(C.ATTACHMENTS) as ArrayList<File>
         val attachments = ArrayList<Attachment>(attachmentFiles.count())
 
         for (file in attachmentFiles) {
-            val attachment = uploadMedia(file)
-            if (attachment != null) {
-                attachments.add(attachment)
-                sb.append(" ")
-                sb.append(attachment.textUrl)
+            uploadMedia(file)?.let {
+                attachments.add(it)
             }
         }
 
@@ -71,7 +67,7 @@ class TootService : IntentService("TootService") {
                         spoilerText = spoilerText,
                         mediaIds = attachments.map { attachment -> attachment.id },
                         isSensitive = isSensitive,
-                        text = sb.toString()
+                        text = text
                 ))?.execute()
     }
 
