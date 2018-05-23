@@ -180,7 +180,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.search) {
+            startActivity(Intent(this, SearchActivity::class.java))
             return true
         }
 

@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 class Results {
     @SerializedName("accounts")
-    val accounts: List<Account>? = null
+    val accounts: List<Account> = emptyList()
     @SerializedName("statuses")
-    val statuses: List<Status>? = null
+    val statuses: List<Status> = emptyList()
     @SerializedName("hashtags")
-    val hashtags: List<String>? = null
+    val hashtags: List<String> = emptyList()
 }
