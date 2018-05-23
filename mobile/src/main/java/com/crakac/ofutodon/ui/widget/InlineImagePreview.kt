@@ -21,7 +21,10 @@ import com.crakac.ofutodon.util.ViewUtil
 
 class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs) {
     private val TAG: String = "InlineImagePreview"
-    val PREVIEW_MAX_NUM = 4
+
+    companion object {
+        private const val PREVIEW_MAX_NUM = 4
+    }
 
     var medias: List<Attachment>? = null
 
@@ -30,10 +33,10 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
     private val leftContainer: LinearLayout
     private val rightContainer: LinearLayout
 
-    val separators: List<@JvmSuppressWildcards View>
-    val hideMediaButton: View
-    val mediaMask: View
-    val cwText: TextView
+    private val separators: List<@JvmSuppressWildcards View>
+    private val hideMediaButton: View
+    private val mediaMask: View
+    private val cwText: TextView
 
     var listener: OnClickPreviewListener? = null
 
@@ -113,7 +116,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         }
     }
 
-    fun onClickPreview(v: View) {
+    private fun onClickPreview(v: View) {
         listener?.run {
             val index = images.indexOf(v)
             onClick(index)
@@ -128,10 +131,10 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         fun onClick(attachmentIndex: Int) {}
     }
 
-    private fun getImageView(index: Int, numOfAttachment: Int) : ImageView{
-        return if(numOfAttachment == 3 && index == 2){
+    private fun getImageView(index: Int, numOfAttachment: Int): ImageView {
+        return if (numOfAttachment == 3 && index == 2) {
             images[3]
-        } else  {
+        } else {
             images[index]
         }
     }
