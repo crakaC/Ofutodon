@@ -42,7 +42,7 @@ class TootService : IntentService("TootService") {
 
         val notifyManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val builder = NotificationCompat.Builder(this, channelId)
-        builder.setSmallIcon(R.drawable.ic_menu_send).setProgress(0, 0, true).setContentText(getString(R.string.sending_toot)).setOngoing(true)
+        builder.setSmallIcon(R.drawable.ic_send).setProgress(0, 0, true).setContentText(getString(R.string.sending_toot)).setOngoing(true)
         startForeground(id, builder.build())
 
         val text = intent.getStringExtra(C.TEXT) ?: ""
