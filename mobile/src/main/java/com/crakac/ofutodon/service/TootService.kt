@@ -23,13 +23,14 @@ class TootService : IntentService("TootService") {
     val TAG: String = "TootService"
     private val channelId = "TootService"
     private val channelName = "toot"
-    private val rand = Random()
+    private val id = 3838
+
     @SuppressLint("NewApi")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // create NotificationChannel for Oreo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
             channel.enableVibration(false)
             manager.createNotificationChannel(channel)
         }
@@ -39,12 +40,10 @@ class TootService : IntentService("TootService") {
     override fun onHandleIntent(intent: Intent?) {
         if (intent == null) return
 
-        val id = rand.nextInt()
         val notifyManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val builder = NotificationCompat.Builder(this, channelId)
         builder.setSmallIcon(R.drawable.ic_menu_send).setProgress(0, 0, true).setContentText(getString(R.string.sending_toot)).setOngoing(true)
         startForeground(id, builder.build())
-
 
         val text = intent.getStringExtra(C.TEXT) ?: ""
         val spoilerText = intent.getStringExtra(C.SPOILER_TEXT)
@@ -60,7 +59,7 @@ class TootService : IntentService("TootService") {
             }
         }
 
-        MastodonUtil.api?.postStatus(
+        val response = MastodonUtil.api?.postStatus(
                 StatusBuilder(
                         replyTo = if (replyToId > 0) replyToId else null,
                         visibility = visibility,
@@ -69,6 +68,14 @@ class TootService : IntentService("TootService") {
                         isSensitive = isSensitive,
                         text = text
                 ))?.execute()
+
+        if(response == null || !response.isSuccessful){
+            val builder = NotificationCompat.Builder(this, channelId)
+            builder.setSmallIcon(R.drawable.ic_clear)
+                    .setProgress(0, 0, false)
+                    .setContentText(getString(R.string.impossible))
+            notifyManager.notify(1818, builder.build())
+        }
     }
 
     private fun uploadMedia(file: File): Attachment? {

@@ -6,7 +6,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">設定</string>
+    <string name="action_search">検索</string>
+
     <string name="oauth_redirect_host" translatable="false">com.crakac.ofutodon</string>
     <string name="oauth_scheme" translatable="false">oauth2redirect</string>
 
@@ -60,6 +62,7 @@
     <string name="add_account">アカウントを追加</string>
 
     <string name="something_wrong">なにかがおかしいよ</string>
+    <string name="impossible">無理でした</string>
 
     <string name="dummy">xxxxxxxxxxxxx</string>
 </resources>
