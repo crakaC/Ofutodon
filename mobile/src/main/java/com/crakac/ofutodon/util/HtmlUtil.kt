@@ -81,7 +81,7 @@ object HtmlUtil {
             builder.removeSpan(span)
 
             val clickableSpan = if (linkText.startsWith('@')) {
-                val mention = mentions?.first { e -> e.url == span.url }
+                val mention = mentions?.firstOrNull{ e -> e.url == span.url }
                 if (mention == null) {
                     LinkClickableSpan(text.toString(), span.url)
                 } else {
