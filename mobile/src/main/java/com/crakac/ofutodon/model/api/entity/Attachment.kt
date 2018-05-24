@@ -7,7 +7,7 @@ import java.io.Serializable
  * Created by Kosuke on 2017/04/29.
  */
 class Attachment : Serializable {
-    enum class Type(val v: String) {
+    enum class Type(val value: String) {
         Image("image"),
         Video("video"),
         Gifv("gifv")
@@ -16,7 +16,7 @@ class Attachment : Serializable {
     @SerializedName("id")
     val id: Long = 0L
     @SerializedName("type")
-    val type: Type = Type.Image
+    val type: String = Type.Image.value
     @SerializedName("url")
     val url: String = ""
     @SerializedName("remote_url")
@@ -25,4 +25,6 @@ class Attachment : Serializable {
     val previewUrl: String = ""
     @SerializedName("text_url")
     val textUrl: String = ""
+
+    fun getType(): Type = Type.values().first { e -> e.value == type }
 }

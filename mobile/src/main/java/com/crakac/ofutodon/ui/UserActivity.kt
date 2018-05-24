@@ -131,8 +131,8 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     }
 
     private fun setupAccountInfo() {
-        titleText.text = account.dispNameWithEmoji
-        userName.text = account.dispNameWithEmoji
+        titleText.text = HtmlUtil.emojify(titleText, account.displayName, account.emojis)
+        userName.text = HtmlUtil.emojify(titleText, account.displayName, account.emojis)
         userAcct.text = "@${account.unicodeAcct}"
         lockIcon.visibility = if (account.locked) View.VISIBLE else View.GONE
         userDescription.text = HtmlUtil.fromHtml(account.note)

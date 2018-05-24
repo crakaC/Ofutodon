@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.TextAppearanceSpan
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -90,7 +89,7 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
 
     private fun setup(status: Status) {
         val sb = SpannableStringBuilder()
-        sb.append(HtmlUtil.emojify(name, status.account.dispNameWithEmoji, status.account.emojis))
+        sb.append(HtmlUtil.emojify(name, status.account.displayName, status.account.emojis))
 
         val start = sb.length
         sb.append(" @${status.account.unicodeAcct}")
@@ -199,13 +198,13 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
     }
 
     private fun setRebloggedText(account: Account) {
-        actionedBy.text = context?.getString(R.string.boosted_by)?.format(account.dispNameWithEmoji)
+        actionedBy.text = context?.getString(R.string.boosted_by)?.format(HtmlUtil.emojify(actionedBy, account.displayName, account.emojis))
         actionedIcon.setImageResource(R.drawable.ic_boost)
         actionedIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.boosted))
     }
 
     private fun setFavoritedText(account: Account) {
-        actionedBy.text = context?.getString(R.string.favourited_by)?.format(account.dispNameWithEmoji)
+        actionedBy.text = context?.getString(R.string.favourited_by)?.format(HtmlUtil.emojify(actionedBy, account.displayName, account.emojis))
         actionedIcon.setImageResource(R.drawable.ic_star)
         actionedIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.favourited))
     }

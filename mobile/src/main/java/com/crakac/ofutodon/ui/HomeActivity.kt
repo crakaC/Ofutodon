@@ -27,6 +27,7 @@ import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
 import com.crakac.ofutodon.ui.adapter.UserAccountAdapter
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.GlideApp
+import com.crakac.ofutodon.util.HtmlUtil
 import com.crakac.ofutodon.util.PrefsUtil
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -137,7 +138,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 GlideApp.with(applicationContext).load(result.avatar).into(avatar)
                 GlideApp.with(applicationContext).load(result.headerStatic).centerCrop().into(header)
                 userName.text = getString(R.string.full_user_name).format(result.username, userAccount?.domain)
-                displayName.text = result.dispNameWithEmoji
+                displayName.text = HtmlUtil.emojify(displayName, result.displayName, result.emojis)
                 userAccount?.let{
                     it.displayName = result.displayName
                     AppDatabase.execute {
