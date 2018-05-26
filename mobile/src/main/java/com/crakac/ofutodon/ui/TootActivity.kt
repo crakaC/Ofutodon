@@ -400,6 +400,7 @@ class TootActivity : AppCompatActivity() {
     private fun clearAttachments() {
         imageAttachmentParent.removeAllViews()
         attachmentUris.clear()
+        attachmentFiles.clear()
         if (isNsfw) {
             toggleNotSafeForWork()
         }
