@@ -1,4 +1,4 @@
-package com.crakac.ofutodon.ui.widget
+package com.crakac.ofutodon.ui
 
 import android.content.Context
 import android.content.Intent
@@ -14,14 +14,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.model.api.entity.Account
-import com.crakac.ofutodon.model.api.entity.Tag
-import com.crakac.ofutodon.ui.SearchActivity
-import com.crakac.ofutodon.ui.UserActivity
+import com.crakac.ofutodon.ui.widget.FastScrollLinearLayoutManager
 import com.crakac.ofutodon.util.GlideApp
 import com.crakac.ofutodon.util.HtmlUtil
 
 class ReplacableListFragment : Fragment() {
     lateinit var recyclerView: RecyclerView
+    private var adapter: ReplacableAdapter<*, *>? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_simple_list, null)
         recyclerView = v.findViewById(R.id.recyclerView)
@@ -31,22 +30,22 @@ class ReplacableListFragment : Fragment() {
             setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
         }
         recyclerView.addItemDecoration(divider)
+        recyclerView.adapter = adapter
         return v
     }
 
     fun setAdapter(adapter: ReplacableAdapter<*, *>) {
-        recyclerView.adapter = adapter
+        this.adapter = adapter
     }
 
     abstract class ReplacableAdapter<T, H : RecyclerView.ViewHolder>(context: Context): RecyclerView.Adapter<H>(){
-        private val items = ArrayList<T>()
+        private var items: List<T> = emptyList()
         protected val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         override fun getItemCount(): Int = items.count()
         fun getItem(position: Int): T = items[position]
-        fun addBottom(newItems: Collection<T>){
-            val oldSize = itemCount
-            items.addAll(newItems)
-            notifyItemRangeInserted(oldSize, newItems.size)
+        fun set(newItems: List<T>){
+            items = newItems
+            notifyDataSetChanged()
         }
     }
 
@@ -66,9 +65,9 @@ class ReplacableListFragment : Fragment() {
         }
     }
 
-    class HashtagAdapter(context: Context) : ReplacableAdapter<Tag, HashtagViewHolder>(context) {
+    class HashtagAdapter(context: Context) : ReplacableAdapter<String, HashtagViewHolder>(context) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HashtagViewHolder {
-            return HashtagViewHolder(inflater.inflate(R.layout.list_item_account_searched, null))
+            return HashtagViewHolder(inflater.inflate(R.layout.list_item_hashtag_searched, null))
         }
 
         override fun onBindViewHolder(holder: HashtagViewHolder, position: Int) {
@@ -94,8 +93,8 @@ class ReplacableListFragment : Fragment() {
 
     class HashtagViewHolder(v: View) : RecyclerView.ViewHolder(v){
         var tag: TextView = v.findViewById(R.id.tag)
-        fun set(tag: Tag){
-            this.tag.text = "#${tag.name}"
+        fun set(tag: String){
+            this.tag.text = "#$tag"
         }
     }
 }

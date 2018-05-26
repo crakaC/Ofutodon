@@ -52,6 +52,8 @@
     <string name="you_are_followed">フォローされています</string>
     <string name="detail">詳細</string>
     <string name="notification">通知</string>
+    <string name="account">アカウント</string>
+    <string name="tag">タグ</string>
 
     <string name="tab_toots">投稿</string>
     <string name="tab_media">メディア</string>
