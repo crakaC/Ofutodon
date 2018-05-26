@@ -1,15 +1,11 @@
 package com.crakac.ofutodon.ui.adapter
 
-import android.app.Activity
 import android.support.v7.widget.RecyclerView
 import com.crakac.ofutodon.model.api.entity.Identifiable
-import java.lang.ref.WeakReference
 import java.util.TreeSet
 import kotlin.collections.ArrayList
 
-abstract class RefreshableAdapter<T : Identifiable>(context: Activity) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val contextRef = WeakReference(context)
-    val context get() = contextRef.get()
+abstract class RefreshableAdapter<T : Identifiable> : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val items = ArrayList<T>()
     private val ids = TreeSet<Long>()
 
@@ -78,7 +74,7 @@ abstract class RefreshableAdapter<T : Identifiable>(context: Activity) : Recycle
 
     override fun getItemCount(): Int = items.size
 
-    interface Refreshable{
-        fun refresh(){}
+    interface Refreshable {
+        fun refresh() {}
     }
 }

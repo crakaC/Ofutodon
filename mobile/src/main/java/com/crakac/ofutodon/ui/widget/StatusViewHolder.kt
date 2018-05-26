@@ -1,6 +1,5 @@
 package com.crakac.ofutodon.ui.widget
 
-import android.app.Activity
 import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
@@ -21,11 +20,9 @@ import com.crakac.ofutodon.model.api.entity.Status
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.util.HtmlUtil
 import com.crakac.ofutodon.util.TextUtil
-import java.lang.ref.WeakReference
 
-class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v), RefreshableAdapter.Refreshable {
-    val contextRef = WeakReference(context)
-    val context get() = contextRef.get()
+class StatusViewHolder(v: View) : RecyclerView.ViewHolder(v), RefreshableAdapter.Refreshable {
+    val context get() = itemView.context
     val roundedCorners = RequestOptions().transform(RoundedCorners(8))
     val actionedBy: TextView = v.findViewById(R.id.actioned_text)
     val actionedByIcon: ImageView = v.findViewById(R.id.actioned_by_icon)
@@ -100,7 +97,7 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
             status.spannedContent = HtmlUtil.emojify(content, status)
         }
         content.text = status.spannedContent
-        Glide.with(context!!)
+        Glide.with(context)
                 .load(status.account.avatar)
                 .apply(roundedCorners)
                 .into(icon)
@@ -113,13 +110,13 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
         }
 
         if (status.isReblogged) {
-            boost.setColorFilter(ContextCompat.getColor(context!!, R.color.boosted))
+            boost.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
         } else {
             boost.clearColorFilter()
         }
 
         if (status.isFavourited) {
-            favorite.setColorFilter(ContextCompat.getColor(context!!, R.color.favourited))
+            favorite.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
         } else {
             favorite.clearColorFilter()
         }
@@ -168,11 +165,11 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
     }
 
     private fun setupIcons(originalAccount: Account, actionedAccount: Account) {
-        Glide.with(context!!)
+        Glide.with(context.applicationContext)
                 .load(actionedAccount.avatar)
                 .apply(roundedCorners)
                 .into(actionedByIcon)
-        Glide.with(context!!)
+        Glide.with(context.applicationContext)
                 .load(originalAccount.avatar)
                 .apply(roundedCorners)
                 .into(originalIcon)
@@ -184,10 +181,10 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
             spoilerText.text = status.spoilerText
             readMore.visibility = View.VISIBLE
             if (status.hasExpanded) {
-                readMore.text = context?.getString(R.string.hide)
+                readMore.text = context.getString(R.string.hide)
                 content.visibility = View.VISIBLE
             } else {
-                readMore.text = context?.getString(R.string.read_more)
+                readMore.text = context.getString(R.string.read_more)
                 content.visibility = View.GONE
             }
         } else {
@@ -198,15 +195,15 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
     }
 
     private fun setRebloggedText(account: Account) {
-        actionedBy.text = context?.getString(R.string.boosted_by)?.format(HtmlUtil.emojify(actionedBy, account.displayName, account.emojis))
+        actionedBy.text = context.getString(R.string.boosted_by)?.format(HtmlUtil.emojify(actionedBy, account.displayName, account.emojis))
         actionedIcon.setImageResource(R.drawable.ic_boost)
-        actionedIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.boosted))
+        actionedIcon.setColorFilter(ContextCompat.getColor(context, R.color.boosted))
     }
 
     private fun setFavoritedText(account: Account) {
-        actionedBy.text = context?.getString(R.string.favourited_by)?.format(HtmlUtil.emojify(actionedBy, account.displayName, account.emojis))
+        actionedBy.text = context.getString(R.string.favourited_by)?.format(HtmlUtil.emojify(actionedBy, account.displayName, account.emojis))
         actionedIcon.setImageResource(R.drawable.ic_star)
-        actionedIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.favourited))
+        actionedIcon.setColorFilter(ContextCompat.getColor(context, R.color.favourited))
     }
 
     private fun clearFilter() {
@@ -216,8 +213,8 @@ class StatusViewHolder(context: Activity, v: View) : RecyclerView.ViewHolder(v),
     }
 
     private fun setFilter() {
-        originalIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
-        actionedByIcon.setColorFilter(ContextCompat.getColor(context!!, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
+        originalIcon.setColorFilter(ContextCompat.getColor(context, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
+        actionedByIcon.setColorFilter(ContextCompat.getColor(context, R.color.notification_icon_mask), PorterDuff.Mode.SRC_ATOP)
         for (v in arrayOf(content, statusActions, createdAt, spoilerText, readMore, name)) {
             v.alpha = 0.625f
         }

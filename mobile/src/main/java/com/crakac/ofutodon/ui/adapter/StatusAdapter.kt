@@ -1,6 +1,5 @@
 package com.crakac.ofutodon.ui.adapter
 
-import android.app.Activity
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -13,7 +12,7 @@ import com.crakac.ofutodon.ui.widget.OnClickStatusListener
 import com.crakac.ofutodon.ui.widget.StatusViewHolder
 
 
-class StatusAdapter(context: Activity, val showBottomLoading: Boolean = true) : RefreshableAdapter<Status>(context), StatusChangeListener{
+class StatusAdapter(val showBottomLoading: Boolean = true) : RefreshableAdapter<Status>(), StatusChangeListener{
     companion object {
         private val statusChangeListeners = ArrayList<StatusChangeListener>()
         fun register(adapter: StatusChangeListener){
@@ -63,9 +62,9 @@ class StatusAdapter(context: Activity, val showBottomLoading: Boolean = true) : 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == HolderType.Footer.rawValue) {
-            return FooterViewHolder(View.inflate(context, R.layout.footer, null))
+            return FooterViewHolder(View.inflate(parent.context, R.layout.footer, null))
         }
-        return StatusViewHolder(context!!, View.inflate(context, R.layout.status, null)).apply {
+        return StatusViewHolder(View.inflate(parent.context, R.layout.status, null)).apply {
             itemView.setOnClickListener { statusListener?.onItemClicked(getItem(adapterPosition)) }
             icon.setOnClickListener { v ->
                 statusListener?.onIconClicked(v as ImageView, getItem(adapterPosition))

@@ -6,7 +6,7 @@ import com.crakac.ofutodon.model.api.entity.Attachment
 import com.crakac.ofutodon.util.GlideApp
 import com.github.chrisbanes.photoview.PhotoView
 
-class AttachmentPreviewAdapter(val attachments: List<Attachment>) : PreviewAdapter(){
+class AttachmentPreviewAdapter(val attachments: List<Attachment>) : PreviewAdapter() {
     val TAG: String = "AttachmentPreview"
 
     override fun getCount(): Int {

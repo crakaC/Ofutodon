@@ -1,7 +1,5 @@
 package com.crakac.ofutodon.ui.adapter
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
@@ -20,16 +18,15 @@ import com.crakac.ofutodon.ui.widget.OnClickStatusListener
 import com.crakac.ofutodon.ui.widget.StatusViewHolder
 import com.crakac.ofutodon.util.GlideApp
 import com.crakac.ofutodon.util.HtmlUtil
-import java.lang.ref.WeakReference
 
-class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(context), StatusChangeListener {
+class NotificationAdapter : RefreshableAdapter<Notification>(), StatusChangeListener {
 
     var statusListener: OnClickStatusListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             NotificationType.Mention.value, NotificationType.Favourite.value, NotificationType.Reblog.value -> {
-                StatusViewHolder(context!!, View.inflate(context, R.layout.status, null)).apply {
+                StatusViewHolder(View.inflate(parent.context, R.layout.status, null)).apply {
                     itemView.setOnClickListener { statusListener?.onItemClicked(getItem(adapterPosition).status!!) }
                     icon.setOnClickListener { v ->
                         statusListener?.onIconClicked(v as ImageView, getItem(adapterPosition).status!!)
@@ -44,7 +41,7 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
                         statusListener?.onFavoriteClicked(favorite, getItem(adapterPosition).status!!)
                     }
                     more.setOnClickListener { _ ->
-                        val popup = PopupMenu(context!!, more)
+                        val popup = PopupMenu(context, more)
                         popup.inflate(R.menu.status_popup)
                         popup.setOnMenuItemClickListener { item ->
                             val menuItemId = item.itemId
@@ -67,17 +64,17 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
                 }
             }
             NotificationType.Follow.value -> {
-                FollowedNotificationViewHolder(context!!, View.inflate(context, R.layout.followed_notification, null)).apply {
+                FollowedNotificationViewHolder(View.inflate(parent.context, R.layout.followed_notification, null)).apply {
                     itemView.setOnClickListener { _ ->
                         val account = getItem(adapterPosition).account!!
-                        val intent = Intent(context, UserActivity::class.java)
+                        val intent = Intent(parent.context, UserActivity::class.java)
                         UserActivity.setUserInfo(intent, account)
-                        context?.startActivity(intent)
+                        parent.context.startActivity(intent)
                     }
                 }
             }
             else -> {
-                StatusAdapter.FooterViewHolder(View.inflate(context, R.layout.footer, null))
+                StatusAdapter.FooterViewHolder(View.inflate(parent.context, R.layout.footer, null))
             }
         }
     }
@@ -115,9 +112,8 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
         Follow(4)
     }
 
-    class FollowedNotificationViewHolder(context: Context, v: View) : RecyclerView.ViewHolder(v), Refreshable {
-        val contextRef = WeakReference(context)
-        val context get() = contextRef.get()
+    class FollowedNotificationViewHolder(v: View) : RecyclerView.ViewHolder(v), Refreshable {
+        val context get() = itemView.context
         val roundedCorners = RequestOptions().transform(RoundedCorners(8))
         val followedBy: TextView = v.findViewById(R.id.followed_by)
         val name: TextView = v.findViewById(R.id.display_name)
@@ -126,10 +122,10 @@ class NotificationAdapter(context: Activity) : RefreshableAdapter<Notification>(
 
         fun setNotification(notification: Notification) {
             val account = notification.account!!
-            val nameWithEmoij = HtmlUtil.emojify(followedBy, context!!.getString(R.string.followed_by).format(account.displayName), account.emojis)
+            val nameWithEmoij = HtmlUtil.emojify(followedBy, context.getString(R.string.followed_by).format(account.displayName), account.emojis)
             followedBy.text = nameWithEmoij
             name.text = nameWithEmoij
-            GlideApp.with(context!!).load(account.avatar).apply(roundedCorners).into(icon)
+            GlideApp.with(context.applicationContext).load(account.avatar).apply(roundedCorners).into(icon)
             userId.text = account.unicodeAcct
         }
     }

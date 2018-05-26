@@ -9,7 +9,7 @@ import com.crakac.ofutodon.ui.adapter.StatusAdapter
  */
 abstract class StatusFragment<T> : MastodonApiFragment<Status, T>() {
     override fun createAdapter(): RefreshableAdapter<Status> {
-        val adapter = StatusAdapter(requireActivity())
+        val adapter = StatusAdapter()
         adapter.statusListener = StatusClickListener(requireActivity())
         StatusAdapter.register(adapter)
         return adapter

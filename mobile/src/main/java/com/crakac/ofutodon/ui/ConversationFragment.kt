@@ -37,7 +37,7 @@ class ConversationFragment : MastodonApiFragment<Status, ConversationContext>() 
     }
 
     override fun createAdapter(): RefreshableAdapter<Status> {
-        val adapter = StatusAdapter(requireActivity(), false)
+        val adapter = StatusAdapter(false)
         StatusAdapter.register(adapter)
         adapter.statusListener = StatusClickListener(requireActivity())
         return adapter

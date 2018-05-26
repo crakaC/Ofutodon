@@ -93,7 +93,7 @@ class InlineImagePreview(context: Context, attrs: AttributeSet) : RelativeLayout
         images.forEach { e -> e.visibility = View.GONE }
         attachments.forEachIndexed { index, attachment ->
             val v = getImageView(index, attachments.count())
-            GlideApp.with(context).asBitmap().load(attachment.previewUrl).centerCrop().listener(object : RequestListener<Bitmap> {
+            GlideApp.with(context.applicationContext).asBitmap().load(attachment.previewUrl).centerCrop().listener(object : RequestListener<Bitmap> {
                 override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         val bitmap = resource ?: return false

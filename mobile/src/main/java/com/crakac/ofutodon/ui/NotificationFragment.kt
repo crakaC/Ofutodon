@@ -12,7 +12,7 @@ class NotificationFragment: MastodonApiFragment<Notification, List<Notification>
     override fun getTitle() = "通知"
 
     override fun createAdapter(): RefreshableAdapter<Notification> {
-        val adapter = NotificationAdapter(requireActivity())
+        val adapter = NotificationAdapter()
         StatusAdapter.register(adapter)
         adapter.statusListener = StatusClickListener(requireActivity())
         return adapter
