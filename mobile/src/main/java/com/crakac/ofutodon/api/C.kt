@@ -10,7 +10,6 @@ object C {
     const val CLIENT_ID: String = "client_id"
     const val CLIENT_SECRET: String = "client_secret"
     const val CREDENTIAL_ID: String = "credential_id"
-    const val ACCESS_TOKEN: String = "access_token"
     const val REDIRECT_URI: String = "redirect_uri"
     const val RESPONSE_TYPE: String = "response_type"
     const val SCOPE: String = "scope"
