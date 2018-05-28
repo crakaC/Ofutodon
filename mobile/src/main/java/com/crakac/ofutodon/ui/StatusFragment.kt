@@ -1,6 +1,6 @@
 package com.crakac.ofutodon.ui
 
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.ui.adapter.StatusAdapter
 

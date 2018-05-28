@@ -14,9 +14,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.entity.Account
-import com.crakac.ofutodon.model.api.entity.Notification
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Account
+import com.crakac.ofutodon.api.entity.Notification
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.util.HtmlUtil
 import com.crakac.ofutodon.util.TextUtil

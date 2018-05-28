@@ -1,8 +1,8 @@
 package com.crakac.ofutodon.methods
 
 import com.crakac.ofutodon.BuildConfig
-import com.crakac.ofutodon.model.api.entity.Status
-import com.crakac.ofutodon.model.api.entity.StatusBuilder
+import com.crakac.ofutodon.api.entity.Status
+import com.crakac.ofutodon.api.entity.StatusBuilder
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

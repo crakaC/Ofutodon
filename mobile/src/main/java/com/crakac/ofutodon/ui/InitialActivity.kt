@@ -3,7 +3,7 @@ package com.crakac.ofutodon.ui
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.crakac.ofutodon.model.api.MastodonUtil
+import com.crakac.ofutodon.api.MastodonUtil
 
 class InitialActivity: AppCompatActivity() {
     val TAG: String = "InitialActivity"

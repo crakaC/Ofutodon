@@ -1,9 +1,9 @@
 package com.crakac.ofutodon.methods
 
 import com.crakac.ofutodon.BuildConfig
-import com.crakac.ofutodon.model.api.Link
-import com.crakac.ofutodon.model.api.Pageable
-import com.crakac.ofutodon.model.api.entity.AccountCredentials
+import com.crakac.ofutodon.api.Link
+import com.crakac.ofutodon.api.Pageable
+import com.crakac.ofutodon.api.entity.AccountCredentials
 import org.junit.Assert
 import org.junit.Test
 

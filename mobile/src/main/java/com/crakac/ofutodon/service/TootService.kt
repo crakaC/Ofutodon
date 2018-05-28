@@ -9,9 +9,9 @@ import android.content.Intent
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.Attachment
-import com.crakac.ofutodon.model.api.entity.StatusBuilder
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.Attachment
+import com.crakac.ofutodon.api.entity.StatusBuilder
 import com.crakac.ofutodon.util.C
 import okhttp3.MediaType
 import okhttp3.MultipartBody

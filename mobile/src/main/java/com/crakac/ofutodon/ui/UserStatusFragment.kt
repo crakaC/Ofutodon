@@ -1,9 +1,9 @@
 package com.crakac.ofutodon.ui
 
 import android.os.Bundle
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.Account
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.Account
+import com.crakac.ofutodon.api.entity.Status
 import retrofit2.Call
 
 class UserStatusFragment : TimelineFragment() {

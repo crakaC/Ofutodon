@@ -17,11 +17,11 @@ import android.widget.ProgressBar
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.db.AppDatabase
 import com.crakac.ofutodon.db.User
-import com.crakac.ofutodon.model.api.MastodonCallback
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.AccessToken
-import com.crakac.ofutodon.model.api.entity.Account
-import com.crakac.ofutodon.model.api.entity.AppCredentials
+import com.crakac.ofutodon.api.MastodonCallback
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.AccessToken
+import com.crakac.ofutodon.api.entity.Account
+import com.crakac.ofutodon.api.entity.AppCredentials
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.PrefsUtil
 import retrofit2.Call

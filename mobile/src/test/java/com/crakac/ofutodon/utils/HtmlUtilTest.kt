@@ -1,6 +1,6 @@
 package com.crakac.ofutodon.utils
 
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Status
 import com.google.gson.Gson
 import org.junit.Assert
 import org.junit.Test

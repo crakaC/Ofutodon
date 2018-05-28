@@ -1,8 +1,8 @@
 package com.crakac.ofutodon.methods
 
 import com.crakac.ofutodon.BuildConfig
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.Range
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Range
 
 abstract class MastodonMethodTestBase {
     val rangeLong = Range(Long.MAX_VALUE, 0, 10)

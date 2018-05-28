@@ -6,8 +6,8 @@ import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.widget.ImageView
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.StatusAdapter
 import com.crakac.ofutodon.ui.widget.OnClickStatusListener

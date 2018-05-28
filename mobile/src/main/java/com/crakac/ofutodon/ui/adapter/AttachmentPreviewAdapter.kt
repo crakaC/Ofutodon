@@ -2,7 +2,7 @@ package com.crakac.ofutodon.ui.adapter
 
 import android.util.Log
 import android.widget.ProgressBar
-import com.crakac.ofutodon.model.api.entity.Attachment
+import com.crakac.ofutodon.api.entity.Attachment
 import com.crakac.ofutodon.util.GlideApp
 import com.github.chrisbanes.photoview.PhotoView
 

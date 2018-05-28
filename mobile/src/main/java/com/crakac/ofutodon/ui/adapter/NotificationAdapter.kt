@@ -10,8 +10,8 @@ import android.widget.TextView
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.entity.Notification
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Notification
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.ui.UserActivity
 import com.crakac.ofutodon.ui.widget.InlineImagePreview
 import com.crakac.ofutodon.ui.widget.OnClickStatusListener

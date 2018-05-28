@@ -1,7 +1,7 @@
 package com.crakac.ofutodon.ui.adapter
 
 import android.support.v7.widget.RecyclerView
-import com.crakac.ofutodon.model.api.entity.Identifiable
+import com.crakac.ofutodon.api.entity.Identifiable
 import java.util.TreeSet
 import kotlin.collections.ArrayList
 

@@ -36,7 +36,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.service.TootService
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.util.*

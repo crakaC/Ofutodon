@@ -6,9 +6,9 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.URLSpan
 import android.view.View
-import com.crakac.ofutodon.model.api.entity.Emoji
-import com.crakac.ofutodon.model.api.entity.Mention
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Emoji
+import com.crakac.ofutodon.api.entity.Mention
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.ui.widget.EmojiSpan
 import com.crakac.ofutodon.ui.widget.LinkClickableSpan
 import com.crakac.ofutodon.ui.widget.MensionClickableSpan

@@ -1,6 +1,6 @@
 package com.crakac.ofutodon.ui.adapter
 
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Status
 
 interface StatusChangeListener {
     fun onUpdate(status: Status){}

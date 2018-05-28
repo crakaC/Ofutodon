@@ -10,9 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.Link
-import com.crakac.ofutodon.model.api.Range
-import com.crakac.ofutodon.model.api.entity.Identifiable
+import com.crakac.ofutodon.api.Link
+import com.crakac.ofutodon.api.Range
+import com.crakac.ofutodon.api.entity.Identifiable
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.ui.widget.FastScrollLinearLayoutManager
 import com.crakac.ofutodon.ui.widget.SwipeRefreshListView

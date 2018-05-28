@@ -1,9 +1,9 @@
 package com.crakac.ofutodon.methods
 
 import com.crakac.ofutodon.BuildConfig
-import com.crakac.ofutodon.model.api.entity.Notification
-import com.crakac.ofutodon.model.api.entity.Status
-import com.crakac.ofutodon.model.api.entity.StreamingContent
+import com.crakac.ofutodon.api.entity.Notification
+import com.crakac.ofutodon.api.entity.Status
+import com.crakac.ofutodon.api.entity.StreamingContent
 import com.google.gson.GsonBuilder
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor

@@ -2,9 +2,9 @@ package com.crakac.ofutodon.ui
 
 import android.os.Bundle
 import android.view.View
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.ConversationContext
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.ConversationContext
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.ui.adapter.StatusAdapter
 import com.google.gson.Gson

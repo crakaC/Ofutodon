@@ -15,9 +15,9 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.Account
-import com.crakac.ofutodon.model.api.entity.Relationship
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.Account
+import com.crakac.ofutodon.api.entity.Relationship
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
 import com.crakac.ofutodon.ui.widget.ContentMovementMethod
 import com.crakac.ofutodon.ui.widget.FollowButton

@@ -19,9 +19,9 @@ import android.widget.TextView
 import com.crakac.ofutodon.R
 import com.crakac.ofutodon.db.AppDatabase
 import com.crakac.ofutodon.db.User
-import com.crakac.ofutodon.model.api.MastodonCallback
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.Account
+import com.crakac.ofutodon.api.MastodonCallback
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
 import com.crakac.ofutodon.ui.adapter.UserAccountAdapter

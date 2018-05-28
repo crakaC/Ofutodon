@@ -9,8 +9,8 @@ import android.view.Menu
 import android.view.View
 import android.widget.SearchView
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.Results
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.Results
 import com.crakac.ofutodon.ui.adapter.SimplePagerAdapter
 import retrofit2.Call
 import retrofit2.Callback

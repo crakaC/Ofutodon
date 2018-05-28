@@ -8,7 +8,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.crakac.ofutodon.model.api.entity.Emoji
+import com.crakac.ofutodon.api.entity.Emoji
 
 class EmojiSpan(val view: View, val emoji: Emoji) : ReplacementSpan() {
     val SCALE_RATIO = 1.2f

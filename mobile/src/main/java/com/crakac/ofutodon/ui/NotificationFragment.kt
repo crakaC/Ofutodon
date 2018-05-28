@@ -1,7 +1,7 @@
 package com.crakac.ofutodon.ui
 
-import com.crakac.ofutodon.model.api.MastodonUtil
-import com.crakac.ofutodon.model.api.entity.Notification
+import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.entity.Notification
 import com.crakac.ofutodon.ui.adapter.NotificationAdapter
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
 import com.crakac.ofutodon.ui.adapter.StatusAdapter

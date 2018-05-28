@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.entity.Account
+import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.ui.widget.FastScrollLinearLayoutManager
 import com.crakac.ofutodon.util.GlideApp
 import com.crakac.ofutodon.util.HtmlUtil

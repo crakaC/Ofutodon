@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.model.api.entity.Status
+import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.ui.widget.InlineImagePreview
 import com.crakac.ofutodon.ui.widget.OnClickStatusListener
 import com.crakac.ofutodon.ui.widget.StatusViewHolder
