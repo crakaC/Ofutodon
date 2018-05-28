@@ -2,7 +2,6 @@ package com.crakac.ofutodon.db
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.emojione.Emojione
 
 @Entity(tableName = "user")
 data class User(
@@ -14,6 +13,4 @@ data class User(
         var displayName: String = "",
         var domain: String = "",
         var token: String = ""
-) {
-    fun getDisplayNameWithEmoji() = Emojione.shortnameToUnicode(displayName)
-}
+)

@@ -131,7 +131,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val userName = findViewById<TextView>(R.id.user_name)
         val displayName = findViewById<TextView>(R.id.display_name)
         val userAccount = Mastodon.api.userAccount
-        displayName.text = userAccount?.getDisplayNameWithEmoji()
+        displayName.text = userAccount?.displayName
         userName.text = getString(R.string.full_user_name).format(userAccount?.name, userAccount?.domain)
         Mastodon.api.getCurrentAccount().enqueue(object : MastodonCallback<Account> {
             override fun onSuccess(result: Account) {
