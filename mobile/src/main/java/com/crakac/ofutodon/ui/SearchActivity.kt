@@ -70,11 +70,10 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean{
-                if (newText == null) return false
-                if (newText.isEmpty()){
+                if (newText == null || newText.isEmpty()) {
                     accountAdapter.set(emptyList())
                     hashtagAdapter.set(emptyList())
-                    return true
+                    return false
                 }
                 MastodonUtil.api?.search(newText, newText.contains('@'))?.enqueue(
                         object : Callback<Results> {
