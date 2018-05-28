@@ -15,13 +15,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.db.AppDatabase
-import com.crakac.ofutodon.db.User
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.MastodonCallback
 import com.crakac.ofutodon.api.MastodonUtil
 import com.crakac.ofutodon.api.entity.AccessToken
 import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.api.entity.AppCredentials
+import com.crakac.ofutodon.db.AppDatabase
+import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.util.C
 import com.crakac.ofutodon.util.PrefsUtil
 import retrofit2.Call
@@ -126,7 +127,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun onFetchAccessTokenSuccess(domain: String, accessToken: String) {
         //verify credentials
-        MastodonUtil.api(domain, accessToken).getCurrentAccount().enqueue(object : MastodonCallback<Account> {
+        Mastodon.initialize(domain, accessToken).getCurrentAccount().enqueue(object : MastodonCallback<Account> {
             override fun onSuccess(result: Account) {
                 val user = User(name = result.username,
                         displayName = result.displayName,
@@ -145,7 +146,7 @@ class LoginActivity : AppCompatActivity() {
                     val newUser = AppDatabase.instance.userDao().select(user.userId, user.domain)!!
                     PrefsUtil.putInt(C.CURRENT_USER_ID, newUser.id)
                     AppDatabase.uiThread {
-                        MastodonUtil.initialize(newUser)
+                        Mastodon.initialize(newUser)
                         startHomeActivity()
                     }
                 }

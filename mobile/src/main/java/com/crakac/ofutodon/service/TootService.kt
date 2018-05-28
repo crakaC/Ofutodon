@@ -9,7 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.entity.Attachment
 import com.crakac.ofutodon.api.entity.StatusBuilder
 import com.crakac.ofutodon.util.C
@@ -59,7 +59,7 @@ class TootService : IntentService("TootService") {
             }
         }
 
-        val response = MastodonUtil.api?.postStatus(
+        val response = Mastodon.api.postStatus(
                 StatusBuilder(
                         replyTo = if (replyToId > 0) replyToId else null,
                         visibility = visibility,
@@ -82,7 +82,7 @@ class TootService : IntentService("TootService") {
         val byteArray = file.readBytes()
         val attachment = RequestBody.create(MediaType.parse("image/*"), byteArray)
         val body = MultipartBody.Part.createFormData("file", "media_attachment", attachment)
-        val response = MastodonUtil.api?.uploadMediaAttachment(body)?.execute()
+        val response = Mastodon.api.uploadMediaAttachment(body)?.execute()
         return if (response != null && response.isSuccessful) {
             response.body()!!
         } else null

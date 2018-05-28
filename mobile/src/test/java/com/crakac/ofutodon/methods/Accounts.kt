@@ -85,11 +85,11 @@ class Accounts : MastodonMethodTestBase(){
     @Test
     fun follow(){
         run {
-            val r = api.follow(35079).execute()
+            val r = initialize.follow(35079).execute()
             Assert.assertTrue(r.isSuccessful)
         }
         run{
-            val r = api.unfollow(35079).execute()
+            val r = initialize.unfollow(35079).execute()
             Assert.assertTrue(r.isSuccessful)
         }
     }
@@ -97,11 +97,11 @@ class Accounts : MastodonMethodTestBase(){
     @Test
     fun block(){
         run {
-            val r = api.block(35079).execute()
+            val r = initialize.block(35079).execute()
             Assert.assertTrue(r.isSuccessful)
         }
         run{
-            val r = api.unblock(35079).execute()
+            val r = initialize.unblock(35079).execute()
             Assert.assertTrue(r.isSuccessful)
         }
     }
@@ -109,11 +109,11 @@ class Accounts : MastodonMethodTestBase(){
     @Test
     fun mute(){
         run {
-            val r = api.mute(35079).execute()
+            val r = initialize.mute(35079).execute()
             Assert.assertTrue(r.isSuccessful)
         }
         run{
-            val r = api.unmute(35079).execute()
+            val r = initialize.unmute(35079).execute()
             Assert.assertTrue(r.isSuccessful)
         }
     }

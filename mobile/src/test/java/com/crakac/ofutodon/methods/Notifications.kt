@@ -50,7 +50,7 @@ class Notifications : MastodonMethodTestBase() {
 
 //    @Test
 //    fun clear(){
-//        val r = api.clearNotification().execute()
+//        val r = initialize.clearNotification().execute()
 //        Assert.assertTrue(r.isSuccessful)
 //    }
 }

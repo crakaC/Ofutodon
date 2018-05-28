@@ -6,7 +6,7 @@ import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.widget.ImageView
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.StatusAdapter
@@ -78,10 +78,10 @@ open class StatusClickListener(context: Activity) : OnClickStatusListener {
         }
 
         if (status.isBoosted) {
-            MastodonUtil.api?.unreblogStatus(status.originalId)?.enqueue(onResponse)
+            Mastodon.api.unreblogStatus(status.originalId).enqueue(onResponse)
             icon.clearColorFilter()
         } else {
-            MastodonUtil.api?.reblogStatus(status.originalId)?.enqueue(onResponse)
+            Mastodon.api.reblogStatus(status.originalId).enqueue(onResponse)
             icon.setColorFilter(ContextCompat.getColor(context!!, R.color.boosted))
         }
     }
@@ -116,16 +116,16 @@ open class StatusClickListener(context: Activity) : OnClickStatusListener {
             }
         }
         if (status.isFaved) {
-            MastodonUtil.api?.unfavouriteStatus(status.originalId)?.enqueue(onResponse)
+            Mastodon.api.unfavouriteStatus(status.originalId).enqueue(onResponse)
             icon.clearColorFilter()
         } else {
-            MastodonUtil.api?.favouriteStatus(status.originalId)?.enqueue(onResponse)
+            Mastodon.api.favouriteStatus(status.originalId).enqueue(onResponse)
             icon.setColorFilter(ContextCompat.getColor(context!!, R.color.favourited))
         }
     }
 
     override fun onMenuClicked(status: Status, menuId: Int) {
-        MastodonUtil.api?.run {
+        Mastodon.api.run {
 
         }
     }

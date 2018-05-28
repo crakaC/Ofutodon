@@ -19,7 +19,7 @@ class StreamingTest {
     fun streamingPublicTimeline() {
         val lock = CountDownLatch(10)
         val request = Request.Builder()
-                .url("ws://localhost/api/v1/streaming/?access_token=${BuildConfig.LOCAL_TOKEN}&stream=public:local")
+                .url("ws://localhost/initialize/v1/streaming/?access_token=${BuildConfig.LOCAL_TOKEN}&stream=public:local")
                 .build()
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BODY

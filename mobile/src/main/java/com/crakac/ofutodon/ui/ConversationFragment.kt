@@ -2,7 +2,7 @@ package com.crakac.ofutodon.ui
 
 import android.os.Bundle
 import android.view.View
-import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.entity.ConversationContext
 import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
@@ -11,6 +11,7 @@ import com.google.gson.Gson
 import retrofit2.Call
 
 class ConversationFragment : MastodonApiFragment<Status, ConversationContext>() {
+
     companion object {
         val STATUS_ID = "status_id"
         val STATUS = "status"
@@ -54,7 +55,7 @@ class ConversationFragment : MastodonApiFragment<Status, ConversationContext>() 
         (adapter as StatusAdapter).statusListener = null
     }
 
-    override fun onRefreshRequest(): Call<ConversationContext>? = MastodonUtil.api?.getStatusContext(statusId)
+    override fun onRefreshRequest(): Call<ConversationContext> = Mastodon.api.getStatusContext(statusId)
 
     override fun onRefreshSuccess(response: ConversationContext) {
         adapter.addTop(response.ancestors)

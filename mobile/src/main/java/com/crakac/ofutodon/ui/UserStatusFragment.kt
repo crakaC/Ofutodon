@@ -1,7 +1,7 @@
 package com.crakac.ofutodon.ui
 
 import android.os.Bundle
-import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.api.entity.Status
 import retrofit2.Call
@@ -37,19 +37,19 @@ class UserStatusFragment : TimelineFragment() {
     override fun getTitle() = titleName
 
     override val TAG: String = "UserStatusFragment"
-    override fun onRefreshRequest(): Call<List<Status>>? {
+    override fun onRefreshRequest(): Call<List<Status>> {
         return if(isOnlyMedia){
-            MastodonUtil.api?.getStatuses(accountId ,onlyMedia = true, range = prev)
+            Mastodon.api.getStatuses(accountId ,onlyMedia = true, range = prev)
         } else {
-            MastodonUtil.api?.getStatuses(accountId, range = prev)
+            Mastodon.api.getStatuses(accountId, range = prev)
         }
     }
 
-    override fun onLoadMoreRequest(): Call<List<Status>>? {
+    override fun onLoadMoreRequest(): Call<List<Status>> {
         return if(isOnlyMedia){
-            MastodonUtil.api?.getStatuses(accountId, onlyMedia = true, range = next)
+            Mastodon.api.getStatuses(accountId, onlyMedia = true, range = next)
         } else {
-            MastodonUtil.api?.getStatuses(accountId, range = next)
+            Mastodon.api.getStatuses(accountId, range = next)
         }
     }
 }

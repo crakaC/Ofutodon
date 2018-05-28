@@ -9,7 +9,7 @@ import android.view.Menu
 import android.view.View
 import android.widget.SearchView
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.entity.Results
 import com.crakac.ofutodon.ui.adapter.SimplePagerAdapter
 import retrofit2.Call
@@ -75,7 +75,7 @@ class SearchActivity : AppCompatActivity() {
                     hashtagAdapter.set(emptyList())
                     return false
                 }
-                MastodonUtil.api?.search(newText, newText.contains('@'))?.enqueue(
+                Mastodon.api.search(newText, newText.contains('@')).enqueue(
                         object : Callback<Results> {
                             override fun onFailure(call: Call<Results>?, t: Throwable?) {
                             }

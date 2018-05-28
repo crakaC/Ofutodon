@@ -1,25 +1,16 @@
 package com.crakac.ofutodon.api
 
 import android.net.Uri
-import com.crakac.ofutodon.db.AppDatabase
-import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.api.entity.AccessToken
 import com.crakac.ofutodon.api.entity.AppCredentials
+import com.crakac.ofutodon.db.AppDatabase
+import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.util.PrefsUtil
 import retrofit2.Call
 
 class MastodonUtil private constructor() {
     companion object {
-        private var cached: MastodonApi? = null
-        val api get() = cached
-        val TAG: String = "MastodonUtil"
-        fun api(domain: String, accessToken: String? = null): MastodonApi =
-                MastodonBuilder().setHost(domain).setAccessToken(accessToken).build()
-
-        fun initialize(user: User){
-            cached = MastodonBuilder(user).build()
-        }
-
+        const val TAG: String = "MastodonUtil"
         fun createAuthenticationUri(domain: String, redirectUri: String): Uri {
             return Uri.Builder()
                     .scheme("https")
@@ -62,7 +53,7 @@ class MastodonUtil private constructor() {
         }
 
         fun registerApplication(domain: String, clientName: String, redirectUris: String, website: String): Call<AppCredentials> {
-            return api(domain).registerApplication(
+            return Mastodon.initialize(domain).registerApplication(
                     clientName,
                     redirectUris,
                     C.OAUTH_SCOPES,
@@ -73,7 +64,7 @@ class MastodonUtil private constructor() {
         fun fetchAccessToken(domain: String, redirectUri: String, code: String): Call<AccessToken> {
             val id = getClientId(domain)!!
             val secret = getClientSecret(domain)!!
-            return api(domain).fetchAccessToken(id, secret, redirectUri, code, C.AUTHORIZATION_CODE)
+            return Mastodon.initialize(domain).fetchAccessToken(id, secret, redirectUri, code, C.AUTHORIZATION_CODE)
         }
     }
 }

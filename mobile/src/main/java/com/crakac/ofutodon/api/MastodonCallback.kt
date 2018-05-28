@@ -9,7 +9,7 @@ import retrofit2.Response
  */
 interface MastodonCallback<T>: retrofit2.Callback<T> {
     companion object {
-        val TAG ="MastodonCallback"
+        const val TAG ="MastodonCallback"
     }
     fun onNetworkAccessError(call: Call<T>?, t: Throwable?){
         Log.d(TAG, t?.toString())

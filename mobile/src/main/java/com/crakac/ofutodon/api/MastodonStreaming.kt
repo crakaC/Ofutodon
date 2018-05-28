@@ -2,10 +2,10 @@ package com.crakac.ofutodon.api
 
 import android.os.Handler
 import android.util.Log
-import com.crakac.ofutodon.db.User
 import com.crakac.ofutodon.api.entity.Notification
 import com.crakac.ofutodon.api.entity.Status
 import com.crakac.ofutodon.api.entity.StreamingContent
+import com.crakac.ofutodon.db.User
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,7 +33,7 @@ class MastodonStreaming(val user: User) : WebSocketListener() {
     fun connect() {
         val token = user.token
         val request = Request.Builder()
-                .url("wss://${user.domain}/api/v1/streaming/?stream=public:local")
+                .url("wss://${user.domain}/initialize/v1/streaming/?stream=public:local")
                 .build()
 
         val logger = HttpLoggingInterceptor()
@@ -57,14 +57,9 @@ class MastodonStreaming(val user: User) : WebSocketListener() {
 
     override fun onMessage(webSocket: WebSocket?, text: String?) {
         val message = gson.fromJson(text, StreamingContent::class.java)
-        if (callBack == null) {
-            System.out.println("callback is null!")
-            return
-        }
         when (message.eventType) {
             StreamingContent.Event.Update -> {
                 val status = gson.fromJson(message.payload, Status::class.java)
-                System.out.println(gson.toJson(status))
                 handler.post {
                     callBack?.onStatus(status)
                 }

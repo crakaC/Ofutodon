@@ -17,11 +17,11 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import com.crakac.ofutodon.R
+import com.crakac.ofutodon.api.Mastodon
+import com.crakac.ofutodon.api.MastodonCallback
+import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.db.AppDatabase
 import com.crakac.ofutodon.db.User
-import com.crakac.ofutodon.api.MastodonCallback
-import com.crakac.ofutodon.api.MastodonUtil
-import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.transition.FabTransform
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
 import com.crakac.ofutodon.ui.adapter.UserAccountAdapter
@@ -52,7 +52,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_home)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = MastodonUtil.api?.userAccount?.domain
+        toolbar.title = Mastodon.api.userAccount?.domain
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
@@ -130,10 +130,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val avatar = findViewById<ImageView>(R.id.avatar_icon)
         val userName = findViewById<TextView>(R.id.user_name)
         val displayName = findViewById<TextView>(R.id.display_name)
-        val userAccount = MastodonUtil.api?.userAccount
+        val userAccount = Mastodon.api.userAccount
         displayName.text = userAccount?.getDisplayNameWithEmoji()
         userName.text = getString(R.string.full_user_name).format(userAccount?.name, userAccount?.domain)
-        MastodonUtil.api?.getCurrentAccount()?.enqueue(object : MastodonCallback<Account> {
+        Mastodon.api.getCurrentAccount().enqueue(object : MastodonCallback<Account> {
             override fun onSuccess(result: Account) {
                 GlideApp.with(applicationContext).load(result.avatar).into(avatar)
                 GlideApp.with(applicationContext).load(result.headerStatic).centerCrop().into(header)
@@ -220,7 +220,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         PrefsUtil.putInt(C.CURRENT_USER_ID, user.id)
         AppDatabase.execute {
             val u = AppDatabase.instance.userDao().getUser(user.id)
-            MastodonUtil.initialize(u)
+            Mastodon.initialize(u)
             AppDatabase.uiThread {
                 startActivity(Intent(this@HomeActivity, HomeActivity::class.java))
                 finish()

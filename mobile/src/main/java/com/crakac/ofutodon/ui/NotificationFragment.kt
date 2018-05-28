@@ -1,6 +1,6 @@
 package com.crakac.ofutodon.ui
 
-import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.entity.Notification
 import com.crakac.ofutodon.ui.adapter.NotificationAdapter
 import com.crakac.ofutodon.ui.adapter.RefreshableAdapter
@@ -42,11 +42,11 @@ class NotificationFragment: MastodonApiFragment<Notification, List<Notification>
         }
     }
 
-    override fun onRefreshRequest(): Call<List<Notification>>? {
-        return MastodonUtil.api?.getNotifications(prev)
+    override fun onRefreshRequest(): Call<List<Notification>> {
+        return Mastodon.api.getNotifications(prev)
     }
 
-    override fun onLoadMoreRequest(): Call<List<Notification>>? {
-        return MastodonUtil.api?.getNotifications(next)
+    override fun onLoadMoreRequest(): Call<List<Notification>> {
+        return Mastodon.api.getNotifications(next)
     }
 }

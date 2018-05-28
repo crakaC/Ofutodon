@@ -15,7 +15,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.crakac.ofutodon.R
-import com.crakac.ofutodon.api.MastodonUtil
+import com.crakac.ofutodon.api.Mastodon
 import com.crakac.ofutodon.api.entity.Account
 import com.crakac.ofutodon.api.entity.Relationship
 import com.crakac.ofutodon.ui.adapter.MyFragmentPagerAdapter
@@ -108,7 +108,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         appBar.addOnOffsetChangedListener(this)
 
         if (intent.action == ACTION_WITHOUT_ACCOUNT_INFO) {
-            MastodonUtil.api?.getAccount(intent.getLongExtra(ACCOUNT_ID, 0))?.enqueue(object : Callback<Account> {
+            Mastodon.api.getAccount(intent.getLongExtra(ACCOUNT_ID, 0)).enqueue(object : Callback<Account> {
                 override fun onFailure(call: Call<Account>?, t: Throwable?) {
                 }
 
@@ -139,7 +139,7 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
         GlideApp.with(this).load(account.headerStatic).placeholder(R.color.colorPrimaryDark).into(header)
         GlideApp.with(this).load(account.avatar).circleCrop().into(icon)
         followButton.isLoading = true
-        MastodonUtil.api?.getRelationships(account.id)?.enqueue(
+        Mastodon.api.getRelationships(account.id).enqueue(
                 object : Callback<List<Relationship>> {
                     override fun onFailure(call: Call<List<Relationship>>?, t: Throwable?) {
                     }
@@ -199,11 +199,11 @@ class UserActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     }
 
     private fun follow() {
-        MastodonUtil.api?.follow(account.id)?.enqueue(relationshipCallback)
+        Mastodon.api.follow(account.id).enqueue(relationshipCallback)
     }
 
     private fun unFollow() {
-        MastodonUtil.api?.unfollow(account.id)?.enqueue(relationshipCallback)
+        Mastodon.api.unfollow(account.id).enqueue(relationshipCallback)
     }
 
     private val relationshipCallback = object : Callback<Relationship> {
